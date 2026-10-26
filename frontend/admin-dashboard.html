@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isuka | Admin Workspace</title><link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" aria-label="Admin navigation">
+      <a class="admin-brand" href="/"><img src="/assets/Logo%20in%20white.png" alt="Isuka">Admin</a>
+      <p class="admin-kicker">Platform administration</p>
+      <nav class="admin-nav"><a class="is-active" href="/admin"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12.5V4h7.5v8.5H4zm8.5 0V8H20v4.5h-7.5zm0 7.5V12H20v8.5h-7.5zm-8.5 0V16h7.5v4.5H4z"/></svg></span>Overview</a><a href="/admin/datasets"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5zM8 8h8M8 12h8M8 16h5"/></svg></span>Datasets</a><a href="/admin/upload"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13"/></svg></span>Upload data</a><a href="/admin/reports"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6zM14 3v4h4M9 12h6M9 16h6"/></svg></span>Validation reports</a></nav>
+      <div class="admin-sidebar-spacer"></div><div class="admin-sidebar-status">Current release<strong>2025 · C</strong>Published data</div><button class="admin-logout" type="button" data-admin-logout>Log out</button>
+    </aside>
+    <main class="admin-main">
+      <header class="admin-topbar"><strong>Admin workspace</strong><span class="admin-user">Administrator</span></header>
+      <div class="admin-content">
+        <header class="admin-heading"><div><h1>Data operations</h1><p>Review, validate, and publish the datasets behind Isuka's public insights.</p></div></header>
+        <section class="admin-stats admin-section" id="overview" aria-label="Data status"><article class="admin-stat"><small>Published data</small><strong>2025 · C</strong><em>Available</em></article><article class="admin-stat"><small>Registered farmers</small><strong data-registered-farmers>—</strong><em data-registered-farmers-status>Checking account service...</em></article><article class="admin-stat"><small>Last updated</small><strong>21 Sep</strong><em>Calculation complete</em></article><article class="admin-stat"><small>Validation warnings</small><strong>0</strong><em>Nothing pending</em></article></section>
+        <div class="admin-grid" style="margin-top: 18px;">
+          <section class="admin-panel admin-section" id="datasets"><div class="admin-panel-heading"><div><span class="admin-panel-kicker">Dataset library</span><h2>Published datasets</h2></div></div><table class="admin-table"><thead><tr><th>Dataset</th><th>Period</th><th>Status</th><th>Rows</th></tr></thead><tbody><tr><td>Crop production</td><td>2025 · C</td><td><span class="admin-badge">Published</span></td><td>—</td></tr><tr><td>Crop production</td><td>2025 · B</td><td><span class="admin-badge">Published</span></td><td>—</td></tr><tr><td>Crop production</td><td>2025 · A</td><td><span class="admin-badge">Published</span></td><td>—</td></tr></tbody></table></section>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="/admin.js"></script>
+</body>
+</html>

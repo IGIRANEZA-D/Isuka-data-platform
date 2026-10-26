@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isuka | Complete Your Profile</title><link rel="stylesheet" href="/account.css">
+</head>
+<body class="account-flow account-setup">
+  <main class="flow-shell">
+    <header class="flow-header">
+      <a class="flow-brand" href="/"><img src="/assets/ISUKA%20LOGO.png" alt="Isuka"></a>
+      <a class="flow-exit" href="/account/login">Already have an account? Log in</a>
+    </header>
+    <section class="flow-content" aria-labelledby="setup-title">
+      <div class="flow-heading"><span class="flow-kicker">Profile setup</span><h1 id="setup-title">Set your district.</h1><p>We only need your district to tailor local farm guidance.</p></div>
+      <form class="setup-form" novalidate>
+        <section class="setup-step is-active" data-step="1" aria-labelledby="district-title">
+          <h2 id="district-title">Where is your farm located?</h2>
+          <div class="account-field district-field">
+            <label for="district-search">District</label>
+            <div class="district-picker">
+              <input id="district-search" type="text" placeholder="Click to choose a district" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="district-options">
+              <input id="district" name="district" type="hidden" required>
+              <div class="district-options" id="district-options" role="listbox" hidden>
+                <button type="button" role="option" data-district="Nyarugenge">Nyarugenge</button>
+                <button type="button" role="option" data-district="Gasabo">Gasabo</button>
+                <button type="button" role="option" data-district="Kicukiro">Kicukiro</button>
+                <button type="button" role="option" data-district="Bugesera">Bugesera</button>
+                <button type="button" role="option" data-district="Gatsibo">Gatsibo</button>
+                <button type="button" role="option" data-district="Kayonza">Kayonza</button>
+                <button type="button" role="option" data-district="Kirehe">Kirehe</button>
+                <button type="button" role="option" data-district="Ngoma">Ngoma</button>
+                <button type="button" role="option" data-district="Nyagatare">Nyagatare</button>
+                <button type="button" role="option" data-district="Rwamagana">Rwamagana</button>
+                <button type="button" role="option" data-district="Burera">Burera</button>
+                <button type="button" role="option" data-district="Gakenke">Gakenke</button>
+                <button type="button" role="option" data-district="Gicumbi">Gicumbi</button>
+                <button type="button" role="option" data-district="Musanze">Musanze</button>
+                <button type="button" role="option" data-district="Rulindo">Rulindo</button>
+                <button type="button" role="option" data-district="Nyanza">Nyanza</button>
+                <button type="button" role="option" data-district="Gisagara">Gisagara</button>
+                <button type="button" role="option" data-district="Huye">Huye</button>
+                <button type="button" role="option" data-district="Kamonyi">Kamonyi</button>
+                <button type="button" role="option" data-district="Muhanga">Muhanga</button>
+                <button type="button" role="option" data-district="Nyamagabe">Nyamagabe</button>
+                <button type="button" role="option" data-district="Nyaruguru">Nyaruguru</button>
+                <button type="button" role="option" data-district="Ruhango">Ruhango</button>
+                <button type="button" role="option" data-district="Rubavu">Rubavu</button>
+                <button type="button" role="option" data-district="Nyabihu">Nyabihu</button>
+                <button type="button" role="option" data-district="Ngororero">Ngororero</button>
+                <button type="button" role="option" data-district="Nyamasheke">Nyamasheke</button>
+                <button type="button" role="option" data-district="Karongi">Karongi</button>
+                <button type="button" role="option" data-district="Rusizi">Rusizi</button>
+                <button type="button" role="option" data-district="Rutsiro">Rutsiro</button>
+              </div>
+            </div>
+            <small class="flow-error" data-error="district"></small>
+          </div>
+          <div class="step-actions"><button type="submit" class="account-submit">Finish setup</button></div>
+        </section>
+      </form>
+    </section>
+  </main>
+  <script src="/account.js"></script>
+</body>
+</html>

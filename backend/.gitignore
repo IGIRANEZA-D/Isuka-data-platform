@@ -1,0 +1,4 @@
+.env
+uploads/
+*.isuka-cache.json
+*.isuka-aggregate.json

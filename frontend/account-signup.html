@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isuka | Create an Account</title><link rel="stylesheet" href="/account.css">
+</head>
+<body class="account-signup">
+  <main class="account-shell">
+    <section class="account-visual" aria-label="Isuka farmer account introduction">
+      <div><img class="account-logo" src="/assets/Logo%20in%20white.png" alt="Isuka"></div>
+      <a class="account-back" href="/"><span aria-hidden="true">&#8592;</span> Back to website</a>
+      <div class="account-visual-copy"><h2>Know your harvest,<br>protect your income.</h2><div class="account-dots" aria-label="Static account introduction"><i class="active"></i><i></i><i></i></div></div>
+    </section>
+    <section class="account-content"><div class="account-form-wrap">
+      <h1>Create your account</h1><p class="account-intro">Already have an account? <a href="/account/login">Log in</a></p>
+      <div class="account-status" role="status"></div>
+      <form class="account-form" novalidate>
+        <div class="account-row"><div class="account-field"><label for="first-name">First name</label><input id="first-name" name="firstName" autocomplete="given-name" required><small class="field-error"></small></div><div class="account-field"><label for="last-name">Last name</label><input id="last-name" name="lastName" autocomplete="family-name" required><small class="field-error"></small></div></div>
+        <div class="account-field"><label for="phone">Phone number</label><input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="+250 ..." required><small class="field-error"></small></div>
+        <div class="account-field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required><small class="field-error"></small></div>
+        <div class="account-field"><label for="password">Password</label><div class="account-password"><input id="password" name="password" type="password" data-password autocomplete="new-password" required minlength="8"><button class="password-toggle" type="button" data-password-toggle aria-label="Show password"><svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg></button></div><small class="field-error"></small></div>
+        <label class="account-check"><input type="checkbox" required><span>I agree to the <a href="#terms">Terms &amp; Conditions</a>.</span><small class="field-error"></small></label>
+        <button class="account-submit" type="submit">Create account</button>
+      </form>
+    </div></section>
+  </main>
+  <script src="/account.js"></script>
+</body>
+</html>

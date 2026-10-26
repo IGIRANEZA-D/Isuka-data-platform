@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isuka | Admin Login</title><link rel="stylesheet" href="/admin.css">
+</head>
+<body class="admin-login-page">
+  <main class="admin-login-card" aria-live="polite">
+    <img src="/assets/isuka-logo.png" alt="Isuka">
+    <span class="admin-kicker">Platform administration</span>
+    <h1>Admin access</h1>
+    <p>Manage published agricultural datasets and keep the public dashboard up to date.</p>
+    <div class="admin-login-banner" data-admin-login-banner hidden>
+      <span class="admin-login-banner-icon" aria-hidden="true">!</span>
+      <span data-admin-login-banner-text></span>
+    </div>
+    <form class="admin-login-form" data-admin-login novalidate>
+      <label>Email
+        <input name="email" type="email" autocomplete="username" placeholder="admin@isuka.rw" required aria-describedby="admin-login-error">
+      </label>
+      <label>Password
+        <div class="admin-password">
+          <input name="password" type="password" autocomplete="current-password" placeholder="Enter password" required aria-describedby="admin-login-error">
+          <button class="admin-password-toggle" type="button" data-admin-password-toggle aria-label="Show password">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>
+          </button>
+        </div>
+      </label>
+      <small class="admin-login-note" data-admin-login-note id="admin-login-error" aria-live="polite"></small>
+      <button class="admin-action" type="submit" data-admin-login-submit>Enter admin workspace</button>
+    </form>
+    <a class="admin-login-home" href="/">Back to home</a>
+  </main>
+  <script src="/admin.js"></script>
+</body>
+</html>

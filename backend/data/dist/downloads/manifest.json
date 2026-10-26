@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-10-26T13:31:10.037Z",
+  "calcVersion": "loss-label-resolver-v1-crop-labels-v1-production-aliases-v1",
+  "files": [
+    {
+      "name": "isuka-cleaned-agricultural-dataset-2020.csv",
+      "path": "backend/data/dist/downloads/isuka-cleaned-agricultural-dataset-2020.csv",
+      "type": "csv",
+      "year": 2020
+    },
+    {
+      "name": "isuka-cleaned-agricultural-dataset-2021.csv",
+      "path": "backend/data/dist/downloads/isuka-cleaned-agricultural-dataset-2021.csv",
+      "type": "csv",
+      "year": 2021
+    },
+    {
+      "name": "isuka-cleaned-agricultural-dataset-2022.csv",
+      "path": "backend/data/dist/downloads/isuka-cleaned-agricultural-dataset-2022.csv",
+      "type": "csv",
+      "year": 2022
+    },
+    {
+      "name": "isuka-cleaned-agricultural-dataset-2023.csv",
+      "path": "backend/data/dist/downloads/isuka-cleaned-agricultural-dataset-2023.csv",
+      "type": "csv",
+      "year": 2023
+    },
+    {
+      "name": "isuka-cleaned-agricultural-dataset-2024.csv",
+      "path": "backend/data/dist/downloads/isuka-cleaned-agricultural-dataset-2024.csv",
+      "type": "csv",
+      "year": 2024
+    },
+    {
+      "name": "isuka-cleaned-agricultural-dataset-2025.csv",
+      "path": "backend/data/dist/downloads/isuka-cleaned-agricultural-dataset-2025.csv",
+      "type": "csv",
+      "year": 2025
+    },
+    {
+      "name": "isuka-cleaned-agricultural-datasets-2020-2025.zip",
+      "path": "backend/data/dist/downloads/isuka-cleaned-agricultural-datasets-2020-2025.zip",
+      "type": "zip"
+    }
+  ],
+  "checksums": {
+    "backend/data/dist/downloads/isuka-cleaned-agricultural-dataset-2020.csv": "5e1f0fae2c993498a99c9a012ee9d4cc5b9d83e6fed5401f12982c77d2e50325",
+    "backend/data/dist/downloads/isuka-cleaned-agricultural-dataset-2021.csv": "2682aff71cd11f3b2fef7ed8fe5debeb165b57c40176ab402d38082ecd7af140",
+    "backend/data/dist/downloads/isuka-cleaned-agricultural-dataset-2022.csv": "aa5ab07a93aa265e12aeef56a6ddd46a1868fe8e76d2c52c612effb4f256307b",
+    "backend/data/dist/downloads/isuka-cleaned-agricultural-dataset-2023.csv": "b1116b910d236daa9b485a8b5d802125ad1f722433fe1cfc7aa8da7fa2e67642",
+    "backend/data/dist/downloads/isuka-cleaned-agricultural-dataset-2024.csv": "9248e3d5165df47a848106202db174b4329b3d74879639e097a84f603f4b0a60",
+    "backend/data/dist/downloads/isuka-cleaned-agricultural-dataset-2025.csv": "c7368299f9115f06febd1cc99af90e2dce4a34ee353262df77a8614aeefb4c70",
+    "backend/data/dist/downloads/isuka-cleaned-agricultural-datasets-2020-2025.zip": "a6dcb0f50b790784ab916e00a365976d133fc6b0e194c13a11ed24a8f969962a"
+  }
+}

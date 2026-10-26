@@ -1,0 +1,59 @@
+# .vercelignore — files excluded from the Vercel deployment
+# Vercel reads this like .gitignore.
+
+# Raw microdata — never deployed (contains respondent-level data)
+www/Datasets(2020-2025)/
+**/*.sav
+**/*.dta
+**/*microdata*
+
+# Python virtual environment
+.venv/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# Development dependencies
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Local uploads directory (ephemeral; Vercel uses /tmp for uploads)
+backend/data/uploads/
+backend/data/loss-planner-cache.json
+
+# Test output and scratch files
+backend/reports/
+backend/data/dataset-training-history.json
+backend/data/dataset-acceptance-model.json
+tests/
+scripts/__pycache__/
+
+# Source Python scripts (not needed at runtime on Vercel)
+scripts/*.py
+backend/src/**/*.py
+
+# Local environment files (never committed, never deployed)
+.env
+.env.*
+backend/.env
+**/.env.local
+**/.env.*
+.git/
+
+# Editor / OS artefacts
+.DS_Store
+Thumbs.db
+*.log
+
+# Large media files not referenced by the frontend
+www/*.mp4
+
+# Sample files
+sample_upload.csv
+
+# Docs folder (markdown only, not served)
+docs/
+
+# Whole Dashboard folder (large images not used by the app)
+www/Whole\ Dashboard/

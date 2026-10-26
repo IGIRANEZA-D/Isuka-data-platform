@@ -1,0 +1,110 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "npm run build:vercel",
+  "installCommand": "npm install && npm install --prefix backend && npm install --prefix frontend",
+  "outputDirectory": "public",
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 90,
+      "includeFiles": "backend/data/dist/**,backend/data/forecast-cache.json,backend/data/default-overview-cache.json,backend/src/**/*.js,frontend/*.html,frontend/data/**"
+    }
+  },
+  "regions": ["cpt1"],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.js" },
+    { "source": "/health", "destination": "/api/health" },
+    { "source": "/health/(.*)", "destination": "/api/health/$1" },
+    { "source": "/account/login", "destination": "/account/login.html" },
+    { "source": "/account/login/", "destination": "/account/login.html" },
+    { "source": "/account/signup", "destination": "/account/signup.html" },
+    { "source": "/account/signup/", "destination": "/account/signup.html" },
+    { "source": "/account/setup", "destination": "/account/setup.html" },
+    { "source": "/account/setup/", "destination": "/account/setup.html" },
+    { "source": "/account/dashboard", "destination": "/account/dashboard.html" },
+    { "source": "/account/dashboard/", "destination": "/account/dashboard.html" },
+    { "source": "/account/my-farm", "destination": "/account/my-farm.html" },
+    { "source": "/account/my-farm/", "destination": "/account/my-farm.html" },
+    { "source": "/account/assistant", "destination": "/account/assistant.html" },
+    { "source": "/account/assistant/", "destination": "/account/assistant.html" },
+    { "source": "/account/alerts", "destination": "/account/alerts.html" },
+    { "source": "/account/alerts/", "destination": "/account/alerts.html" },
+    { "source": "/account/settings", "destination": "/account/settings.html" },
+    { "source": "/account/settings/", "destination": "/account/settings.html" },
+    { "source": "/admin/login", "destination": "/admin/login.html" },
+    { "source": "/admin/login/", "destination": "/admin/login.html" },
+    { "source": "/admin", "destination": "/admin/index.html" },
+    { "source": "/admin/", "destination": "/admin/index.html" },
+    { "source": "/admin/datasets", "destination": "/admin/datasets.html" },
+    { "source": "/admin/datasets/", "destination": "/admin/datasets.html" },
+    { "source": "/admin/upload", "destination": "/admin/upload.html" },
+    { "source": "/admin/upload/", "destination": "/admin/upload.html" },
+    { "source": "/admin/reports", "destination": "/admin/reports.html" },
+    { "source": "/admin/reports/", "destination": "/admin/reports.html" },
+    { "source": "/dashboard", "destination": "/dashboard/index.html" },
+    { "source": "/dashboard/", "destination": "/dashboard/index.html" },
+    { "source": "/dashboard/land-crops", "destination": "/dashboard/land-crops/index.html" },
+    { "source": "/dashboard/land-crops/", "destination": "/dashboard/land-crops/index.html" },
+    { "source": "/dashboard/climate-risk", "destination": "/dashboard/climate-risk/index.html" },
+    { "source": "/dashboard/climate-risk/", "destination": "/dashboard/climate-risk/index.html" },
+    { "source": "/dashboard/inputs-practices", "destination": "/dashboard/inputs-practices/index.html" },
+    { "source": "/dashboard/inputs-practices/", "destination": "/dashboard/inputs-practices/index.html" },
+    { "source": "/dashboard/district-explorer", "destination": "/dashboard/district-explorer/index.html" },
+    { "source": "/dashboard/district-explorer/", "destination": "/dashboard/district-explorer/index.html" },
+    { "source": "/dashboard/forecasting", "destination": "/dashboard/forecasting/index.html" },
+    { "source": "/dashboard/forecasting/", "destination": "/dashboard/forecasting/index.html" },
+    { "source": "/dashboard/forecasting/analysis", "destination": "/dashboard/forecasting/analysis/index.html" },
+    { "source": "/dashboard/forecasting/analysis/", "destination": "/dashboard/forecasting/analysis/index.html" },
+    { "source": "/dashboard/loss-planner", "destination": "/dashboard/loss-planner/index.html" },
+    { "source": "/dashboard/loss-planner/", "destination": "/dashboard/loss-planner/index.html" }
+  ],
+  "cleanUrls": false,
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/downloads/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800" }
+      ]
+    },
+    {
+      "source": "/(.*\\.(png|jpg|jpeg|webp|gif|svg|ico|mp4|woff|woff2|ttf|eot))",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=604800" }
+      ]
+    },
+    {
+      "source": "/(.*\\.(js|css))",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
+      ]
+    },
+    {
+      "source": "/(dashboard|account|admin)(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=600" }
+      ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=600" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https://api.open-meteo.com https://generativelanguage.googleapis.com https://api.meteomatics.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(self)" }
+      ]
+    }
+  ]
+}

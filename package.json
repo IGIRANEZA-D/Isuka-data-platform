@@ -1,0 +1,28 @@
+{
+  "name": "isuka-data-platform",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev": "concurrently --kill-others-on-fail \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "verify:data": "node scripts/verify-data.js",
+    "build:data": "node scripts/build-data-artifacts.js && node scripts/build-static-exports.js",
+    "verify:artifacts": "node scripts/verify-artifacts.js",
+    "evaluate:assistant": "node scripts/evaluate-assistant.js",
+    "test": "npm --prefix backend test",
+    "start": "npm run start:backend",
+    "start:backend": "npm --prefix backend start",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:static-exports": "node scripts/build-static-exports.js",
+    "build:vercel": "npm run build:frontend && node scripts/build-public-dir.js && npm run verify:artifacts",
+    "stage:vercel": "node scripts/stage-vercel.js",
+    "check:remote": "node scripts/check-remote.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

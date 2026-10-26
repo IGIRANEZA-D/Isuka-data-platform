@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Isuka overview dashboard for Rwanda agricultural metrics.">
+  <meta name="view-transition" content="same-origin">
+  <title>Isuka | Data Hub Overview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/assistant/assistant.css">
+</head>
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar" aria-label="Sidebar navigation">
+      <div class="sidebar-inner">
+        <div class="sidebar-header">
+          <img src="/assets/Logo%20in%20white.png" alt="Isuka logo" class="sidebar-logo">
+          <div class="sidebar-title">Data Hub</div>
+          <p class="sidebar-subtitle">Select a lens to explore Rwanda's agricultural metrics.</p>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+          <button class="nav-item active" type="button">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5V4h7.5v8.5H4zm8.5 0V8H20v4.5h-7.5zm0 7.5V12H20v8.5h-7.5zm-8.5 0V16h7.5v4.5H4z"/></svg>
+            </span>
+            <span class="nav-label">Overview</span>
+            <span class="nav-chevron" aria-hidden="true">›</span>
+          </button>
+          <a class="nav-item" href="/dashboard/land-crops/">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18.5V8.5l9-5 9 5v10l-9 5-9-5zm9-12v16"/><path d="M12 6.5 6 10l6 3.5 6-3.5-6-3.5zm0 6.5v7"/></svg>
+            </span>
+            <span class="nav-label">Land &amp; Crops</span>
+            <span class="nav-chevron" aria-hidden="true">›</span>
+          </a>
+          <a class="nav-item" href="/dashboard/climate-risk/">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 8.5c2.5-2 4.6-2.7 7-2.7 3.1 0 5.4 1.2 7 2.9"/><path d="M5 15.5c2.5 2 4.6 2.7 7 2.7 3.1 0 5.4-1.2 7-2.9"/><path d="M7 6.5c0 3.6 2.4 5.5 5 7.5 2.7-2 5-3.9 5-7.5"/></svg>
+            </span>
+            <span class="nav-label">Climate &amp; Risk</span>
+            <span class="nav-chevron" aria-hidden="true">›</span>
+          </a>
+          <a class="nav-item" href="/dashboard/inputs-practices/">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9.5A7 7 0 0 1 19 9.5v7.5H5V9.5zm2.5 0h9"/><path d="M9 12.5h6M9 15.5h4"/></svg>
+            </span>
+            <span class="nav-label">Inputs &amp; Practices</span>
+            <span class="nav-chevron" aria-hidden="true">›</span>
+          </a>
+          <a class="nav-item" href="/dashboard/district-explorer/">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9zm0 3.5h16"/><path d="M8 12h8M8 15h5"/></svg>
+            </span>
+            <span class="nav-label">District Explorer</span>
+            <span class="nav-chevron" aria-hidden="true">›</span>
+          </a>
+          <a class="nav-item" href="/dashboard/forecasting/"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18 9 12l4 3 7-9"/><path d="M16 6h4v4M4 21h16"/></svg></span><span class="nav-label">Forecasting</span><span class="nav-chevron" aria-hidden="true">›</span></a>
+          <a class="nav-item" href="/dashboard/loss-planner/"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9M12 14c-4 0-7-2.5-7-6 4 0 7 2.5 7 6ZM12 11c0-3.5 3-6 7-6 0 3.5-3 6-7 6Z"/></svg></span><span class="nav-label">Loss Planner</span><span class="nav-chevron" aria-hidden="true">›</span></a>
+        </nav>
+
+        <div class="sidebar-spacer"></div>
+
+        <div class="info-card" aria-label="Public information">
+          <div class="info-header">
+            <span class="info-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 10.5v5M12 7.5h.01"/></svg>
+            </span>
+            <span class="info-label">PUBLIC INFORMATION</span>
+          </div>
+          <p class="info-body">Data sourced from NISR Seasonal Agricultural Survey, 2020–2025.</p>
+        </div>
+
+        <button class="collapse-toggle" type="button" aria-label="Collapse sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <section class="overview-banner" aria-labelledby="overview-title">
+        <div class="banner-content">
+          <a class="back-link" href="/">
+            <span aria-hidden="true">←</span>
+            <span>Back to Isuka home</span>
+          </a>
+          <h1 id="overview-title">Agricultural Insights Overview</h1>
+          <p>Verified overview of Rwanda's agricultural production records from the local NISR survey files.</p>
+        </div>
+      </section>
+
+      <section class="overview-filters" aria-label="Overview filters">
+        <div class="filter-heading">
+          <span class="filter-kicker">Explore the data</span>
+          <strong>Filter the national overview</strong>
+          <span class="filter-source" data-filter-summary>All years · All districts</span>
+        </div>
+        <label class="filter-control">
+          <span>Year</span>
+          <select id="year-filter" aria-label="Filter by year">
+            <option value="all">All years</option>
+          </select>
+        </label>
+        <label class="filter-control filter-control-wide">
+          <span>District</span>
+          <select id="district-filter" aria-label="Filter by district">
+            <option value="all">All districts</option>
+          </select>
+        </label>
+        <div class="filter-actions"><span class="filter-status" data-filter-status aria-live="polite">Ready</span><button class="filter-reset" type="button" data-filter-reset>Reset</button></div>
+      </section>
+
+      <section class="kpi-row" aria-label="Overview metrics">
+        <article class="kpi-card" data-card="land">
+          <div class="kpi-header">
+            <div class="kpi-icon primary-tint" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16.5 12 4l9 12.5"/><path d="M7 16.5h10"/><path d="M6 19.5h12"/></svg>
+            </div>
+            <span class="kpi-trend trend-positive" data-type="trend">—</span>
+          </div>
+          <div class="kpi-label">Total Arable Land</div>
+          <div class="kpi-value" data-value="land">—</div>
+        </article>
+
+        <article class="kpi-card" data-card="harvest">
+          <div class="kpi-header">
+            <div class="kpi-icon primary-tint" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20c3.5-4.5 5.5-7.5 5.5-10.2A5.3 5.3 0 0 0 12 4.1a5.3 5.3 0 0 0-5.5 5.7C6.5 12.5 8.5 15.5 12 20zm0-9.5v5"/><path d="M9.5 12.5h5"/></svg>
+            </div>
+            <span class="kpi-trend trend-positive" data-type="trend">—</span>
+          </div>
+          <div class="kpi-label">Weighted Production</div>
+          <div class="kpi-value" data-value="harvest">—</div>
+        </article>
+
+        <article class="kpi-card" data-card="loss">
+          <div class="kpi-header">
+            <div class="kpi-icon accent-tint" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16 13 4l6 12l-6 4-8-4zm8-9v6"/><path d="M13 18h.01"/></svg>
+            </div>
+            <span class="kpi-trend trend-positive" data-type="trend">—</span>
+          </div>
+          <div class="kpi-label">National loss (production-weighted)</div>
+          <div class="kpi-value" data-value="loss">—</div>
+        </article>
+
+        <article class="kpi-card" data-card="risk">
+          <div class="kpi-header">
+            <div class="kpi-icon warning-tint" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5 3.5 17.5h17L12 4.5z"/><path d="M12 9v4.5M12 16.5h.01"/></svg>
+            </div>
+            <span class="kpi-trend trend-negative" data-type="trend">—</span>
+          </div>
+          <div class="kpi-label">Active High-Risk Districts</div>
+          <div class="kpi-value" data-value="risk">—</div>
+        </article>
+      </section>
+
+      <section class="content-grid" aria-label="Overview charts section">
+        <article class="panel panel-chart">
+          <div class="panel-header">
+            <div>
+              <h2>Production by crop <span id="forecast-period">(loading)</span></h2>
+            </div>
+            <p>Weighted production totals from the loaded production files.</p>
+          </div>
+          <div class="chart-wrap">
+            <svg id="yield-chart" viewBox="0 0 760 260" preserveAspectRatio="none" aria-label="Yield forecast chart"></svg>
+          </div>
+          <div class="chart-legend" id="chart-legend" aria-label="Chart legend"></div>
+        </article>
+
+        <article class="panel panel-donut">
+          <div class="panel-header tight">
+            <div>
+              <h2>Risk Distribution</h2>
+            </div>
+            <p>Regional alert levels across monitored districts.</p>
+          </div>
+
+          <div class="donut-wrap">
+            <div class="donut-chart" id="donut-chart" aria-label="Risk distribution donut chart">
+              <div class="donut-center">
+                <span id="donut-center-value">30</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="donut-legend" id="donut-legend" aria-label="Risk legend"></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="dashboard.js"></script>
+  <script src="dashboard-navigation.js"></script>
+  <script src="/assistant/loader.js" defer></script>
+</body>
+</html>

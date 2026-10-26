@@ -1,0 +1,186 @@
+{
+  "calcVersion": "loss-label-resolver-v1-crop-labels-v1-production-aliases-v1",
+  "generatedAt": "2026-10-26T13:31:06.995Z",
+  "files": {
+    "periods/2020-A.json": {
+      "bytes": 162544,
+      "rowCount": 41313
+    },
+    "periods/2020-B.json": {
+      "bytes": 166244,
+      "rowCount": 35773
+    },
+    "periods/2020-C.json": {
+      "bytes": 64464,
+      "rowCount": 4283
+    },
+    "periods/2021-A.json": {
+      "bytes": 904456,
+      "rowCount": 41634
+    },
+    "periods/2021-B.json": {
+      "bytes": 383050,
+      "rowCount": 35869
+    },
+    "periods/2021-C.json": {
+      "bytes": 347747,
+      "rowCount": 3416
+    },
+    "periods/2022-A.json": {
+      "bytes": 922689,
+      "rowCount": 41589
+    },
+    "periods/2022-B.json": {
+      "bytes": 337026,
+      "rowCount": 36005
+    },
+    "periods/2022-C.json": {
+      "bytes": 70447,
+      "rowCount": 5818
+    },
+    "periods/2023-A.json": {
+      "bytes": 981038,
+      "rowCount": 39038
+    },
+    "periods/2023-B.json": {
+      "bytes": 364136,
+      "rowCount": 36546
+    },
+    "periods/2023-C.json": {
+      "bytes": 61903,
+      "rowCount": 3566
+    },
+    "periods/2024-A.json": {
+      "bytes": 997637,
+      "rowCount": 39330
+    },
+    "periods/2024-B.json": {
+      "bytes": 291949,
+      "rowCount": 35584
+    },
+    "periods/2024-C.json": {
+      "bytes": 52340,
+      "rowCount": 1949
+    },
+    "periods/2025-A.json": {
+      "bytes": 921037,
+      "rowCount": 34369
+    },
+    "periods/2025-B.json": {
+      "bytes": 320756,
+      "rowCount": 32920
+    },
+    "periods/2025-C.json": {
+      "bytes": 57374,
+      "rowCount": 1884
+    },
+    "loss-planner/2020-A.json": {
+      "bytes": 1280311
+    },
+    "loss-planner/2020-B.json": {
+      "bytes": 1186134
+    },
+    "loss-planner/2020-C.json": {
+      "bytes": 274453
+    },
+    "loss-planner/2021-A.json": {
+      "bytes": 1178195
+    },
+    "loss-planner/2021-B.json": {
+      "bytes": 1157658
+    },
+    "loss-planner/2021-C.json": {
+      "bytes": 184043
+    },
+    "loss-planner/2022-A.json": {
+      "bytes": 1188411
+    },
+    "loss-planner/2022-B.json": {
+      "bytes": 1180290
+    },
+    "loss-planner/2022-C.json": {
+      "bytes": 378052
+    },
+    "loss-planner/2023-A.json": {
+      "bytes": 1040932
+    },
+    "loss-planner/2023-B.json": {
+      "bytes": 1116208
+    },
+    "loss-planner/2023-C.json": {
+      "bytes": 241425
+    },
+    "loss-planner/2024-A.json": {
+      "bytes": 1078624
+    },
+    "loss-planner/2024-B.json": {
+      "bytes": 1100823
+    },
+    "loss-planner/2024-C.json": {
+      "bytes": 206034
+    },
+    "loss-planner/2025-A.json": {
+      "bytes": 1335422
+    },
+    "loss-planner/2025-B.json": {
+      "bytes": 1425549
+    },
+    "loss-planner/2025-C.json": {
+      "bytes": 215545
+    },
+    "../default-overview-cache.json": {
+      "bytes": 20108
+    },
+    "../forecast-cache.json": {
+      "bytes": 2171161
+    },
+    "../loss-planner-cache.json": {
+      "bytes": 15767277
+    },
+    "frontend/data/landing-art.json": {
+      "bytes": 204072
+    }
+  },
+  "checksums": {
+    "periods/2020-A.json": "893b1de411e41e5aa1851036a748251cf8cba411578d8c236fec794ac0599fd1",
+    "periods/2020-B.json": "8309d7d4f65827c810cc08069f0a5b9d667173169def712e892a4652fddc0cf1",
+    "periods/2020-C.json": "06d6a90f2001ce2c30095ae0e8ca60877de47b4c8a6416f4bd009bc876587e6a",
+    "periods/2021-A.json": "d5bd98b0efc4c15c85cc624eeeb67d5ff25434eb6c7e8e5c9e0abf90abe58603",
+    "periods/2021-B.json": "8fdba23d56458231de41bfb3899320488765d166a5cc35c590fc50aeaabc82ca",
+    "periods/2021-C.json": "3a4ae50123b37089f387a79bc6d53f2bb33f9284fb760c1dfe27cec77c851e3a",
+    "periods/2022-A.json": "17c51821f4ce1b585126832f447049dacfe643f4b6e8954a0addd79a0a8284a9",
+    "periods/2022-B.json": "c4c93c663ff74e7c5b6cd42b5c0a9478e183df24e3d4206f3716cc617f5360cd",
+    "periods/2022-C.json": "733a6befdcb53f894a61010af3a1a3357d997b60aa788449a006b2a47312aed3",
+    "periods/2023-A.json": "5db9803d870e51ad671c391e669932b59f158f52fcf4c87390117b3c60aea45e",
+    "periods/2023-B.json": "5821a303e59dcade86b34c88c945024cc3812a38eb811fa3674a66f1dc5af4b2",
+    "periods/2023-C.json": "623e6070f987f9c4c76af1d68d5296e052fe897f114146cfa04ecca957e13910",
+    "periods/2024-A.json": "9025dacb80b7513610d47bfd843efe5ab4358ddcb8d6ad48fa95d265bf13940c",
+    "periods/2024-B.json": "d1694e86506d2e87e6b40cf817b2779b5d7a1d40e980171d6e4237e5927a9251",
+    "periods/2024-C.json": "489d1278edb7004aba818647108eb72160a80053c8ba9bafd7f8e33cf59e0702",
+    "periods/2025-A.json": "cf4461c96044a63b8088a2a9238ecdc5ce4f8c171479c3afdf5a533362da5a5f",
+    "periods/2025-B.json": "54cca72844548dfc12162597f501369fc4a530e7d872fbbf972454849d5284b6",
+    "periods/2025-C.json": "d313527bc65b78f76ac410b278c68c422900e7626e8822c3b546076cadd1a054",
+    "loss-planner/2020-A.json": "aab73c2a07c03a07007d8b9571c0a528bd178d4f27011120f41dd92ec5e6fd1a",
+    "loss-planner/2020-B.json": "e2f880fb71a1e281e7b2af433aa7e5607fcb8ede39d03aa41bdf7d064da98953",
+    "loss-planner/2020-C.json": "1a3324303d2798632199c2919ae9a2c0a3927c0d31913875706f9a44c8ab9322",
+    "loss-planner/2021-A.json": "b1f124385d0740c2f709432a731f3241df371db5436b39c894367b4e3acce483",
+    "loss-planner/2021-B.json": "982970ab7f7fbb10e544fad4e22bf6f2c2a574d5a3729bc49dddc72149be0b5a",
+    "loss-planner/2021-C.json": "d41fce3310f810f99e5c699ee58af661ddeb547ca3214e14f83dbf5dbb1c1aea",
+    "loss-planner/2022-A.json": "67ea72913995041a4c52411a58ab412b666dcafd1ac4274517a2cb099f2838fe",
+    "loss-planner/2022-B.json": "fe1239dd77ce2bd5866f653df55f5c7497124166281e76e752fc1b6731e7d314",
+    "loss-planner/2022-C.json": "6d5b013e2593ddb45346ab839d3512a4576b539792db1e60a5a7fc3ecf2a1fe4",
+    "loss-planner/2023-A.json": "95ad565d1a282d2f9d6d8c2bf8d3519561684921281f362ce5193e5634f3898f",
+    "loss-planner/2023-B.json": "730a34f8730df542c02cd246a33d4f18414d41ab2659df7a7b7160c675c37306",
+    "loss-planner/2023-C.json": "abcae40c731ef44fc61c04c7fe182c6df94b715bf2fed6bdf5c18c2c55bc18cf",
+    "loss-planner/2024-A.json": "eda8bddfcab971dc978cc341215fb56bccf1e506a5405ab59ad13e2e5ec7b535",
+    "loss-planner/2024-B.json": "24693f06cc1a258146ee9dbd8547dac8f78959d8a1448b8f10421fa09abbbfc5",
+    "loss-planner/2024-C.json": "0cdf571cebe5cbdd50371abed26500ee955da594c51662779cf433043a3290b2",
+    "loss-planner/2025-A.json": "97c700792fba0cf3b54eda5d23bc3fd5d0d3f32cebf0a375c35f6196e554f448",
+    "loss-planner/2025-B.json": "91a30cf57a1e0ef92df9a8cda72303701b7a8d2a14e5c48cdbf8f046856392f5",
+    "loss-planner/2025-C.json": "63e36786b836ec8b7c5f6d39a9616b52c22e3beec6b6b310b409be78cbcd4fb7",
+    "../default-overview-cache.json": "eec7e0bd39e95614e20f64385bb47599042cbc02e8fba3b5175c1f02769400ae",
+    "../forecast-cache.json": "4a9cc96ffa27a8f82e9c1cfdd01cc838fc7d4c8cacd91b80b3ebe0f7c083f3a9",
+    "../loss-planner-cache.json": "c6e4830bef3f5f5dafd7e95d39bb8151a88ccec020822d7cf43dcc940e840f03",
+    "frontend/data/landing-art.json": "8110a6bd191c004a02628bbd8e7f3c60d9b861f853834ac6e0db6f4ea7bfeae9"
+  }
+}

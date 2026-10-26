@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isuka | Alerts</title><link rel="stylesheet" href="/account.css">
+</head>
+<body class="farmer-dashboard account-protected">
+  <div class="farmer-shell">
+    <aside class="farmer-sidebar" aria-label="Account navigation">
+      <a class="farmer-sidebar-brand" href="/account/dashboard"><img src="/assets/Logo%20in%20white.png" alt="Isuka"></a>
+      <nav class="farmer-nav" aria-label="Farmer account navigation"><a href="/account/dashboard"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10Z"/></svg></span>Home</a><a href="/account/my-farm"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11M8 20v-6h8v6M6 10h12"/></svg></span>My Farm</a><a href="/account/assistant"><span class="nav-icon nav-icon-ai" aria-hidden="true"><img src="/assets/ISUKA%20BOT.png" alt=""></span>Assistant</a><a class="is-active" href="/account/alerts"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></span>Alerts</a><a href="/account/settings"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19 13 2-1-2-1-.4-2 1-1.8-1.8-1-1.7 1-2-.4-1-2-1 2-2 .4-1.7-1-1.8 1 1 1.8-.4 2-2 1-1 2 1 1.8 1 2-.4 2 1 1 1 2 2-1 1.8-1 1.7 1 1.8-1 1 1 1.8 1 2-.4 1 2-2-1-1-2Z"/></svg></span>Settings</a></nav>
+      <button class="farmer-collapse" type="button" data-sidebar-toggle aria-label="Collapse navigation">‹</button><a class="farmer-logout" href="/" data-logout><span aria-hidden="true">↪</span>Logout</a>
+    </aside>
+    <main class="farmer-main">
+      <header class="farmer-topbar"><strong>Alerts</strong><span class="farmer-user" data-user-name>Farmer</span></header>
+      <div class="alerts-content">
+        <header class="alerts-heading"><div><h1>Farm Alerts</h1><p>Stay updated with real-time risks and agricultural notices.</p></div><div class="alerts-actions"><button type="button" class="alerts-read" data-mark-read>MARK ALL READ</button><button type="button" class="alerts-filter-button" data-filter-toggle aria-expanded="false"><span aria-hidden="true">⌯</span> Filter</button><div class="alerts-filter-menu" data-filter-menu hidden><button type="button" data-filter="all">All alert types</button><button type="button" data-filter="weather">Weather</button><button type="button" data-filter="pests">Pests</button><button type="button" data-filter="livestock">Livestock</button><button type="button" data-filter="system">System</button></div></div></header>
+        <label class="alerts-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Search alerts by crop, pest, or location..." data-alert-search></label>
+        <nav class="alerts-tabs" role="tablist"><button class="is-active" type="button" role="tab" data-alert-tab="all" aria-selected="true">ALL ALERTS <span data-all-count>(0)</span></button><button type="button" role="tab" data-alert-tab="unread" aria-selected="false">UNREAD <span data-unread-count>(0)</span></button><button type="button" role="tab" data-alert-tab="high" aria-selected="false">HIGH PRIORITY</button></nav>
+        <section class="alerts-list" data-alert-list aria-live="polite"></section>
+      </div>
+    </main>
+  </div>
+  <script src="/account.js"></script>
+</body>
+</html>
