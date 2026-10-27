@@ -5,6 +5,7 @@ venv/
 .env.*
 .vercel/
 frontend/dist/
+frontend/.vite/
 *.log
 __pycache__/
 *.pyc
