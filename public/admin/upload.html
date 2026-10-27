@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>Isuka | Upload Data</title>
+	<link rel="stylesheet" href="/admin.css">
+</head>
+<body class="admin-upload-page">
+	<div class="admin-shell">
+		<aside class="admin-sidebar">
+			<a class="admin-brand" href="/"><img src="/assets/Logo%20in%20white.png" alt="Isuka">Admin</a>
+			<p class="admin-kicker">Platform administration</p>
+			<nav class="admin-nav"><a href="/admin"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12.5V4h7.5v8.5H4zm8.5 0V8H20v4.5h-7.5zm0 7.5V12H20v8.5h-7.5zm-8.5 0V16h7.5v4.5H4z"/></svg></span>Overview</a><a href="/admin/datasets"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5zM8 8h8M8 12h8M8 16h5"/></svg></span>Datasets</a><a class="is-active" href="/admin/upload"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13"/></svg></span>Upload data</a><a href="/admin/reports"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6zM14 3v4h4M9 12h6M9 16h6"/></svg></span>Validation reports</a></nav>
+			<div class="admin-sidebar-spacer"></div>
+			<div class="admin-sidebar-status">Current release<strong>2025 - C</strong>Published data</div>
+			<button class="admin-logout" type="button" data-admin-logout>Log out</button>
+		</aside>
+		<main class="admin-main">
+			<div class="admin-content">
+				<header class="admin-heading compact-heading">
+					<div>
+						<p class="admin-panel-kicker">Upload workflow</p>
+						<h1>Upload data</h1>
+					</div>
+				</header>
+				<p role="status">Data updates are published by redeploying.</p>
+				<nav class="upload-steps" aria-label="Dataset upload steps">
+					<div class="upload-step is-active" data-upload-step-indicator="1"><span>1</span><strong>Dataset details</strong><small>Source metadata</small></div>
+					<div class="upload-step" data-upload-step-indicator="2"><span>2</span><strong>Clean &amp; validate</strong><small>Quality checks</small></div>
+					<div class="upload-step" data-upload-step-indicator="3"><span>3</span><strong>Review &amp; submit</strong><small>Admin approval</small></div>
+				</nav>
+				<section class="admin-panel upload-panel-shell">
+					<div class="admin-panel-heading"><div><span class="admin-panel-kicker" data-upload-panel-kicker>Step 1</span><h2 data-upload-panel-title>Dataset details</h2></div><div class="admin-panel-header-actions"><span class="admin-status" data-upload-status>Draft workflow</span><span class="admin-status is-success" data-upload-prepared-status hidden>Prepared dataset</span></div></div>
+					<form class="admin-upload" data-admin-upload>
+						<label data-upload-details>Dataset title<input name="title" type="text" placeholder="Rwanda crop production" required></label>
+						<label data-upload-details>Year
+							<div class="custom-select" data-custom-select data-name="year">
+								<button type="button" class="custom-select-trigger" data-custom-trigger>
+									<span class="custom-select-value">2026</span>
+									<span class="custom-select-arrow" aria-hidden="true">▾</span>
+								</button>
+								<div class="custom-select-menu" role="listbox" aria-label="Year">
+									<button type="button" class="custom-option is-selected" data-value="2026">2026</button>
+									<button type="button" class="custom-option" data-value="2025">2025</button>
+									<button type="button" class="custom-option" data-value="2024">2024</button>
+									<button type="button" class="custom-option" data-value="2023">2023</button>
+									<button type="button" class="custom-option" data-value="2022">2022</button>
+									<button type="button" class="custom-option" data-value="2021">2021</button>
+									<button type="button" class="custom-option" data-value="2020">2020</button>
+									<button type="button" class="custom-option" data-value="2027">2027</button>
+									<button type="button" class="custom-option" data-value="2028">2028</button>
+									<button type="button" class="custom-option" data-value="2029">2029</button>
+									<button type="button" class="custom-option" data-value="2030">2030</button>
+									<button type="button" class="custom-option" data-value="2031">2031</button>
+									<button type="button" class="custom-option" data-value="2032">2032</button>
+									<button type="button" class="custom-option" data-value="2033">2033</button>
+									<button type="button" class="custom-option" data-value="2034">2034</button>
+									<button type="button" class="custom-option" data-value="2035">2035</button>
+								</div>
+								<select name="year" hidden>
+									<option value="2026" selected>2026</option>
+									<option value="2025">2025</option>
+									<option value="2024">2024</option>
+									<option value="2023">2023</option>
+									<option value="2022">2022</option>
+									<option value="2021">2021</option>
+									<option value="2020">2020</option>
+									<option value="2027">2027</option>
+									<option value="2028">2028</option>
+									<option value="2029">2029</option>
+									<option value="2030">2030</option>
+									<option value="2031">2031</option>
+									<option value="2032">2032</option>
+									<option value="2033">2033</option>
+									<option value="2034">2034</option>
+									<option value="2035">2035</option>
+								</select>
+							</div>
+						</label>
+						<label data-upload-details>Season
+							<div class="custom-select" data-custom-select data-name="season">
+								<button type="button" class="custom-select-trigger" data-custom-trigger>
+									<span class="custom-select-value">Season A</span>
+									<span class="custom-select-arrow" aria-hidden="true">▾</span>
+								</button>
+								<div class="custom-select-menu" role="listbox" aria-label="Season">
+									<button type="button" class="custom-option is-selected" data-value="Season A">Season A</button>
+									<button type="button" class="custom-option" data-value="Season B">Season B</button>
+									<button type="button" class="custom-option" data-value="Season C">Season C</button>
+								</div>
+								<select name="season" hidden>
+									<option value="Season A" selected>Season A</option>
+									<option value="Season B">Season B</option>
+									<option value="Season C">Season C</option>
+								</select>
+							</div>
+						</label>
+						<label data-upload-details>Dataset type
+							<div class="custom-select" data-custom-select data-name="datasetType">
+								<button type="button" class="custom-select-trigger" data-custom-trigger>
+									<span class="custom-select-value">Crop production</span>
+									<span class="custom-select-arrow" aria-hidden="true">▾</span>
+								</button>
+								<div class="custom-select-menu" role="listbox" aria-label="Dataset type">
+									<button type="button" class="custom-option is-selected" data-value="crop">Crop production</button>
+									<button type="button" class="custom-option" data-value="yield">Yield</button>
+									<button type="button" class="custom-option" data-value="climate">Climate</button>
+									<button type="button" class="custom-option" data-value="rainfall">Rainfall</button>
+									<button type="button" class="custom-option" data-value="land">Land</button>
+									<button type="button" class="custom-option" data-value="practice">Farming practices</button>
+								</div>
+								<select name="datasetType" hidden>
+									<option value="crop" selected>Crop production</option>
+									<option value="yield">Yield</option>
+									<option value="climate">Climate</option>
+									<option value="rainfall">Rainfall</option>
+									<option value="land">Land</option>
+									<option value="practice">Farming practices</option>
+								</select>
+							</div>
+						</label>
+						<label data-upload-details>Dataset file<input name="dataset" type="file" accept=".csv,.xlsx,.xls,.sav,.dta,.rds,.rda,.rdata" required></label>
+						<section class="upload-validation-workspace" data-upload-validation-workspace hidden>
+							<div class="validation-console-heading"><div><span class="admin-panel-kicker">Live validation run</span><p data-upload-validation-message>Ready to inspect the dataset structure, quality, and model compatibility.</p></div><span class="validation-run-badge" data-upload-run-status>Ready to run</span></div>
+							<div class="validation-console-body">
+								<div class="validation-run-panel">
+									<div class="validation-run-meta"><strong data-upload-current-step>Ready to run</strong><span data-upload-elapsed>00:00</span></div>
+									<div class="validation-progress-track"><span data-upload-progress></span></div>
+									<div class="validation-run-stages" aria-label="Validation run stages">
+										<span data-run-stage="system">System checks</span><span data-run-stage="detect">Detecting structure</span><span data-run-stage="clean">Cleaning data</span><span data-run-stage="model">Model readiness</span><span data-run-stage="ai">AI review</span>
+									</div>
+								</div>
+								<div class="validation-checks" aria-label="Validation checks">
+									<div class="validation-check" data-validation-check="period"><span class="validation-check-marker">01</span><div><strong>Period integrity</strong><small>Year and season match</small></div><em data-validation-check-state>Waiting</em></div>
+									<div class="validation-check" data-validation-check="schema"><span class="validation-check-marker">02</span><div><strong>Schema compatibility</strong><small>Columns and data types</small></div><em data-validation-check-state>Waiting</em></div>
+									<div class="validation-check" data-validation-check="quality"><span class="validation-check-marker">03</span><div><strong>Data quality</strong><small>Missing values and duplicates</small></div><em data-validation-check-state>Waiting</em></div>
+									<div class="validation-check" data-validation-check="readiness"><span class="validation-check-marker">04</span><div><strong>Model readiness</strong><small>Dashboard compatibility</small></div><em data-validation-check-state>Waiting</em></div>
+								</div>
+								<div class="validation-bot-panel"><iframe class="validation-bot" src="/www/isuka-bot-animated-no-status.html" title="Animated Isuka AI agricultural assistant" loading="lazy" scrolling="no"></iframe><strong data-upload-ai-state>Ready when you are</strong><small>Isuka AI review monitor</small></div>
+							</div>
+							<div class="validation-explanation" data-upload-validation-explanation hidden><strong>Why this cannot continue</strong><p></p></div>
+						</section>
+						<p class="admin-upload-note" data-upload-note>The next step detects columns, cleans labels, checks agricultural fields, and creates a validation report.</p>
+						<section class="upload-activity" data-upload-activity hidden><div class="upload-activity-head"><strong>Validation activity stream</strong><span data-upload-activity-state>Ready to run</span></div><ol data-upload-activity-list></ol></section>
+						<section class="upload-summary" data-upload-summary hidden></section>
+						<div class="upload-actions">
+							<button class="admin-table-action" type="button" data-upload-back hidden>Back</button>
+							<button class="admin-table-action" type="button" data-upload-repair hidden data-mode="repair">Prepare with AI</button>
+							<a class="admin-table-action" href="#" target="_blank" rel="noreferrer" data-upload-download hidden>Download cleaned dataset</a>
+							<button class="admin-action" type="button" data-upload-submit>Next</button>
+						</div>
+					</form>
+				</section>
+			</div>
+		</main>
+	</div>
+	<script src="/admin.js"></script>
+</body>
+</html>

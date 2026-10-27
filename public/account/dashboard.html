@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isuka | Farmer Dashboard</title><link rel="stylesheet" href="/account.css">
+</head>
+<body class="farmer-dashboard account-protected">
+  <div class="farmer-shell">
+    <aside class="farmer-sidebar" aria-label="Account navigation">
+      <a class="farmer-sidebar-brand" href="/account/dashboard"><img src="/assets/Logo%20in%20white.png" alt="Isuka"></a>
+      <nav class="farmer-nav" aria-label="Farmer account navigation">
+        <a class="is-active" href="/account/dashboard"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10Z"/></svg></span>Home</a>
+        <a href="/account/my-farm"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11M8 20v-6h8v6M6 10h12"/></svg></span>My Farm</a>
+        <a href="/account/assistant"><span class="nav-icon nav-icon-ai" aria-hidden="true"><img src="/assets/ISUKA%20BOT.png" alt=""></span>Assistant</a>
+        <a href="/account/alerts"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></span>Alerts</a>
+        <a href="/account/settings"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19 13 2-1-2-1-.4-2 1-1.8-1.8-1-1.7 1-2-.4-1-2-1 2-2 .4-1.7-1-1.8 1 1 1.8-.4 2-2 1-1 2 1 1-1 1.8 1.8 1 1.7-1 2 .4 1 2 1-2 1 1 2-1 1.8-1 1.7 1 1.8-1 1-1.8-1-2 .4-1 2-2-1-1-2Z"/></svg></span>Settings</a>
+      </nav>
+      <button class="farmer-collapse" type="button" data-sidebar-toggle aria-label="Collapse navigation">‹</button>
+      <a class="farmer-logout" href="/" data-logout><span aria-hidden="true">↪</span>Logout</a>
+    </aside>
+    <main class="farmer-main">
+      <header class="farmer-topbar"><strong>Dashboard</strong><span class="farmer-user" data-user-name>Farmer</span></header>
+      <div class="farmer-content">
+        <section class="farmer-welcome" aria-labelledby="farmer-greeting"><div><span class="farmer-kicker">Your farm</span><h1 id="farmer-greeting"><span data-first-name>Farmer</span></h1><p>Here is the current status of your farm in <span data-district-label>your district</span>.</p></div></section>
+        <section class="metric-section" aria-labelledby="metrics-title"><h2 id="metrics-title">Live Farm Metrics</h2><div class="metric-grid"><article class="metric-card"><span class="metric-icon">⌁</span><small>CROPS TRACKED</small><strong><span data-crop-count>0</span></strong><em>Active records</em></article><article class="metric-card"><span class="metric-icon">◇</span><small>LIVESTOCK TYPES</small><strong><span data-livestock-count>0</span></strong><em>Active records</em></article><article class="metric-card"><span class="metric-icon">!</span><small>NEEDS ATTENTION</small><strong><span data-attention-count>0</span></strong><em>Health, loss, or failure</em></article><article class="metric-card"><span class="metric-icon">＋</span><small>FARM RECORDS</small><strong><span data-record-count>0</span></strong><em>All active records</em></article></div></section>
+        <section class="assistant-banner" aria-labelledby="assistant-title"><div class="assistant-banner-main"><div class="assistant-heading"><span class="assistant-large-icon"><img src="/assets/ISUKA%20BOT.png" alt="Isuka AI"></span><div><span class="assistant-tag">AI FARM GUIDE</span><h2 id="assistant-title">What needs your attention?</h2></div></div><p>Ask about your crops, livestock, diseases, nutrition, or the next action to take on your farm.</p><div class="assistant-prompts"><a href="/account/assistant">Check my crops <span aria-hidden="true">→</span></a><a href="/account/assistant">Ask about livestock <span aria-hidden="true">→</span></a></div></div><div class="assistant-banner-side"><img src="/assets/ISUKA%20BOT.png" alt="Isuka AI agricultural assistant"></div></section>
+        <section class="recent-alerts" aria-labelledby="alert-summary-title"><div class="recent-heading"><h2 id="alert-summary-title">Recent Alert</h2><a href="/account/alerts">See all history</a></div><a class="alert-row" href="/account/alerts"><span class="alert-icon">!</span><span><strong data-alert-title>No alerts yet</strong><small data-alert-meta>There are no recent alerts for your farm.</small></span><span class="alert-action">View all alerts <span aria-hidden="true">›</span></span></a></section>
+        <div class="insight-grid"><a class="insight-card" href="/account/my-farm"><strong>My Farm Items</strong><p>You have <span data-crop-count>0</span> crops and <span data-livestock-count>0</span> livestock types registered.</p><span>Manage Farm Inventory ›</span></a><a class="insight-card" href="/dashboard/"><strong>Market Insights</strong><p>Explore verified agricultural production and market trends from the public data hub.</p><span>View Market Trends ›</span></a></div>
+      </div>
+    </main>
+  </div>
+  <script src="/account.js"></script>
+</body>
+</html>

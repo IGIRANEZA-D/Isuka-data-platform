@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "periods": [{ "year": 2025, "season": "C" }],
+    "generatedAt": "2026-10-21T11:49:19.205Z",
+    "calcVersion": "loss-planner-v3",
+    "minRecords": 30,
+    "notes": [
+      "Trimmed live baseline sample for Irish potato, 2025-C.",
+      "Rows with fewer than 30 records are suppressed by the scenario helper."
+    ]
+  },
+  "crops": [{ "code": "110", "name": "Irish potato" }],
+  "districts": [
+    { "code": "burera", "name": "Burera", "province": "North" },
+    { "code": "gicumbi", "name": "Gicumbi", "province": "North" },
+    { "code": "musanze", "name": "Musanze", "province": "North" },
+    { "code": "nyabihu", "name": "Nyabihu", "province": "West" }
+  ],
+  "stages": [
+    { "id": "pests", "label": "Pests and insects", "availablePeriods": [{ "year": 2025, "season": "C" }], "unitStatus": "confirmed" },
+    { "id": "animals", "label": "Birds and animals", "availablePeriods": [{ "year": 2025, "season": "C" }], "unitStatus": "confirmed" },
+    { "id": "harvest", "label": "Harvest", "availablePeriods": [{ "year": 2025, "season": "C" }], "unitStatus": "confirmed" },
+    { "id": "transport", "label": "Transport", "availablePeriods": [{ "year": 2025, "season": "C" }], "unitStatus": "confirmed" },
+    { "id": "storage", "label": "Storage", "availablePeriods": [{ "year": 2025, "season": "C" }], "unitStatus": "confirmed" },
+    { "id": "processing", "label": "Processing and packaging", "availablePeriods": [{ "year": 2025, "season": "C" }], "unitStatus": "confirmed" },
+    { "id": "sales", "label": "Sales", "availablePeriods": [{ "year": 2025, "season": "C" }], "unitStatus": "confirmed" },
+    { "id": "other", "label": "Other", "availablePeriods": [], "unitStatus": "unconfirmed" }
+  ],
+  "rows": [
+    { "d": "burera", "c": "110", "productionKg": 20271829.41541418, "stageKg": { "pests": 353914.9322400001, "animals": 0, "harvest": 76852.63472999999, "transport": 28559.65, "storage": 0, "processing": 1600.1648, "sales": 10701.3992, "other": null }, "unattributedKg": 159804.69835999998, "totalLossKg": 631433.4793300001, "records": 102, "stageRecords": 102, "stageCoveragePct": 100, "priceRwfPerKg": 9999, "priceBasis": "district", "priceRecordCount": 92, "excludedStageRows": 0 },
+    { "d": "gicumbi", "c": "110", "productionKg": 1993264.5861267452, "stageKg": { "pests": 150480.9572, "animals": 0, "harvest": 6852.7762, "transport": 2550.396, "storage": 0, "processing": 0, "sales": 0, "other": null }, "unattributedKg": 25979.6911, "totalLossKg": 185863.82050000003, "records": 34, "stageRecords": 34, "stageCoveragePct": 100, "priceRwfPerKg": 9999, "priceBasis": "national", "priceRecordCount": 26, "excludedStageRows": 0 },
+    { "d": "musanze", "c": "110", "productionKg": 20284597.06267851, "stageKg": { "pests": 1340857.7419107996, "animals": 184412.945, "harvest": 1422469.17925, "transport": 10615.1565, "storage": 0, "processing": 22880.27375, "sales": 16856.5675, "other": null }, "unattributedKg": 49060.469, "totalLossKg": 3047152.3329107994, "records": 54, "stageRecords": 54, "stageCoveragePct": 100, "priceRwfPerKg": 9999, "priceBasis": "district", "priceRecordCount": 49, "excludedStageRows": 0 },
+    { "d": "nyabihu", "c": "110", "productionKg": 36093126.395215586, "stageKg": { "pests": 445654.68923, "animals": 193732.5595, "harvest": 286980.3565, "transport": 1211714.5747, "storage": 0, "processing": 86428.98300000001, "sales": 84195.0305, "other": null }, "unattributedKg": 735186.2938999999, "totalLossKg": 3043892.4873300004, "records": 77, "stageRecords": 77, "stageCoveragePct": 100, "priceRwfPerKg": 9999, "priceBasis": "district", "priceRecordCount": 72, "excludedStageRows": 0 }
+  ]
+}

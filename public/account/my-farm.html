@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isuka | My Farm</title><link rel="stylesheet" href="/account.css">
+</head>
+<body class="farmer-dashboard account-protected">
+  <div class="farmer-shell">
+    <aside class="farmer-sidebar" aria-label="Account navigation">
+      <a class="farmer-sidebar-brand" href="/account/dashboard"><img src="/assets/Logo%20in%20white.png" alt="Isuka"></a>
+      <nav class="farmer-nav" aria-label="Farmer account navigation">
+        <a href="/account/dashboard"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10Z"/></svg></span>Home</a>
+        <a class="is-active" href="/account/my-farm"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11M8 20v-6h8v6M6 10h12"/></svg></span>My Farm</a>
+        <a href="/account/assistant"><span class="nav-icon nav-icon-ai" aria-hidden="true"><img src="/assets/ISUKA%20BOT.png" alt=""></span>Assistant</a>
+        <a href="/account/alerts"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></span>Alerts</a>
+        <a href="/account/settings"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19 13 2-1-2-1-.4-2 1-1.8-1.8-1-1.7 1-2-.4-1-2-1 2-2 .4-1.7-1-1.8 1 1 1.8-.4 2-2 1-1 2 1 1.8 1 2-.4 2 1 1 1 2 2-1 1.8-1 1.7-1 1.8-1 1-1.8-1-2 .4-1 2-2-1-1-2Z"/></svg></span>Settings</a>
+      </nav>
+      <button class="farmer-collapse" type="button" data-sidebar-toggle aria-label="Collapse navigation">‹</button>
+      <a class="farmer-logout" href="/" data-logout><span aria-hidden="true">↪</span>Logout</a>
+    </aside>
+    <main class="farmer-main">
+      <header class="farmer-topbar"><strong>My Farm</strong><span class="farmer-user" data-user-name>Farmer</span></header>
+      <div class="farm-content">
+        <header class="farm-heading"><div><h1>My Farm Inventory</h1><p>Manage and monitor your crops and livestock in one place.</p></div><div class="farm-tools"><label class="farm-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Search inventory..." data-inventory-search></label><button class="farm-filter" type="button" data-inventory-archive-toggle>Show archived</button></div></header>
+        <div class="farm-tabs" role="tablist"><button class="is-active" type="button" role="tab" aria-selected="true" data-inventory-tab="crops">Crops</button><button type="button" role="tab" aria-selected="false" data-inventory-tab="livestock">Livestock</button><button class="farm-add" type="button" data-add-item>＋ Add New</button></div>
+        <form class="farm-add-panel" data-add-panel hidden>
+          <input type="hidden" name="recordType" value="crop">
+          <strong data-add-title>Add a crop record</strong>
+          <div class="farm-form-grid" data-crop-fields>
+            <label><span>Crop name</span><input name="cropName" placeholder="e.g. Maize"></label>
+            <label><span>Variety</span><input name="variety" placeholder="e.g. Local variety"></label>
+            <label><span>Plot name</span><input name="plotName" placeholder="e.g. Plot A"></label>
+            <label><span>Area (hectares)</span><input name="area" type="number" min="0" step="0.01" placeholder="e.g. 0.5"></label>
+            <label><span>Planting date</span><input name="plantingDate" type="date"></label>
+            <label><span>Expected harvest date</span><input name="expectedHarvestDate" type="date"></label>
+            <label><span>What is happening in the field now?</span><select name="stage" title="Choose the current activity in this crop field"><option value="planned">Not planted yet</option><option value="land preparation">Preparing the land</option><option value="planted">Recently planted</option><option value="growing">Growing</option><option value="ready to harvest">Ready to harvest</option><option value="harvested">Harvest completed</option><option value="failed">Crop lost or failed</option></select><small class="farm-help">Choose the field status today. Harvest results are added later.</small></label>
+            <label><span>Expected yield (estimate)</span><input name="expectedYield" placeholder="e.g. 800 kg"></label>
+            <div class="farm-outcome-fields" data-crop-outcome-fields hidden><span class="farm-field-note">Add these after harvest, when you know the result.</span>
+              <label><span>Harvest quantity</span><input name="harvestQuantity" placeholder="e.g. 650 kg"></label>
+              <label><span>Harvest quality</span><select name="harvestQuality"><option value="">Not recorded</option><option>Good</option><option>Average</option><option>Poor</option></select></label>
+              <label><span>Loss quantity</span><input name="lossQuantity" placeholder="e.g. 40 kg"></label>
+              <label><span>Loss reason</span><input name="lossReason" placeholder="e.g. pests, drought, storage"></label>
+            </div>
+          </div>
+          <div class="farm-form-grid" data-livestock-fields hidden>
+            <label><span>Livestock type</span><select name="livestockType"><option>Cattle</option><option>Goats</option><option>Poultry</option><option>Pigs</option><option>Other</option></select></label>
+            <label><span>Name or group label</span><input name="animalName" placeholder="e.g. Cow 014 or Layer flock"></label>
+            <label><span>Count</span><input name="count" type="number" min="0" placeholder="e.g. 12"></label>
+            <div class="farm-form-grid farm-form-grid-wide" data-individual-fields hidden>
+              <label><span>Tag number</span><input name="tagNumber" placeholder="e.g. RW-014"></label>
+              <label><span>Date of birth</span><input name="dateOfBirth" type="date"></label>
+              <label><span>Sex</span><select name="sex"><option value="">Not recorded</option><option>Female</option><option>Male</option></select></label>
+              <label><span>Status</span><select name="status"><option value="active">Active</option><option value="pregnant">Pregnant</option><option value="sick">Sick</option><option value="sold">Sold</option></select></label>
+              <label data-pregnancy-field><span>Expected birth</span><input name="expectedBirthDate" type="date"></label>
+              <label><span>Next vaccination</span><input name="nextVaccinationDate" type="date"></label>
+              <label data-offspring-field><span>Offspring count</span><input name="offspringCount" type="number" min="0" placeholder="e.g. 3"></label>
+            </div>
+            <label class="farm-photo"><span>Livestock photo</span><input name="photo" type="file" accept="image/*"></label>
+          </div>
+          <label class="farm-notes"><span>Notes</span><textarea name="notes" rows="2" placeholder="What should you remember about this record?"></textarea></label>
+          <div class="farm-form-actions"><button type="button" class="farm-cancel" data-cancel-add>Cancel</button><button type="submit" class="farm-save">Save record</button></div>
+        </form>
+        <section class="inventory-table" aria-label="Farm inventory"><div class="inventory-header"><span>Description &amp; health</span><span>Metrics &amp; status</span></div><div data-inventory-list></div><button class="register-row" type="button" data-add-item>＋ <span data-register-label>Register another crop</span></button></section>
+      </div>
+    </main>
+  </div>
+  <script src="/account.js"></script>
+</body>
+</html>

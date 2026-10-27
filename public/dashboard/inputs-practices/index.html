@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Isuka inputs and agricultural practices dashboard for Rwanda.">
+  <meta name="view-transition" content="same-origin">
+  <title>Isuka | Inputs &amp; Practices</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/inputs-practices.css">
+  <link rel="stylesheet" href="/assistant/assistant.css">
+</head>
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar" aria-label="Sidebar navigation">
+      <div class="sidebar-inner">
+        <div class="sidebar-header"><img src="/assets/Logo%20in%20white.png" alt="Isuka logo" class="sidebar-logo"><div class="sidebar-title">Data Hub</div><p class="sidebar-subtitle">Select a lens to explore Rwanda's agricultural metrics.</p></div>
+        <nav class="sidebar-nav" aria-label="Main navigation">
+          <a class="nav-item" href="/dashboard/"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12.5V4h7.5v8.5H4zm8.5 0V8H20v4.5h-7.5zm0 7.5V12H20v8.5h-7.5zm-8.5 0V16h7.5v4.5H4z"/></svg></span><span class="nav-label">Overview</span><span class="nav-chevron">›</span></a>
+          <a class="nav-item" href="/dashboard/land-crops/"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18.5V8.5l9-5 9 5v10l-9 5-9-5zm9-12v16"/><path d="M12 6.5 6 10l6 3.5 6-3.5-6-3.5zm0 6.5v7"/></svg></span><span class="nav-label">Land &amp; Crops</span><span class="nav-chevron">›</span></a>
+          <a class="nav-item" href="/dashboard/climate-risk/"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M5 8.5c2.5-2 4.6-2.7 7-2.7 3.1 0 5.4 1.2 7 2.9M5 15.5c2.5 2 4.6 2.7 7 2.7 3.1 0 5.4-1.2 7-2.9"/></svg></span><span class="nav-label">Climate &amp; Risk</span><span class="nav-chevron">›</span></a>
+          <a class="nav-item active" href="/dashboard/inputs-practices/"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 9.5A7 7 0 0 1 19 9.5v7.5H5V9.5zm2.5 0h9"/><path d="M9 12.5h6M9 15.5h4"/></svg></span><span class="nav-label">Inputs &amp; Practices</span><span class="nav-chevron">›</span></a>
+          <a class="nav-item" href="/dashboard/district-explorer/"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9zm0 3.5h16"/><path d="M8 12h8M8 15h5"/></svg></span><span class="nav-label">District Explorer</span><span class="nav-chevron">›</span></a>
+          <a class="nav-item" href="/dashboard/forecasting/"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18 9 12l4 3 7-9"/><path d="M16 6h4v4M4 21h16"/></svg></span><span class="nav-label">Forecasting</span><span class="nav-chevron">›</span></a>
+          <a class="nav-item" href="/dashboard/loss-planner/"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21V9M12 14c-4 0-7-2.5-7-6 4 0 7 2.5 7 6ZM12 11c0-3.5 3-6 7-6 0 3.5-3 6-7 6Z"/></svg></span><span class="nav-label">Loss Planner</span><span class="nav-chevron">›</span></a>
+        </nav>
+        <div class="sidebar-spacer"></div>
+        <div class="info-card" aria-label="Public information"><div class="info-header"><span class="info-icon">i</span><span class="info-label">PUBLIC INFORMATION</span></div><p class="info-body">Data sourced from NISR Seasonal Agricultural Survey, 2020–2025.</p></div>
+        <button class="collapse-toggle" type="button" aria-label="Collapse sidebar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+    </aside>
+    <main class="inputs-main">
+      <section class="inputs-hero"><div class="inputs-hero-overlay"></div><div class="inputs-hero-content"><a class="inputs-back" href="/">← Back to Isuka home</a><p class="inputs-eyebrow">Inputs &amp; farming practices</p><h1>Grow smarter.<br>Protect every season.</h1><p>Monitor input use and practical adoption signals across Rwanda's agricultural districts.</p></div></section>
+      <section class="inputs-controls" aria-label="Inputs filters"><div><span class="inputs-kicker">Explore the records</span><strong>Practice adoption</strong><small>Indicators are calculated from the selected production records.</small></div><label><span>Survey year</span><select id="inputs-year"><option value="all">All years</option></select></label><label><span>District</span><select id="inputs-district"><option value="all">All districts</option></select></label></section>
+      <section class="inputs-kpis" aria-label="Inputs and practices metrics"><article><span>Production records</span><strong id="inputs-rows">—</strong><small>usable survey rows</small></article><article><span>District coverage</span><strong id="inputs-district-count">—</strong><small>districts in view</small></article><article><span>Crop categories</span><strong id="inputs-crop-count">—</strong><small>observed categories</small></article><article><span>Weighted production</span><strong id="inputs-production">—</strong><small>metric tonnes</small></article></section>
+      <section class="inputs-grid"><article class="inputs-panel"><div class="inputs-heading"><div><p>Input adoption by district</p><h2>Where practice signals are strongest?</h2></div><span id="inputs-status">Loading</span></div><div id="inputs-bars" class="practice-bars"></div></article><article class="inputs-panel"><div class="inputs-heading"><div><p>National practice signals</p><h2>Survey-linked indicators</h2></div></div><div class="signal-list"><div><span>Production records with valid values</span><strong id="signal-records">—</strong><div class="signal-track"><i id="signal-records-bar"></i></div></div><div><span>Districts represented in records</span><strong id="signal-districts">—</strong><div class="signal-track"><i id="signal-districts-bar"></i></div></div><div><span>Crop categories represented</span><strong id="signal-crops">—</strong><div class="signal-track"><i id="signal-crops-bar"></i></div></div></div></article></section>
+      <section class="inputs-panel practice-register"><div class="inputs-heading"><div><p>Practice register</p><h2>District input context</h2></div><span id="inputs-register-status">—</span></div><div class="inputs-table-wrap"><table><thead><tr><th>District</th><th>Production</th><th>Records</th><th>Crop categories</th><th>Signal</th></tr></thead><tbody id="inputs-table"></tbody></table></div><div class="inputs-pagination"><span id="inputs-register-range">—</span><div><button id="inputs-prev-page" type="button">Previous</button><button id="inputs-next-page" type="button">Next page</button></div></div></section>
+    </main>
+  </div>
+  <script type="module" src="/inputs-practices.js"></script>
+  <script src="/dashboard-navigation.js"></script>
+  <script src="/assistant/loader.js" defer></script>
+</body>
+</html>

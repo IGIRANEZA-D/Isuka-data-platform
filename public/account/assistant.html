@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isuka | Assistant</title><link rel="stylesheet" href="/account.css">
+</head>
+<body class="farmer-dashboard account-protected">
+  <div class="farmer-shell">
+    <aside class="farmer-sidebar" aria-label="Account navigation">
+      <a class="farmer-sidebar-brand" href="/account/dashboard"><img src="/assets/Logo%20in%20white.png" alt="Isuka"></a>
+      <nav class="farmer-nav" aria-label="Farmer account navigation"><a href="/account/dashboard"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10Z"/></svg></span>Home</a><a href="/account/my-farm"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11M8 20v-6h8v6M6 10h12"/></svg></span>My Farm</a><a class="is-active" href="/account/assistant"><span class="nav-icon nav-icon-ai" aria-hidden="true"><img src="/assets/ISUKA%20BOT.png" alt=""></span>Assistant</a><a href="/account/alerts"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></span>Alerts</a><a href="/account/settings"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19 13 2-1-2-1-.4-2 1-1.8-1.8-1-1.7 1-2-.4-1-2-1 2-2 .4-1.7-1-1.8 1 1 1.8-.4 2-2 1-1 2 1 1.8-1 1 1.8 1 2-.4 2 1 1 1 2 2-1 1.8-1 1.7 1 1.8-1 1-1.8-1-2 .4-1 2-2-1-1-2Z"/></svg></span>Settings</a></nav>
+      <button class="farmer-collapse" type="button" data-sidebar-toggle aria-label="Collapse navigation">‹</button>
+      <a class="farmer-logout" href="/" data-logout><span aria-hidden="true">↪</span>Logout</a>
+    </aside>
+    <main class="farmer-main assistant-page">
+      <header class="farmer-topbar"><strong>Assistant</strong><span class="farmer-user" data-user-name>Farmer</span></header>
+      <section class="assistant-workspace" aria-labelledby="assistant-page-title">
+        <header class="assistant-page-header"><div class="assistant-page-title"><span class="assistant-large-icon"><img src="/assets/ISUKA%20BOT.png" alt="Isuka AI"></span><div><h1 id="assistant-page-title">Ask Isuka</h1><p>Practical guidance for crops, livestock, and weather.</p></div></div></header>
+        <div class="chat-rename-dialog" data-chat-rename-dialog hidden><div class="chat-rename-card" role="dialog" aria-modal="true" aria-labelledby="chat-rename-title"><div class="chat-rename-heading"><strong id="chat-rename-title">Rename chat</strong><button type="button" data-chat-rename-close aria-label="Close rename dialog">×</button></div><form data-chat-rename-form><label for="chat-rename-input">Chat name</label><input id="chat-rename-input" name="title" maxlength="120" autocomplete="off"><div class="chat-rename-actions"><button type="button" class="chat-rename-cancel" data-chat-rename-close>Cancel</button><button type="submit" class="chat-rename-save">Save</button></div></form></div></div>
+        <div class="chat-delete-dialog" data-chat-delete-dialog hidden><div class="chat-delete-card" role="dialog" aria-modal="true" aria-labelledby="chat-delete-title"><div class="chat-rename-heading"><strong id="chat-delete-title">Delete chat?</strong><button type="button" data-chat-delete-close aria-label="Close delete dialog">×</button></div><p>This conversation will be permanently deleted from your account.</p><div class="chat-rename-actions"><button type="button" class="chat-rename-cancel" data-chat-delete-close>Cancel</button><button type="button" class="chat-delete-confirm" data-chat-delete-confirm>Delete</button></div></div></div>
+        <div class="assistant-layout">
+          <div class="assistant-conversation-column">
+            <div class="assistant-chat-area"><div class="assistant-empty" data-assistant-empty><span class="assistant-empty-icon"><img src="/assets/ISUKA%20BOT.png" alt="Isuka AI"></span><h2>How can we help your farm?</h2><p>Ask a question about your crops, livestock, weather, or farming practices.</p></div><div class="assistant-messages" data-assistant-messages hidden></div></div>
+            <div class="assistant-suggestions" data-assistant-suggestions><button type="button">Treatment for crop disease</button><button type="button">Weather forecast for this week</button><button type="button">Best fertilizer for maize</button><button type="button">Livestock vaccination schedule</button></div>
+            <form class="assistant-composer" data-assistant-form><button type="button" class="composer-upload" data-file-trigger aria-label="Upload a crop or livestock photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13"/></svg></button><input type="file" data-file-input accept="image/*,application/pdf,text/plain" hidden><span class="assistant-file-name" data-file-name hidden></span><input name="message" placeholder="Ask anything about your farm..." autocomplete="off"><button class="composer-send" type="submit" aria-label="Send message"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 4 16 8-16 8 3.5-8L4 4Zm3.5 8H20"/></svg></button></form>
+            <p class="assistant-disclaimer">ⓘ AI may provide inaccurate information. Verify with local officials.</p>
+          </div>
+          <aside class="assistant-history-card" aria-label="Chat history"><div class="assistant-history-card-header"><button class="assistant-history" type="button" data-assistant-history-toggle aria-expanded="true"><span class="assistant-control-icon assistant-control-ai" aria-hidden="true"><img src="/assets/ISUKA%20BOT.png" alt=""></span><span class="assistant-control-label">Chat history</span></button><button class="assistant-history-collapse" type="button" data-assistant-history-collapse aria-expanded="true" aria-label="Collapse chat history"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button></div><button class="assistant-new-chat" type="button" data-assistant-new-chat><span class="assistant-control-icon assistant-control-ai" aria-hidden="true"><img src="/assets/ISUKA%20BOT.png" alt=""></span><span class="assistant-control-label">New chat</span></button><div class="assistant-history-panel chat-history-panel" data-assistant-history-panel><div class="history-list" data-assistant-history-list><p class="history-empty">Loading history...</p></div></div></aside>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="/account.js"></script>
+</body>
+</html>

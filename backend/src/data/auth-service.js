@@ -290,13 +290,11 @@ async function deleteAccount(user) {
   if (user.role === 'admin') throw new Error('The admin account cannot be deleted here.');
   const databaseCollections = await initializeDatabase();
   await withTransaction(async (session) => {
-    await Promise.all([
-      databaseCollections.sessions.deleteMany({ userId: user._id }, { session }),
-      databaseCollections.passwordResets.deleteMany({ userId: user._id }, { session }),
-      databaseCollections.farmRecords.deleteMany({ userId: user._id }, { session }),
-      databaseCollections.alerts.deleteMany({ userId: user._id }, { session }),
-      databaseCollections.assistantMessages.deleteMany({ userId: user._id }, { session })
-    ]);
+    await databaseCollections.sessions.deleteMany({ userId: user._id }, { session });
+    await databaseCollections.passwordResets.deleteMany({ userId: user._id }, { session });
+    await databaseCollections.farmRecords.deleteMany({ userId: user._id }, { session });
+    await databaseCollections.alerts.deleteMany({ userId: user._id }, { session });
+    await databaseCollections.assistantMessages.deleteMany({ userId: user._id }, { session });
     const deleted = await databaseCollections.users.deleteOne({ _id: user._id, role: { $ne: 'admin' } }, { session });
     if (deleted.deletedCount !== 1) throw new Error('Account could not be deleted.');
   });

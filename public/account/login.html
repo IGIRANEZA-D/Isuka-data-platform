@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isuka | Log In</title><link rel="stylesheet" href="/account.css">
+</head>
+  <body class="account-login">
+  <main class="account-shell">
+    <section class="account-visual" aria-label="Isuka farmer account introduction">
+      <div><img class="account-logo" src="/assets/Logo%20in%20white.png" alt="Isuka"></div>
+      <a class="account-back" href="/"><span aria-hidden="true">&#8592;</span> Back to website</a>
+      <div class="account-visual-copy"><h2>Know your harvest,<br>protect your income.</h2><div class="account-dots" aria-label="Static account introduction"><i class="active"></i><i></i><i></i></div></div>
+    </section>
+    <section class="account-content"><div class="account-form-wrap">
+      <h1>Welcome back</h1><p class="account-intro">New here? <a href="/account/signup">Create an account</a></p>
+      <div class="account-status" role="status"></div>
+      <form class="account-form" novalidate>
+        <div class="account-field"><label for="identity">Phone number or email</label><input id="identity" name="identity" autocomplete="username" placeholder="Phone number or email" required><small class="field-error"></small></div>
+        <div class="account-field"><label for="password">Password</label><div class="account-password"><input id="password" name="password" type="password" data-password autocomplete="current-password" required><button class="password-toggle" type="button" data-password-toggle aria-label="Show password"><svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg></button></div><small class="field-error"></small></div>
+        <button class="forgot forgot-button" type="button" data-forgot-password>Forgot password?</button><button class="account-submit" type="submit" data-login-submit>Log in</button>
+      </form>
+      <section class="password-recovery" data-recovery-panel hidden aria-labelledby="recovery-title"><div class="recovery-card"><div class="recovery-art"><span class="recovery-art-mark" aria-hidden="true">↺</span><strong>Back in control</strong><p>Secure access to your farm account, one step at a time.</p><span class="recovery-art-line" aria-hidden="true"></span></div><div class="recovery-content"><div class="recovery-heading"><div><span class="recovery-kicker">Account recovery</span><h2 id="recovery-title">Reset your password</h2></div><button type="button" class="recovery-close" data-recovery-close aria-label="Close password reset">×</button></div><p class="recovery-description">Enter your email or phone number and we’ll send a secure reset link and code.</p><form data-recovery-form><label class="account-field"><span>Email or phone number</span><input name="recoveryIdentity" required placeholder="Email or phone number"></label><button class="account-submit" type="submit">Send reset link <span aria-hidden="true">→</span></button></form><p class="recovery-note" role="status" aria-live="polite"></p><div class="otp-panel" data-reset-token-panel hidden><label class="account-field" data-reset-code-field><span>6-digit verification code</span><input name="recoveryCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="000000"></label><label class="account-field"><span>New password</span><input name="recoveryPassword" type="password" minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label><label class="account-field"><span>Confirm new password</span><input name="recoveryPasswordConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Re-enter your new password"></label><button class="account-submit" type="button" data-complete-password-reset>Save new password <span aria-hidden="true">→</span></button></div><p class="recovery-footnote">Codes and reset links expire after 10 minutes and can only be used once.</p></div></div></section>
+    </div></section>
+  </main>
+  <script src="/account.js"></script>
+</body>
+</html>

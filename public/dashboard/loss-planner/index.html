@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explore measured agricultural losses and estimate what could be recovered through a hypothetical reduction.">
+  <meta name="view-transition" content="same-origin">
+  <title>Isuka | Loss Recovery Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/loss-planner.css">
+  <link rel="stylesheet" href="/assistant/assistant.css">
+  <link rel="stylesheet" href="/rwanda-map.css">
+</head>
+<body class="loss-planner-page">
+  <div class="dashboard-shell">
+    <aside class="sidebar" aria-label="Sidebar navigation">
+      <div class="sidebar-inner">
+        <div class="sidebar-header"><img src="/assets/Logo%20in%20white.png" alt="Isuka logo" class="sidebar-logo"><div class="sidebar-title">Data Hub</div><p class="sidebar-subtitle">Select a lens to explore Rwanda's agricultural metrics.</p></div>
+        <nav class="sidebar-nav" aria-label="Main navigation">
+          <a class="nav-item" href="/dashboard/"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12.5V4h7.5v8.5H4zm8.5 0V8H20v4.5h-7.5zm0 7.5V12H20v8.5h-7.5zm-8.5 0V16h7.5v4.5H4z"/></svg></span><span class="nav-label">Overview</span><span class="nav-chevron">›</span></a>
+          <a class="nav-item" href="/dashboard/land-crops/"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18.5V8.5l9-5 9 5v10l-9 5-9-5zm9-12v16"/><path d="M12 6.5 6 10l6 3.5 6-3.5-6-3.5z"/></svg></span><span class="nav-label">Land &amp; Crops</span><span class="nav-chevron">›</span></a>
+          <a class="nav-item" href="/dashboard/climate-risk/"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M5 8.5c2.5-2 4.6-2.7 7-2.7 3.1 0 5.4 1.2 7 2.9M5 15.5c2.5 2 4.6 2.7 7 2.7 3.1 0 5.4-1.2 7-2.9"/></svg></span><span class="nav-label">Climate &amp; Risk</span><span class="nav-chevron">›</span></a>
+          <a class="nav-item" href="/dashboard/inputs-practices/"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 9.5A7 7 0 0 1 19 9.5v7.5H5V9.5zM8 12h8M8 15h5"/></svg></span><span class="nav-label">Inputs &amp; Practices</span><span class="nav-chevron">›</span></a>
+          <a class="nav-item" href="/dashboard/district-explorer/"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9zM4 11h16M8 14h8"/></svg></span><span class="nav-label">District Explorer</span><span class="nav-chevron">›</span></a>
+          <a class="nav-item" href="/dashboard/forecasting/"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m4 18 5-6 4 3 7-9M16 6h4v4M4 21h16"/></svg></span><span class="nav-label">Forecasting</span><span class="nav-chevron">›</span></a>
+          <a class="nav-item active" href="/dashboard/loss-planner/"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9M12 14c-4 0-7-2.5-7-6 4 0 7 2.5 7 6ZM12 11c0-3.5 3-6 7-6 0 3.5-3 6-7 6Z"/></svg></span><span class="nav-label">Loss Planner</span><span class="nav-chevron" aria-hidden="true">›</span></a>
+        </nav>
+        <div class="sidebar-spacer"></div>
+        <div class="info-card"><div class="info-header"><span class="info-icon">i</span><span class="info-label">PUBLIC INFORMATION</span></div><p class="info-body">Measured agricultural losses from NISR Seasonal Agricultural Survey records, 2020–2025.</p></div>
+        <button class="collapse-toggle" type="button" aria-label="Collapse sidebar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+    </aside>
+
+    <main class="lp-main">
+      <header class="lp-hero">
+        <div class="lp-hero-content">
+          <a class="lp-back" href="/">← Back to Isuka home</a>
+          <p class="lp-eyebrow">Action planning</p>
+          <h1>Loss Recovery Planner</h1>
+          <p>See how much harvest could be saved by fixing one problem.</p>
+        </div>
+      </header>
+
+      <div class="lp-content">
+        <section class="lp-card lp-scenario" aria-labelledby="scenario-title">
+          <header class="lp-card-heading"><div><p class="lp-kicker">Scenario builder</p><h2 id="scenario-title">Build a scenario</h2></div><span class="lp-example" data-example-scenario>Example scenario</span></header>
+          <div class="lp-filter-slot">
+          <div class="lp-filter-sentinel" aria-hidden="true"></div>
+          <div class="lp-filter-toolbar" aria-label="Scenario filters">
+            <div class="lp-field"><label for="lp-stage">Loss stage</label><select id="lp-stage" aria-label="Loss stage"><option value="all">All stages</option></select></div>
+            <div class="lp-field"><label for="lp-crop">Crop</label><select id="lp-crop" aria-label="Crop"></select></div>
+            <div class="lp-field"><label for="lp-district-trigger">Districts</label><button id="lp-district-trigger" class="lp-select-pill" type="button" aria-haspopup="dialog" aria-expanded="false">All districts <span aria-hidden="true">⌄</span></button></div>
+            <div class="lp-field"><label for="lp-year">Year</label><select id="lp-year" aria-label="Survey year"><option value="all">All years</option><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option></select></div>
+            <div class="lp-field"><label for="lp-season">Season</label><select id="lp-season" aria-label="Survey season"><option value="all">All seasons</option><option value="A">Season A</option><option value="B">Season B</option><option value="C">Season C</option></select></div>
+            <div class="lp-reduction-field">
+              <div class="lp-reduction-heading"><label for="lp-reduction">Reduction</label><output data-inline-reduction for="lp-reduction">30%</output></div>
+              <input id="lp-reduction" class="lp-range" type="range" min="0" max="100" step="1" value="30" aria-valuetext="30 percent">
+              <div class="lp-range-ticks" aria-hidden="true"><span>0</span><span>50</span><span>100</span></div>
+            </div>
+          </div>
+          </div>
+          <div class="lp-district-popover" data-district-popover role="dialog" aria-label="Choose districts" hidden>
+            <label class="lp-search-label" for="lp-district-search">Search districts</label><input id="lp-district-search" type="search" placeholder="Type a district">
+            <div class="lp-popover-actions"><button type="button" data-select-all>All</button><button type="button" data-clear-districts>Clear</button></div>
+            <div class="lp-district-options" data-district-options></div>
+            <div class="lp-popover-footer"><span data-district-count>All districts</span><button type="button" class="lp-button lp-button-primary" data-district-done>Done</button></div>
+          </div>
+          <div class="lp-slider-footer"><div class="lp-presets" role="group" aria-label="Reduction presets"><button type="button" data-preset="20">Modest 20%</button><button type="button" data-preset="30">30%</button><button type="button" data-preset="50">Ambitious 50%</button></div><button class="lp-text-button lp-reset" type="button" data-reset><span aria-hidden="true">↶</span> Start over</button></div>
+          <p class="lp-state-note" data-state-note hidden></p>
+        </section>
+
+        <section class="lp-card lp-answer" aria-labelledby="answer-title" aria-live="off">
+          <header class="lp-card-heading"><div><p class="lp-kicker">Estimated harvest saved</p><h2 class="lp-sr-only" id="answer-title">Scenario result</h2></div><div class="lp-actions"><button type="button" class="lp-icon-button" data-copy-link aria-label="Copy link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M14 11a5 5 0 0 0-7.1 0l-2 2A5 5 0 0 0 14 20l1.1-1.1"/></svg><span>Copy link</span></button><button type="button" class="lp-icon-button" data-download-csv aria-label="Download CSV"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 18v3h14v-3"/></svg><span>Download CSV</span></button></div></header>
+          <div class="lp-skeleton-layer" data-answer-skeleton hidden aria-hidden="true"><i class="sk-line sk-short"></i><i class="sk-title"></i><i class="sk-line sk-wide"></i><i class="sk-line"></i><i class="sk-chip"></i><i class="sk-line sk-wide"></i></div>
+          <div class="lp-answer-main" data-answer-content>
+            <strong class="lp-tonnes" data-answer-tonnes>Not available</strong>
+            <strong class="lp-value" data-answer-value>Value not available</strong>
+            <span class="lp-sacks" data-answer-sacks>Not available</span>
+          </div>
+          <p class="lp-answer-sentence" data-answer-sentence>Loading scenario data.</p>
+          <p class="lp-range-line" data-range-line>A 20% cut saves about Not available. A 40% cut about Not available.</p>
+          <div class="lp-chip-row" data-answer-chips></div>
+          <p class="lp-caution" data-low-coverage hidden>Few survey records report loss by stage here. Treat as indicative.</p>
+          <p class="lp-suppressed" data-suppressed hidden></p>
+          <p class="lp-disclaimer" data-disclaimer>What-if estimate based on NISR survey data (Not available). Not a forecast or a guarantee.</p>
+          <p class="lp-empty-state" data-empty hidden>No recorded loss for this stage in this selection.</p>
+        </section>
+
+        <section class="lp-card lp-stages" aria-labelledby="stages-title">
+          <header class="lp-card-heading"><div><p class="lp-kicker">Measured losses</p><h2 id="stages-title">Where the loss happens</h2><p class="lp-subtitle">Share of the harvest recorded as lost, by stage.</p></div><button type="button" class="lp-text-button" data-stage-table-toggle aria-expanded="false">View as table</button></header>
+          <div class="lp-skeleton-layer" data-stage-skeleton hidden aria-hidden="true"><i class="sk-line sk-wide"></i><i class="sk-bar"></i><i class="sk-line"></i><i class="sk-bar"></i><i class="sk-line sk-wide"></i><i class="sk-bar"></i><i class="sk-line"></i><i class="sk-bar"></i><i class="sk-line sk-wide"></i></div>
+          <div class="lp-stage-chart" data-stage-chart role="img" aria-label="Loss stages as a share of total production"></div>
+          <div class="lp-stage-table-wrap" data-stage-table-wrap hidden><table class="lp-data-table"><caption>Recorded loss by stage</caption><thead><tr><th scope="col">Stage</th><th scope="col">Tonnes</th><th scope="col">Production share</th><th scope="col">Records</th></tr></thead><tbody data-stage-table></tbody></table></div>
+          <p class="lp-stage-summary" data-stage-summary>Recorded loss and after-change rate are not available.</p>
+          <p class="lp-caption">Percentages are shares of total production. The stage order is for reading only.</p>
+        </section>
+
+        <section class="lp-card lp-districts" aria-labelledby="district-title">
+          <header class="lp-card-heading"><div><p class="lp-kicker">Geographic view</p><h2 id="district-title">Where it matters most</h2></div></header>
+          <div class="lp-skeleton-layer" data-district-skeleton hidden aria-hidden="true"><i class="sk-line sk-wide"></i><i class="sk-bar"></i><i class="sk-line"></i><i class="sk-bar"></i><i class="sk-line sk-wide"></i><i class="sk-bar"></i><i class="sk-line"></i><i class="sk-bar"></i></div>
+          <div class="lp-ranking">
+            <div class="lp-ranking-heading"><h3>District ranking</h3><div class="lp-ranking-tools"><span class="lp-ranking-sort-label">Rank by</span><div class="lp-segment" role="group" aria-label="District ranking metric"><button type="button" class="is-active" data-metric="tonnes" aria-pressed="true">Tonnes</button><button type="button" data-metric="rwf" aria-pressed="false">RWF</button></div></div></div>
+            <div class="lp-district-list" data-district-list></div>
+            <div class="lp-pagination" data-pagination>
+              <button type="button" class="lp-page-button" data-previous-page aria-label="Previous districts">← Previous</button>
+              <span data-page-status aria-live="polite">Page 1</span>
+              <button type="button" class="lp-page-button" data-next-page aria-label="Next districts">Next →</button>
+              <button type="button" class="lp-text-button" data-show-all hidden>Show all</button>
+            </div>
+          </div>
+          <div class="lp-map-column"><div id="lp-map" class="lp-map" aria-label="Map of Rwanda districts by estimated recovery"></div><div class="lp-map-legend"><span>Less</span><i aria-hidden="true"></i><span>More</span><span class="lp-map-insufficient"><i aria-hidden="true"></i>Insufficient data: fewer than 30 survey records</span></div><p class="lp-map-note" data-map-note></p></div>
+        </section>
+
+        <section class="lp-card lp-method" aria-labelledby="method-title">
+          <details data-method-details open>
+            <summary><span><p class="lp-kicker">Method and limits</p><h2 id="method-title">How this is calculated</h2></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+            <div class="lp-method-content" data-method-content></div>
+          </details>
+        </section>
+
+        <nav class="lp-related" aria-label="Related dashboard pages"><a href="/dashboard/climate-risk/">See where loss is highest <span aria-hidden="true">→</span></a><a href="/dashboard/forecasting/">See the next-season outlook <span aria-hidden="true">→</span></a></nav>
+      </div>
+    </main>
+  </div>
+  <div class="lp-live" aria-live="polite" aria-atomic="true" data-live-region></div>
+  <script src="/rwanda-map.js"></script>
+  <script type="module" src="/loss-planner.js"></script>
+  <script src="/dashboard-navigation.js"></script>
+  <script src="/assistant/loader.js" defer></script>
+</body>
+</html>
