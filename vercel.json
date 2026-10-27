@@ -73,19 +73,19 @@
       ]
     },
     {
-      "source": "/(.*\\.(png|jpg|jpeg|webp|gif|svg|ico|mp4|woff|woff2|ttf|eot))",
+      "source": "/:path*.:ext(png|jpg|jpeg|webp|gif|svg|ico|mp4|woff|woff2|ttf|eot)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=604800" }
       ]
     },
     {
-      "source": "/(.*\\.(js|css))",
+      "source": "/:path*.:ext(js|css)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
       ]
     },
     {
-      "source": "/(dashboard|account|admin)(.*)",
+      "source": "/:section(dashboard|account|admin)/:path*",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=600" }
       ]
