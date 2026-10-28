@@ -66,6 +66,25 @@ test('keeps MongoDB diagnostics in server logs while serving public data and saf
   assert.equal(foreignOriginQuery.status, 403);
   assert.equal((await foreignOriginQuery.json()).error, 'Cross-origin request rejected.');
 
+  const configuredPublicBaseUrl = process.env.PUBLIC_BASE_URL;
+  delete process.env.PUBLIC_BASE_URL;
+  try {
+    const loginWithoutPublicBaseUrl = await fetch(`${baseUrl}/api/auth/login`, {
+      method: 'POST',
+      headers: {
+        Origin: `https://${new URL(baseUrl).host}`,
+        'x-forwarded-proto': 'https',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ identity: 'farmer@example.com', password: 'diagnostic-password' })
+    });
+    const loginWithoutPublicBaseUrlBody = await loginWithoutPublicBaseUrl.json();
+    assert.equal(loginWithoutPublicBaseUrl.status, 503);
+    assert.equal(loginWithoutPublicBaseUrlBody.error, 'Account services are temporarily unavailable. Please try again shortly.');
+  } finally {
+    process.env.PUBLIC_BASE_URL = configuredPublicBaseUrl;
+  }
+
   const loginResponse = await fetch(`${baseUrl}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

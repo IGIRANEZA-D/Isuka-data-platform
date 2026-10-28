@@ -378,21 +378,27 @@ const assistantLimiter = rateLimit({ windowMs: 60 * 1000, limit: 24, standardHea
 const adminLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 60, standardHeaders: 'draft-8', legacyHeaders: false, store: new MongoRateLimitStore('admin'), message: { error: 'Too many administrator requests. Please try again later.' } });
 let accountsReadyPromise;
 let adminSeedPromise;
-function hasValidPublicBaseUrl() {
+function publicBaseUrlForRequest(request) {
+  const configured = normalizedOrigin(process.env.PUBLIC_BASE_URL);
+  if (configured && new URL(configured).protocol === 'https:') return configured;
+  return normalizedOrigin(`${request.protocol}://${request.get('host')}`) || '';
+}
+
+function hasValidPublicBaseUrl(request) {
   try {
-    const url = new URL(process.env.PUBLIC_BASE_URL || '');
+    const url = new URL(publicBaseUrlForRequest(request));
     return url.protocol === 'https:' && !url.username && !url.password;
   } catch { return false; }
 }
 async function requireAccountFeatures(request, response, next) {
   response.set('Cache-Control', 'private, no-store');
-  const required = ['MONGODB_URI', 'SESSION_SECRET', 'PUBLIC_BASE_URL'];
+  const required = ['MONGODB_URI', 'SESSION_SECRET'];
   const hasAdminCredentials = Boolean(
     (process.env.ADMIN_SEED_PHONE || process.env.ADMIN_EMAIL)
     && (process.env.ADMIN_SEED_PASSWORD || process.env.ADMIN_PASSWORD)
   );
   if ((process.env.NODE_ENV === 'production' || process.env.VERCEL)
-    && (required.some((name) => !process.env[name]?.trim()) || !hasValidPublicBaseUrl()
+    && (required.some((name) => !process.env[name]?.trim()) || !hasValidPublicBaseUrl(request)
       || (request.baseUrl === '/api/admin' && !hasAdminCredentials))) {
     return response.status(503).set('Retry-After', '60').json({ error: 'This account service is not configured yet.' });
   }
@@ -732,7 +738,7 @@ app.post('/api/auth/forgot-password', authLimiter, async (request, response) => 
   try {
     const result = await requestPasswordReset(request.body.identity);
     const recipient = result.user?.email || process.env.RESEND_FROM_EMAIL;
-    const publicBaseUrl = process.env.PUBLIC_BASE_URL || `http://localhost:${port}`;
+    const publicBaseUrl = publicBaseUrlForRequest(request) || `http://localhost:${port}`;
     const resetUrl = new URL('/account/login', publicBaseUrl);
     resetUrl.hash = new URLSearchParams({ resetToken: result.token }).toString();
     await sendPasswordResetEmail(recipient, resetUrl.toString(), result.code);
