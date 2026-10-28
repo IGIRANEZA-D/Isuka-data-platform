@@ -96,10 +96,16 @@ let landingSummaryCacheBody;
 const rwandaDistrictBoundaryUrl = 'https://gis.naeb.gov.rw/server/rest/services/Hosted/Administrative_Boundaries_WFL1/FeatureServer/0/query?where=1%3D1&outFields=district%2Ccode_dist%2Cname&returnGeometry=true&outSR=4326&maxAllowableOffset=0.001&f=geojson';
 const defaultOverviewCachePath = path.join(repositoryRoot, 'backend', 'data', 'default-overview-cache.json');
 const defaultOverviewCacheVersion = 1;
-const uploadStorage = multer.diskStorage({
-  destination: uploadsRoot,
-  filename: (request, file, callback) => callback(null, `pending-${Date.now()}-${Math.random().toString(36).slice(2)}${path.extname(file.originalname).toLowerCase()}`)
-});
+// Vercel functions have a read-only deployment filesystem, and the uploads
+// directory is intentionally excluded from the bundle. Upload routes return
+// 503 on Vercel, so use memory storage there to avoid Multer creating a
+// missing /var/task/backend/data/uploads directory during module startup.
+const uploadStorage = process.env.VERCEL
+  ? multer.memoryStorage()
+  : multer.diskStorage({
+    destination: uploadsRoot,
+    filename: (request, file, callback) => callback(null, `pending-${Date.now()}-${Math.random().toString(36).slice(2)}${path.extname(file.originalname).toLowerCase()}`)
+  });
 const upload = multer({
   storage: uploadStorage,
   limits: { fileSize: 4 * 1024 * 1024 },
