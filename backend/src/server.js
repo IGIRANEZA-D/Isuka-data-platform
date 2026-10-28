@@ -85,9 +85,25 @@ const requestId = (request, response, next) => {
   response.set('x-request-id', id);
   next();
 };
-const frontendOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
+const frontendOrigin = process.env.FRONTEND_ORIGIN || (process.env.VERCEL ? '' : 'http://localhost:5173');
 const frontendDirectory = path.join(repositoryRoot, 'frontend');
 const periodCache = new Map();
+
+function normalizedOrigin(value) {
+  try { return new URL(value).origin; } catch { return null; }
+}
+
+function isAllowedRequestOrigin(request, origin) {
+  const normalizedRequestOrigin = normalizedOrigin(origin);
+  if (!normalizedRequestOrigin) return false;
+  const configuredOrigins = [
+    frontendOrigin,
+    process.env.PUBLIC_BASE_URL,
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ''
+  ].map(normalizedOrigin).filter(Boolean);
+  const requestHostOrigin = normalizedOrigin(`${request.protocol}://${request.get('host')}`);
+  return configuredOrigins.includes(normalizedRequestOrigin) || normalizedRequestOrigin === requestHostOrigin;
+}
 const overviewCache = new Map();
 const maxOverviewCacheEntries = 256;
 let rwandaDistrictBoundaryCache;
@@ -270,7 +286,13 @@ function rowsToCsv(rows) {
 
 app.use(requestId);
 app.use(helmet({ contentSecurityPolicy: { directives: { defaultSrc: ["'self'"], scriptSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com'], styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://unpkg.com'], fontSrc: ["'self'", 'https://fonts.gstatic.com'], imgSrc: ["'self'", 'data:', 'https:'], mediaSrc: ["'self'"], connectSrc: ["'self'", 'https://api.open-meteo.com', 'https://generativelanguage.googleapis.com', 'https://api.meteomatics.com'], objectSrc: ["'none'"], baseUri: ["'self'"], frameAncestors: ["'self'"] } } }));
-app.use(cors({ origin: frontendOrigin, credentials: true }));
+app.use(cors((request, callback) => {
+  const origin = request.get('origin');
+  callback(null, {
+    origin: origin && isAllowedRequestOrigin(request, origin) ? origin : false,
+    credentials: true
+  });
+}));
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 app.use((request, response, next) => {
@@ -313,9 +335,7 @@ app.use('/api', (request, response, next) => {
   }
   if (process.env.NODE_ENV === 'production' && !['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
     const origin = request.get('origin');
-    let allowedOrigin = '';
-    try { allowedOrigin = new URL(process.env.PUBLIC_BASE_URL || '').origin; } catch {}
-    if ((origin && origin !== allowedOrigin) || request.get('sec-fetch-site') === 'cross-site') {
+    if ((origin && !isAllowedRequestOrigin(request, origin)) || request.get('sec-fetch-site') === 'cross-site') {
       return response.status(403).json({ error: 'Cross-origin request rejected.', requestId: request.requestId });
     }
   }

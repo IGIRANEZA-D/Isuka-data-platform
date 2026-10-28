@@ -5,6 +5,8 @@ process.env.MONGODB_URI = 'mongodb://127.0.0.1:1/isuka';
 process.env.MONGODB_DATABASE = 'isuka';
 process.env.SESSION_SECRET = 'unit-test-session-secret';
 process.env.PUBLIC_BASE_URL = 'https://isuka.example.test';
+process.env.VERCEL = '1';
+process.env.NODE_ENV = 'production';
 process.env.MONGODB_SERVER_SELECTION_TIMEOUT_MS = '200';
 process.env.MONGODB_CONNECT_TIMEOUT_MS = '150';
 process.env.MONGODB_RECONNECT_COOLDOWN_MS = '1000';
@@ -47,6 +49,22 @@ test('keeps MongoDB diagnostics in server logs while serving public data and saf
   assert.equal(allSeasonsResponse.status, 200);
   assert.equal(allSeasonsOverview.period.year, 2021);
   assert.equal(allSeasonsOverview.filters.season, 'all');
+
+  const productionOriginQuery = await fetch(`${baseUrl}/api/data/query`, {
+    method: 'POST',
+    headers: { Origin: baseUrl, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ metric: 'lossRate', crop: 'all', districts: 'all', years: ['2025'], seasons: ['C'], breakdown: 'district' })
+  });
+  assert.equal(productionOriginQuery.status, 200);
+  assert.equal(productionOriginQuery.headers.get('access-control-allow-origin'), baseUrl);
+
+  const foreignOriginQuery = await fetch(`${baseUrl}/api/data/query`, {
+    method: 'POST',
+    headers: { Origin: 'https://attacker.example', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ metric: 'lossRate', crop: 'all', districts: 'all', years: ['2025'], seasons: ['C'], breakdown: 'district' })
+  });
+  assert.equal(foreignOriginQuery.status, 403);
+  assert.equal((await foreignOriginQuery.json()).error, 'Cross-origin request rejected.');
 
   const loginResponse = await fetch(`${baseUrl}/api/auth/login`, {
     method: 'POST',
