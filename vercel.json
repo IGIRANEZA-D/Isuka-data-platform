@@ -7,7 +7,7 @@
   "functions": {
     "api/index.js": {
       "maxDuration": 90,
-      "includeFiles": "backend/data/dist/**,backend/data/forecast-cache.json,backend/data/default-overview-cache.json,backend/src/**/*.js,frontend/*.html,frontend/data/**"
+      "includeFiles": "{backend/data/**,backend/src/**/*.js,frontend/*.html,frontend/data/**}"
     }
   },
   "regions": ["cpt1"],

@@ -12,7 +12,10 @@ const ignoreLines = fs.readFileSync(path.join(root, '.vercelignore'), 'utf8')
   .split(/\r?\n/).map((line) => line.trim()).filter((line) => line && !line.startsWith('#'));
 const stageRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'isuka-vercel-stage-'));
 const bundleRoot = path.join(stageRoot, 'app');
-const functionPattern = config.functions['api/index.js'].includeFiles.split(',').map((value) => value.trim());
+const includeFilesPattern = config.functions['api/index.js'].includeFiles;
+const functionPattern = includeFilesPattern.startsWith('{') && includeFilesPattern.endsWith('}')
+  ? includeFilesPattern.slice(1, -1).split(',').map((value) => value.trim())
+  : [includeFilesPattern];
 const assembleOnly = process.argv.includes('--assemble-only');
 
 function globRegex(pattern) {
