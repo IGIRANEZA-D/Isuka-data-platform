@@ -711,6 +711,9 @@ app.post('/api/auth/password', requireUser, async (request, response) => {
 });
 
 app.delete('/api/auth/account', requireUser, async (request, response) => {
+  if (request.user.role === 'admin') {
+    return response.status(403).json({ error: 'Administrator accounts cannot be deleted from account settings.' });
+  }
   try {
     const token = sessionToken(request);
     await deleteAccount(request.user);
@@ -719,7 +722,7 @@ app.delete('/api/auth/account', requireUser, async (request, response) => {
     response.json({ deleted: true });
   } catch (error) {
     log.warn({ event: 'account_deletion_failed', requestId: request.requestId, errorName: error?.name || 'Error', errorCode: error?.codeName || error?.code || null });
-    response.status(503).json({ error: 'We could not delete your account right now. Please try again shortly.' });
+    response.status(503).json({ error: 'We could not delete your account right now. Please try again shortly.', requestId: request.requestId });
   }
 });
 
