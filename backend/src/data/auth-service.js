@@ -198,33 +198,10 @@ async function loginAccount({ identity, password, roles }) {
 async function loginConfiguredAdmin({ identity, password }) {
   const normalizedIdentity = normalizeEmail(identity);
   const passwordValue = String(password || '');
-  const configuredEmail = normalizeEmail(process.env.ADMIN_EMAIL);
-  const configuredPassword = String(process.env.ADMIN_PASSWORD || process.env.ADMIN_SEED_PASSWORD || '');
-  if (!configuredEmail || !configuredPassword) {
-    throw new Error('Admin sign-in is not configured. Set ADMIN_EMAIL and ADMIN_PASSWORD in the Vercel Production environment.');
-  }
-  const suppliedBytes = Buffer.from(passwordValue);
-  const expectedBytes = Buffer.from(configuredPassword);
-  if (normalizedIdentity !== configuredEmail || suppliedBytes.length !== expectedBytes.length || !crypto.timingSafeEqual(suppliedBytes, expectedBytes)) {
-    throw new Error('Invalid email or password.');
-  }
-
   const databaseCollections = await initializeDatabase();
-  const existingUser = await databaseCollections.users.findOne({ email: configuredEmail });
-  const passwordHash = existingUser && await verifyPassword(passwordValue, existingUser.passwordHash)
-    ? existingUser.passwordHash
-    : await hashPassword(passwordValue);
-  const now = new Date();
-  await databaseCollections.users.updateOne(
-    { email: configuredEmail },
-    {
-      $set: { role: 'admin', passwordHash, updatedAt: now },
-      $setOnInsert: { email: configuredEmail, createdAt: now, profile: {} }
-    },
-    { upsert: true }
-  );
-  const user = await databaseCollections.users.findOne({ email: configuredEmail, role: 'admin' });
-  if (!user) throw new Error('Admin account could not be initialized.');
+  const user = await databaseCollections.users.findOne({ email: normalizedIdentity, role: 'admin' });
+  if (!user || !(await verifyPassword(passwordValue, user.passwordHash))) throw new Error('Invalid email or password.');
+  await upgradePasswordHash(databaseCollections, user, passwordValue);
   return { user, session: await createSession(user) };
 }
 
