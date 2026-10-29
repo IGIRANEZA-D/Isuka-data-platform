@@ -9,9 +9,16 @@
   padding: 24px;
   background: #f4f6f1;
   color: #376d22;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 240ms ease, visibility 240ms ease;
+}
+
+.isuka-loader-enabled .isuka-page-loader {
   opacity: 1;
   visibility: visible;
-  transition: opacity 240ms ease, visibility 240ms ease;
+  pointer-events: auto;
 }
 
 .isuka-page-loader.is-hidden {
