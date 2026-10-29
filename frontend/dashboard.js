@@ -1,5 +1,5 @@
 import { attachTooltip } from './chart-tooltip.js';
-import { animateMetric } from './lib/metric-animation.js';
+import { animateMetric } from '/lib/metric-animation.js';
 
 const apiBaseUrl = window.__ISUKA_API_BASE_URL__ || '';
 
