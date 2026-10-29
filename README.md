@@ -14,10 +14,18 @@ Turning six years of seasonal agricultural survey data into a clearer picture of
 
 <p align="center">
   <a href="https://drive.google.com/file/d/1ob8TfhxoGgCY-fB-HY1VxDf-pke8hgTw/preview">
-    <img src="www/demo-video-preview.jpg" alt="Isuka demo video preview — click to watch on Google Drive" width="900">
+    <img src="www/GIT2.png" alt="Isuka landing page and interactive Rwanda district production map — click to watch the demo" width="900">
   </a>
   <br>
-  <sub>Click the preview to watch the full demo in Google Drive.</sub>
+  <sub>01 · Landing page and interactive district production map · Click to watch the demo</sub>
+</p>
+
+<p align="center">
+  <a href="https://drive.google.com/file/d/1ob8TfhxoGgCY-fB-HY1VxDf-pke8hgTw/preview">
+    <img src="www/Git1.png" alt="Isuka Inputs and Practices dashboard with district filters and agricultural indicators — click to watch the demo" width="900">
+  </a>
+  <br>
+  <sub>02 · Inputs &amp; Practices dashboard · Click to watch the demo</sub>
 </p>
 
 > **Hackathon review access**
