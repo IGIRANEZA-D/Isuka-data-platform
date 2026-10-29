@@ -140,12 +140,12 @@ body.is-navigating a[aria-busy="true"] {
 .dashboard-shell > main.dashboard-nav-enter > .forecast-hero .forecast-hero-content,
 .dashboard-shell > main.dashboard-nav-enter > .lp-hero .lp-hero-content,
 .dashboard-shell > main.dashboard-nav-enter > .analysis-header {
-  animation: dashboard-heading-enter 140ms cubic-bezier(.2,.75,.25,1) both;
+  animation: dashboard-heading-enter 90ms ease-out both;
 }
 
 @keyframes dashboard-heading-enter {
-  from { opacity: .72; transform: translate3d(0, 4px, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
+  from { opacity: .82; }
+  to { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
