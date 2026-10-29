@@ -22,8 +22,8 @@ html {
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 160ms;
-  animation-timing-function: ease-out;
+  /* Keep the browser from cross-fading two full dashboard pages together. */
+  animation: none;
 }
 
 ::view-transition-old(sidebar),
@@ -128,25 +128,21 @@ a:focus-visible {
   transform: none !important;
 }
 
-body.is-navigating .dashboard-main,
-body.is-navigating .land-main,
-body.is-navigating .climate-main,
-body.is-navigating .farmer-main,
-body.is-navigating .admin-main {
-  opacity: .72;
-  transition: opacity 90ms ease;
-}
-
 body.is-navigating a[aria-busy="true"] {
   pointer-events: none;
 }
 
+.dashboard-shell > main.dashboard-nav-enter {
+  animation: dashboard-section-enter 240ms cubic-bezier(.2,.75,.25,1) both;
+}
+
+@keyframes dashboard-section-enter {
+  from { opacity: .45; transform: translate3d(0, 10px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  body.is-navigating .dashboard-main,
-  body.is-navigating .land-main,
-  body.is-navigating .climate-main,
-  body.is-navigating .farmer-main,
-  body.is-navigating .admin-main { transition: none; }
+  .dashboard-shell > main.dashboard-nav-enter { animation: none; }
 }
 
 .nav-item:active,
