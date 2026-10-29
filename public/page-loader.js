@@ -1,6 +1,41 @@
 (() => {
   const entry = window.__isukaLoaderEntry || { show: false, startedAt: Date.now() };
   const loader = document.querySelector('[data-isuka-page-loader]');
+  const transitionKey = 'isuka-page-loader-transition';
+  const dashboardPath = (path) => /^\/dashboard(?:\/|$)/.test(path);
+  const loginPath = (path) => /^\/(?:account|admin)\/login\/?$/.test(path);
+  const homePath = (path) => path === '/' || path === '/index.html';
+
+  function shouldAnimate(from, to) {
+    return (homePath(from) && dashboardPath(to))
+      || (dashboardPath(from) && homePath(to))
+      || loginPath(to)
+      || (loginPath(from) && homePath(to));
+  }
+
+  // This listener must be installed even when this page has no entry
+  // animation; otherwise logout clicks on a previously visited page are lost.
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return;
+    const logout = event.target.closest('[data-logout], [data-settings-logout], [data-admin-logout]');
+    if (logout) {
+      try { sessionStorage.setItem(transitionKey, JSON.stringify({ to: '/' })); } catch { /* storage may be disabled */ }
+      return;
+    }
+
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.target === '_blank' || link.hasAttribute('download')) return;
+
+    let destination;
+    try { destination = new URL(link.href, window.location.href); } catch { return; }
+    if (destination.origin !== window.location.origin || !shouldAnimate(window.location.pathname, destination.pathname)) return;
+
+    try {
+      sessionStorage.setItem(transitionKey, JSON.stringify({ to: destination.pathname }));
+    } catch { /* destination will still render normally */ }
+  });
+
   if (!loader || !entry.show) return;
 
   const progress = loader.querySelector('[data-loader-progress]');
@@ -50,37 +85,4 @@
     document.documentElement.classList.remove('isuka-loader-enabled');
   }, { once: true });
 
-  const transitionKey = 'isuka-page-loader-transition';
-  const dashboardPath = (path) => /^\/dashboard(?:\/|$)/.test(path);
-  const loginPath = (path) => /^\/(?:account|admin)\/login\/?$/.test(path);
-  const homePath = (path) => path === '/' || path === '/index.html';
-
-  function shouldAnimate(from, to) {
-    return (homePath(from) && dashboardPath(to))
-      || (dashboardPath(from) && homePath(to))
-      || loginPath(to)
-      || (loginPath(from) && homePath(to));
-  }
-
-  document.addEventListener('click', (event) => {
-    if (!(event.target instanceof Element)) return;
-    const logout = event.target.closest('[data-logout], [data-settings-logout], [data-admin-logout]');
-    if (logout) {
-      try { sessionStorage.setItem(transitionKey, JSON.stringify({ to: '/' })); } catch { /* storage may be disabled */ }
-      return;
-    }
-
-    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    const link = event.target.closest('a[href]');
-    if (!link || link.target === '_blank' || link.hasAttribute('download')) return;
-
-    let destination;
-    try { destination = new URL(link.href, window.location.href); } catch { return; }
-    if (destination.origin !== window.location.origin) return;
-    if (!shouldAnimate(window.location.pathname, destination.pathname)) return;
-
-    try {
-      sessionStorage.setItem(transitionKey, JSON.stringify({ to: destination.pathname }));
-    } catch { /* destination will still render normally */ }
-  });
 })();
