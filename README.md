@@ -208,6 +208,19 @@ Agricultural data is from the National Institute of Statistics of Rwanda (NISR) 
 
 <div align="center">
 
-Built by **The Ciphers** · *Know where the harvest goes.*
+**The Ciphers** · *Know where the harvest goes.*
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="www/team/obed-bugingo.png" width="150" alt="Portrait of Obed Bugingo in a circular frame"><br>
+      <strong>Obed Bugingo</strong>
+    </td>
+    <td align="center">
+      <img src="www/team/niyirora-aphrodise.png" width="150" alt="Portrait of Niyirora Aphrodise in a circular frame"><br>
+      <strong>Niyirora Aphrodise</strong>
+    </td>
+  </tr>
+</table>
 
 </div>
