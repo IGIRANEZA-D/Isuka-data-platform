@@ -1,5 +1,6 @@
 const apiBaseUrl = window.__ISUKA_API_BASE_URL__ || '';
 import { attachTooltip } from './chart-tooltip.js';
+import { animateMetric } from './lib/metric-animation.js';
 const elements = {
   sidebar: document.querySelector('.sidebar'), collapse: document.querySelector('.collapse-toggle'), district: document.getElementById('forecast-district'), crop: document.getElementById('forecast-crop'), accuracy: document.getElementById('forecast-accuracy'), districts: document.getElementById('forecast-districts'), horizon: document.getElementById('forecast-horizon'), model: document.getElementById('forecast-model'), title: document.getElementById('selected-title'), status: document.getElementById('forecast-status'), chart: document.getElementById('forecast-chart'), metrics: document.getElementById('backtest-metrics'), backtest: document.getElementById('backtest-table'), importance: document.getElementById('feature-importance'), analysis: document.getElementById('forecast-analysis'), map: document.getElementById('forecast-map'), mapStatus: document.getElementById('map-status')
 };
@@ -30,8 +31,8 @@ function updateSelectors() {
 
 function renderKpis() {
   const match = cache.backtest?.riskTierMatchPercent;
-  elements.accuracy.textContent = percent(match);
-  elements.districts.textContent = new Set(cache.forecasts.map((entry) => entry.districtCode)).size.toLocaleString();
+  animateMetric(elements.accuracy, match, percent);
+  animateMetric(elements.districts, new Set(cache.forecasts.map((entry) => entry.districtCode)).size);
   elements.horizon.textContent = `${cache.horizon.startYear}–${cache.horizon.endYear}`;
   elements.model.textContent = activeModel[0].toUpperCase() + activeModel.slice(1);
 }

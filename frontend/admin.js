@@ -172,24 +172,23 @@ function setupAdminLogin() {
       const response = await fetch('/api/admin/login', { method: 'POST', credentials: 'include', cache: 'no-store', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ identity: email, password: passwordValue }) });
       const result = await response.json();
       if (!response.ok) {
-        if (response.status === 503) {
-          setAdminLoginBanner('Sign-in is temporarily unavailable. Please try again shortly.', 'error');
-          setAdminNote('Please try again shortly.');
-        } else {
+        if (response.status === 401) {
           setAdminLoginBanner('');
           setAdminNote('Invalid credentials.');
+        } else {
+          const message = typeof result.error === 'string' ? result.error : 'Admin sign-in is temporarily unavailable. Please try again shortly.';
+          setAdminLoginBanner(message, 'error');
+          setAdminNote(message);
         }
-        throw new Error(response.status === 503 ? 'Service unavailable.' : 'Invalid credentials.');
+        return;
       }
       sessionStorage.setItem(adminSessionKey, 'true');
       setAdminNote('Signed in successfully.', 'success');
       window.location.href = '/admin';
     } catch (error) {
-      const message = error.message || 'Unable to sign in.';
-      if (message !== 'Service unavailable.' && !message.includes('Invalid credentials')) {
-        setAdminLoginBanner('Service unavailable. Please try again in a moment.', 'error');
-        setAdminNote('Service unavailable.');
-      }
+      console.error('Admin sign-in request failed.', error);
+      setAdminLoginBanner('Could not reach the sign-in service. Check your connection and try again.', 'error');
+      setAdminNote('Could not reach the sign-in service.');
     } finally {
       button.disabled = false;
       button.removeAttribute('aria-busy');

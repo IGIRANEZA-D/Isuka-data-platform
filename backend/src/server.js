@@ -641,7 +641,7 @@ app.post('/api/admin/login', authLimiter, async (request, response) => {
     const failure = classifyAuthenticationFailure(error);
     log.warn({ event: 'admin_login_failed', requestId: request.requestId, category: failure.logLabel, errorName: error?.name || 'Error' });
     return response.status(failure.statusCode).json({
-      error: failure.statusCode === 503 ? 'Sign-in is temporarily unavailable. Please try again shortly.' : failure.publicError
+      error: failure.publicError
     });
   }
 });

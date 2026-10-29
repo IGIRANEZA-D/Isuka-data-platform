@@ -1,4 +1,5 @@
 import { attachTooltip } from './chart-tooltip.js';
+import { animateMetric } from './lib/metric-animation.js';
 
 const apiBaseUrl = window.__ISUKA_API_BASE_URL__ || '';
 
@@ -41,13 +42,13 @@ function trendBadge(value, lowerIsBetter = false) {
   return { text: `${value >= 0 ? '↗' : '↘'} ${Math.abs(value).toFixed(1)}%`, tone: positive ? 'positive' : 'negative' };
 }
 
-function setCardValue(cardKey, valueText, trend) {
+function setCardValue(cardKey, numericValue, formatter, trend) {
   const card = document.querySelector(`.kpi-card[data-card="${cardKey}"]`);
   if (!card) return;
   const value = card.querySelector('[data-value]');
   const trendElement = card.querySelector('[data-type="trend"]');
-  value.textContent = valueText;
-  value.title = valueText === '—' ? 'Data unavailable for this period' : '';
+  animateMetric(value, numericValue, formatter);
+  value.title = Number.isFinite(Number(numericValue)) ? '' : 'Data unavailable for this period';
   trendElement.textContent = trend.text;
   trendElement.classList.remove('trend-positive', 'trend-negative');
   if (trend.tone !== 'neutral') trendElement.classList.add(`trend-${trend.tone}`);
@@ -55,10 +56,10 @@ function setCardValue(cardKey, valueText, trend) {
 
 function renderKpis(overview) {
   const { kpis, trends } = overview;
-  setCardValue('land', formatCompact(kpis.arableLandHa, 'Ha'), trendBadge(trends.arableLandPercent));
-  setCardValue('harvest', formatCompact(kpis.weightedProductionKg / 1000, 'Tons'), trendBadge(trends.weightedProductionPercent));
-  setCardValue('loss', formatPercent(kpis.postHarvestLossPercent), trendBadge(trends.postHarvestLossPercent, true));
-  setCardValue('risk', Number.isFinite(kpis.highRiskDistrictCount) ? String(kpis.highRiskDistrictCount) : '—', { text: 'Reported tier', tone: 'neutral' });
+  setCardValue('land', kpis.arableLandHa, (value) => formatCompact(value, 'Ha'), trendBadge(trends.arableLandPercent));
+  setCardValue('harvest', kpis.weightedProductionKg / 1000, (value) => formatCompact(value, 'Tons'), trendBadge(trends.weightedProductionPercent));
+  setCardValue('loss', kpis.postHarvestLossPercent, formatPercent, trendBadge(trends.postHarvestLossPercent, true));
+  setCardValue('risk', kpis.highRiskDistrictCount, (value) => Number.isFinite(value) ? String(Math.round(value)) : '—', { text: 'Reported tier', tone: 'neutral' });
 }
 
 function renderChart(overview) {
@@ -156,10 +157,13 @@ function renderDonut(overview) {
   elements.donutChart.appendChild(svg);
   const center = document.createElement('div');
   center.className = 'donut-center';
-  center.textContent = total ? String(total) : '—';
+  const centerValue = document.createElement('span');
+  centerValue.id = 'donut-center-value';
+  center.appendChild(centerValue);
   elements.donutChart.appendChild(center);
   elements.donutChart.classList.add('has-rendered');
-  elements.donutCenterValue.textContent = total ? String(total) : '—';
+  elements.donutCenterValue = centerValue;
+  animateMetric(elements.donutCenterValue, total || Number.NaN, (value) => Number.isFinite(value) ? String(Math.round(value)) : '—');
   elements.donutLegend.innerHTML = entries.map((entry) => `
     <div class="donut-row">
       <span class="legend-swatch" style="background:${riskPalette[entry.tier] || '#6B7566'};"></span>
@@ -181,7 +185,7 @@ function showError(message) {
   elements.forecastPeriod.textContent = '(unavailable)';
   elements.chartLegend.textContent = message;
   elements.donutLegend.innerHTML = '<span class="legend-item">Data unavailable</span>';
-  ['land', 'harvest', 'loss', 'risk'].forEach((key) => setCardValue(key, '—', { text: 'Unavailable', tone: 'neutral' }));
+  ['land', 'harvest', 'loss', 'risk'].forEach((key) => setCardValue(key, Number.NaN, () => '—', { text: 'Unavailable', tone: 'neutral' }));
 }
 
 async function loadOverview() {

@@ -58,7 +58,7 @@ function classifyAuthenticationFailure(error, { defaultStatusCode = 503 } = {}) 
   }
   return {
     statusCode: defaultStatusCode,
-    publicError: 'Database temporarily unavailable. Please try again shortly.',
+    publicError: 'Authentication service temporarily unavailable. Please try again shortly.',
     logLabel: normalized.logLabel || 'service_error',
     cause: normalized
   };
