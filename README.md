@@ -1,115 +1,126 @@
-# Isuka Data Platform
+<div align="center">
+
+# ISUKA
+
+### Agricultural Data Intelligence for Rwanda
 
 **Know where the harvest goes.**
 
-Isuka is an interactive agricultural data platform that helps people explore crop production, cultivated land, and reported post-harvest losses across Rwanda's 30 districts. It turns six years of National Institute of Statistics of Rwanda (NISR) Seasonal Agricultural Survey data into practical, district-level insight for farmers, researchers, NGOs, and decision-makers.
+Turning six years of seasonal agricultural survey data into a clearer picture of production, land use, and reported crop loss across Rwanda.
 
-**Live platform:** [Open Isuka](https://isukadataintelligent.vercel.app) · [Public dashboard](https://isukadataintelligent.vercel.app/dashboard/)
+[🌱 Open the platform](https://isukadataintelligent.vercel.app) · [📊 Explore the dashboard](https://isukadataintelligent.vercel.app/dashboard/) · [▶ Watch the 2:58 demo](www/DEMO%20VIDEO.mp4)
 
-**For judges:** [Open the admin sign-in page](https://isukadataintelligent.vercel.app/admin/login) and use the shared review account:
+</div>
 
-- **Email:** `bugingoobed1@gmail.com`
-- **Password:** `Bugingo123?`
-
-The public dashboard is available without signing in. The admin account is provided for project review; please avoid changing or deleting published datasets.
-
-**Explore:** [Dashboard](https://isukadataintelligent.vercel.app/dashboard/) · [Forecasting](https://isukadataintelligent.vercel.app/dashboard/forecasting/) · [Loss Recovery Planner](https://isukadataintelligent.vercel.app/dashboard/loss-planner/) · [Data Library](https://isukadataintelligent.vercel.app/dashboard/forecasting/analysis/)
+> **Hackathon review access**
+> - Admin: [Open the admin workspace](https://isukadataintelligent.vercel.app/admin/login)
+> - Email: `bugingoobed1@gmail.com` · Password: `Bugingo123?`
+> - The public dashboard is open without an account. The demo recording is stored in [`www/DEMO VIDEO.mp4`](www/DEMO%20VIDEO.mp4).
 
 ---
 
-## Overview
+## 🌾 The idea
 
-Isuka turns six years of national agricultural survey data into a public, interactive resource for farmers, researchers, NGOs, and decision-makers. Visitors can explore district-level indicators, compare seasons, examine recorded losses, review a tested forecast, and download cleaned aggregate data without creating an account.
+Isuka makes Rwanda's National Institute of Statistics (NISR) Seasonal Agricultural Survey easier to explore and use. The platform brings district-level evidence into one place so farmers, researchers, NGOs, and decision-makers can compare seasons, understand recorded losses, and explore practical scenarios.
 
-The name *Isuka* refers to the hoe, an everyday tool of Rwandan farming. The platform is built around a simple goal: make agricultural evidence easier to explore and use.
+The name *Isuka* means “hoe”—a familiar tool of Rwandan farming. The product follows the same spirit: make useful agricultural evidence accessible and practical.
 
-## Explore the platform
+## ✨ Explore Isuka
 
-| Area | What it offers |
+| Experience | What you can do |
 | --- | --- |
-| **Public dashboard** | National and district indicators, animated overview metrics, season and district filters |
-| **Land & Crops** | Crop production, yield, and harvested area across districts and seasons |
-| **Climate & Risk** | District views of reported loss and defined risk tiers |
-| **Inputs & Practices** | Improved seed, fertilizer, and irrigation indicators; summary figures animate as filters change |
-| **District Explorer** | District-level production, leading crop, survey records, area, and loss rate |
-| **Forecasting** | A one-season-ahead outlook with confidence ranges and a held-out evaluation |
-| **Loss Recovery Planner** | What-if estimates of potential harvest recovery from reducing recorded losses |
-| **Ask Isuka** | AI-assisted questions about survey results and farming topics |
-| **Farmer area** | Accounts, farm profiles, crop and livestock records, and account tools |
-| **Admin workspace** | Dataset administration for authorized administrators |
-| **Data Library** | Downloadable cleaned aggregates by year or as a combined archive |
+| **National dashboard** | Filter agricultural indicators by year and district; see overview figures animate as the selection changes. |
+| **Land & Crops** | Explore crop production, cultivated area, and yield across districts and seasons. |
+| **Climate & Risk** | Compare recorded district loss rates and risk tiers. |
+| **Inputs & Practices** | Review improved seed, fertilizer, and irrigation indicators. |
+| **District Explorer** | Inspect a district's production, leading crop, area, and reported loss. |
+| **Forecasting** | Compare a seasonal baseline, machine-learning estimate, blended outlook, and held-out evaluation. |
+| **Loss Recovery Planner** | Explore what-if scenarios for potential harvest recovery when recorded losses fall. |
+| **Ask Isuka** | Ask questions about survey findings and farming topics with AI assistance. |
+| **Farmer area** | Create an account, maintain farm records, and review alerts and account settings. |
+| **Admin workspace** | Manage published agricultural data through an authorized account. |
+| **Data Library** | Download cleaned district aggregates by year or as a combined archive. |
 
-## Data and methodology
-
-The public indicators are built from the National Institute of Statistics of Rwanda (NISR) Seasonal Agricultural Survey for 2020–2025. The period covers three survey seasons (A, B, and C) each year and all 30 districts.
-
-- **Survey-weighted estimates:** figures use survey weights where applicable; they are not simple row counts.
-- **Question-label mapping:** fields are identified by question labels to accommodate survey questionnaire changes.
-- **Data quality checks:** duplicate and invalid records are handled during processing, and districts are joined using codes.
-- **Consistent calculations:** generated artifacts carry a calculation version so the application can serve a coherent set of metrics.
-- **Missing values stay missing:** unavailable observations are not silently converted to zero.
-- **Aggregate downloads:** the public Data Library contains district-level aggregates, not individual respondent records.
-
-### Risk tiers
-
-Risk tiers are based on recorded district loss rates:
-
-| Tier | Recorded loss rate |
-| --- | ---: |
-| Low | Below 15% |
-| Moderate | 15% to below 30% |
-| High | 30% or higher |
-
-## Forecasting
-
-Isuka provides a one-season-ahead forecast for 2026 Season A, based on the available historical survey data. It combines a seasonal statistical baseline with a gradient-boosting model. The forecasting interface exposes the baseline, machine-learning, and blended results, alongside confidence information.
-
-The evaluation holds out 2025 data, generates predictions for that period, and compares them with the corresponding survey observations. Forecasts are decision-support estimates, not guarantees. The current inputs do not include rainfall, pests, market prices, or policy changes.
-
-## Important limitations
-
-- Survey responses are self-reported and represent weighted estimates from sampled plots, not a census.
-- Recorded loss reflects what respondents reported; it should not be interpreted as a complete measure of all food waste.
-- District is the finest geographic level available in the published data.
-- Some storage indicators have fewer observations than other measures.
-- Loss Recovery Planner outputs are scenario estimates, not forecasts; currency estimates should be interpreted accordingly.
-- SMS alerts and phone verification require an external provider and are not currently connected.
-- New survey seasons require a data rebuild and deployment before they appear in the platform.
-
-## Architecture
+## 🗺️ From survey to insight
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#e8f2df","primaryTextColor":"#1f3b24","primaryBorderColor":"#4b7f32","lineColor":"#6d8f55","secondaryColor":"#f5f7ef","tertiaryColor":"#ffffff"}}}%%
 flowchart LR
-    A[ NISR survey files ] --> B[ Offline cleaning and aggregation ]
-    B --> C[ Versioned aggregate and forecast artifacts ]
+    A[ NISR seasonal survey files ] --> B[ Clean, validate and aggregate ]
+    B --> C[ Versioned data and forecast artifacts ]
     C --> D[ Node.js and Express API ]
-    D --> E[ Public dashboard and data downloads ]
-    D --> F[ Farmer and admin account services ]
+    D --> E[ Public dashboard and downloads ]
+    D --> F[ Farmer and admin services ]
     F --> G[( MongoDB )]
     D --> H[ Ask Isuka AI providers ]
     I[ Python forecasting pipeline ] --> C
 ```
 
-The dashboards read published data artifacts. MongoDB is used for account and session features; it is not the source of the public survey aggregates.
+**Data source:** NISR Seasonal Agricultural Survey, 2020–2025 · **Coverage:** 30 districts · **Seasons:** A, B, and C.
 
-## Technology
+### How figures are prepared
 
-| Component | Technologies |
+- Survey weights are used where applicable; estimates are not simple counts of respondent rows.
+- Question labels help map measures when questionnaires change between seasons.
+- Data checks handle duplicate and invalid records; district joins use district codes.
+- Missing observations remain missing instead of being silently changed to zero.
+- Public downloads contain aggregate district-level data, not individual respondent records.
+- Published artifacts carry a calculation version so the application can serve a consistent set of indicators.
+
+### Recorded-loss tiers
+
+| Tier | Recorded district loss rate |
+| --- | ---: |
+| 🟢 Low | Below 15% |
+| 🟡 Moderate | 15% to below 30% |
+| 🔴 High | 30% or higher |
+
+## 🔭 Forecasting, with context
+
+The platform presents a one-season-ahead outlook for 2026 Season A using historical survey data. It combines a seasonal statistical baseline with a gradient-boosting model and shows baseline, machine-learning, and blended results with confidence information. Evaluation holds out 2025 data and compares predictions with the corresponding survey observations.
+
+Forecasts are decision-support estimates, not guarantees. Current model inputs do not include rainfall, pests, market prices, or policy changes.
+
+## 🎬 Demo route
+
+The [project demo video](www/DEMO%20VIDEO.mp4) is included in the repository under `www/`. For a quick walkthrough:
+
+1. Open the landing page and district map.
+2. Explore the dashboard; change the year and district filters.
+3. Compare crop, risk, and input indicators across dashboard sections.
+4. Open a district in District Explorer.
+5. Review the forecast and its held-out evaluation.
+6. Try a reduction scenario in Loss Recovery Planner.
+7. Download an aggregate from the Data Library and ask Isuka a question.
+
+## ⚖️ Important context
+
+- Survey responses are self-reported and produce weighted estimates from sampled plots, not a census.
+- Reported loss is not a complete measure of all food waste.
+- District is the finest geographic level available in the published data.
+- Some storage indicators have fewer observations than other measures.
+- Loss Recovery Planner results are scenarios, not forecasts; currency estimates should be interpreted accordingly.
+- SMS alerts and phone verification need an external provider and are not currently connected.
+- A new survey season appears after its data artifacts are rebuilt and deployed.
+
+## 🧰 Technology
+
+| Layer | Tools |
 | --- | --- |
-| Frontend | HTML, CSS, JavaScript, Vite, Leaflet |
+| Interface and maps | HTML, CSS, JavaScript, Vite, Leaflet |
 | API and account services | Node.js, Express, MongoDB |
-| Data processing and forecasting | Python, pandas, scikit-learn |
-| AI integrations | Gemini, with optional OpenAI configuration |
+| Data preparation and forecasting | Python, pandas, scikit-learn |
+| AI | Gemini; optional OpenAI provider configuration |
 | Email | Resend |
-| Deployment | Vercel |
+| Hosting | Vercel |
 
-## Run locally
+## 🚀 Run locally
 
 ### Requirements
 
 - Node.js 22.x
-- Python 3 only if you need to regenerate forecasting or data artifacts
 - MongoDB for account features
+- Python 3 only when regenerating data or forecasting artifacts
 
 ### Install and start
 
@@ -122,75 +133,65 @@ npm install --prefix frontend
 npm run dev
 ```
 
-Create the backend environment file before starting account services. In PowerShell:
+Create the backend environment file for local account and integration features:
 
 ```powershell
+# Windows PowerShell
 Copy-Item backend/.env.example backend/.env
 ```
 
-On macOS or Linux:
-
 ```bash
+# macOS or Linux
 cp backend/.env.example backend/.env
 ```
 
-The backend reads `backend/.env` during local development. Vercel does not read your local `.env`; configure environment variables in the Vercel project and redeploy after changing them.
+The backend reads `backend/.env` locally. Vercel does not read your local `.env`; configure production variables in the Vercel project and redeploy after changing them.
 
 ### Common commands
 
 | Command | Purpose |
 | --- | --- |
-| `npm run dev` | Start the backend and frontend development servers |
-| `npm run build:frontend` | Build the frontend assets |
-| `npm run build:vercel` | Build the Vercel application and verify required deployment artifacts |
-| `npm start` | Start the backend server |
-| `npm test` | Run backend automated tests |
+| `npm run dev` | Start the frontend and backend development servers. |
+| `npm run build:frontend` | Build the frontend assets. |
+| `npm run build:vercel` | Build the Vercel application and verify deployment artifacts. |
+| `npm start` | Start the backend server. |
+| `npm test` | Run the backend automated tests. |
 
-### Environment variables
+### Environment configuration
 
-Set only the variables required for the features you are deploying. Add production values in the Vercel project's **Production** environment, and redeploy to apply changes.
+Set only the variables needed by the features you deploy. In Vercel, add production values under the project's **Production** environment. Never commit `.env` files or private API keys.
 
 | Variable | Purpose |
 | --- | --- |
-| `MONGODB_URI` | MongoDB connection string for account services |
-| `MONGODB_DATABASE` | MongoDB database name; required in production |
-| `SESSION_SECRET` | Secret used to sign session and account tokens |
-| `ADMIN_EMAIL` and `ADMIN_PASSWORD` | Optional credentials to provision or refresh the MongoDB admin account during setup; deployed sign-in checks the stored admin account |
-| `ADMIN_SEED_PHONE` and `ADMIN_SEED_PASSWORD` | Optional phone-based admin account provisioning pair |
-| `GEMINI_API_KEY` | Enables Gemini-powered AI features |
-| `GEMINI_MODEL` | Optional Gemini model override |
-| `OPENAI_API_KEY` | Optional AI provider fallback |
-| `RESEND_API_KEY` and `RESEND_FROM_EMAIL` | Outgoing account email configuration |
-| `PUBLIC_BASE_URL` | Optional canonical public URL for account links |
-| `FRONTEND_ORIGIN` | Optional frontend origin for local or split-host deployments |
-| `PORT` | Optional local server port (defaults to 3000) |
+| `MONGODB_URI` | MongoDB connection string for accounts and sessions. |
+| `MONGODB_DATABASE` | Production database name. |
+| `SESSION_SECRET` | Secret used to sign account sessions and tokens. |
+| `ADMIN_EMAIL` + `ADMIN_PASSWORD` | Optional pair for provisioning or refreshing the MongoDB admin account. |
+| `ADMIN_SEED_PHONE` + `ADMIN_SEED_PASSWORD` | Optional phone-based admin provisioning pair. |
+| `GEMINI_API_KEY` | Enables Gemini-powered AI features. |
+| `GEMINI_MODEL` | Optional Gemini model override. |
+| `OPENAI_API_KEY` | Optional AI provider fallback. |
+| `RESEND_API_KEY` + `RESEND_FROM_EMAIL` | Outgoing account email configuration. |
+| `PUBLIC_BASE_URL` | Optional canonical URL used in account links. |
+| `FRONTEND_ORIGIN` | Optional frontend origin for local or split-host deployments. |
+| `PORT` | Optional local server port; defaults to `3000`. |
 
-Never commit `.env` files or private API keys. Production admin sign-in uses the admin account stored in MongoDB; the admin credential variables are only needed when provisioning or refreshing that account.
+Deployed admin sign-in checks the admin account stored in MongoDB. The admin variables above are for provisioning or refreshing that database account.
 
-## Five-minute demo
+## 🧭 Next steps
 
-1. Open the landing page and explore the district map.
-2. Visit the dashboard and change the year or district filters; overview values animate to the newly filtered data.
-3. Open **Inputs & Practices** and filter the view to see its summary metrics update and animate.
-4. Select a district in **District Explorer** and review its production and reported loss indicators.
-5. Visit **Forecasting** and compare the baseline, machine-learning, and blended results, including the held-out 2025 evaluation.
-6. Use the **Loss Recovery Planner** to explore a reduction scenario.
-7. Download an aggregate dataset from the **Data Library**.
-8. Try **Ask Isuka**, then explore the farmer and admin areas if desired.
+- Explore feature-phone access through USSD or SMS with a telecom or aggregator partner.
+- Add weather inputs to improve future forecasting.
+- Introduce a Kinyarwanda interface reviewed by native speakers.
 
-## Roadmap
+## 🙏 Acknowledgements
 
-- Feature-phone access through USSD or SMS, subject to a telecom or aggregator partnership.
-- Additional weather inputs for forecasting.
-- A Kinyarwanda interface reviewed by native speakers.
+Agricultural data is from the National Institute of Statistics of Rwanda (NISR) Seasonal Agricultural Survey, 2020–2025. Isuka is an independent project and does not represent an official NISR statement. The project uses open-source tools including Node.js, Express, Vite, Leaflet, pandas, and scikit-learn. Typeface families Baloo 2 and Work Sans are distributed under the SIL Open Font License. The project follows the hackathon's stated intellectual-property terms.
 
-## Acknowledgements
+---
 
-- Agricultural survey data: National Institute of Statistics of Rwanda (NISR), Seasonal Agricultural Survey, 2020–2025. This is an independent project and does not represent an official NISR statement.
-- Open-source technologies include Node.js, Express, Vite, Leaflet, pandas, and scikit-learn.
-- Typeface families: Baloo 2 and Work Sans, distributed under the SIL Open Font License.
-- The project follows the hackathon's stated intellectual-property terms.
+<div align="center">
 
-## Team
+Built by **The Ciphers** · *Know where the harvest goes.*
 
-**The Ciphers** · *Know where the harvest goes.*
+</div>
