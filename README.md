@@ -8,9 +8,17 @@
 
 Turning six years of seasonal agricultural survey data into a clearer picture of production, land use, and reported crop loss across Rwanda.
 
-[🌱 Open the platform](https://isukadataintelligent.vercel.app) · [📊 Explore the dashboard](https://isukadataintelligent.vercel.app/dashboard/) · [▶ Watch the 2:58 demo](www/DEMO%20VIDEO.mp4)
+[🌱 Open the platform](https://isukadataintelligent.vercel.app) · [📊 Explore the dashboard](https://isukadataintelligent.vercel.app/dashboard/) · [▶ Watch the 2:58 demo on Google Drive](https://drive.google.com/file/d/1ob8TfhxoGgCY-fB-HY1VxDf-pke8hgTw/view?usp=sharing)
 
 </div>
+
+<p align="center">
+  <a href="https://drive.google.com/file/d/1ob8TfhxoGgCY-fB-HY1VxDf-pke8hgTw/preview">
+    <img src="www/demo-video-preview.jpg" alt="Isuka demo video preview — click to watch on Google Drive" width="900">
+  </a>
+  <br>
+  <sub>Click the preview to watch the full demo in Google Drive.</sub>
+</p>
 
 > **Hackathon review access**
 > - Admin: [Open the admin workspace](https://isukadataintelligent.vercel.app/admin/login)
@@ -83,7 +91,7 @@ Forecasts are decision-support estimates, not guarantees. Current model inputs d
 
 ## 🎬 Demo route
 
-The [project demo video](www/DEMO%20VIDEO.mp4) is included in the repository under `www/`. For a quick walkthrough:
+Watch the [full project demo on Google Drive](https://drive.google.com/file/d/1ob8TfhxoGgCY-fB-HY1VxDf-pke8hgTw/view?usp=sharing). A repository copy is also available at [`www/DEMO VIDEO.mp4`](www/DEMO%20VIDEO.mp4). For a quick walkthrough:
 
 1. Open the landing page and district map.
 2. Explore the dashboard; change the year and district filters.
