@@ -318,7 +318,7 @@ async function deleteAccount(user) {
     await databaseCollections.farmRecords.deleteMany({ userId: user._id }, options);
     await databaseCollections.alerts.deleteMany({ userId: user._id }, options);
     await databaseCollections.assistantMessages.deleteMany({ userId: user._id }, options);
-    const deleted = await databaseCollections.users.deleteOne({ _id: user._id, role: { $ne: 'admin' } }, options);
+    const deleted = await databaseCollections.users.deleteOne({ _id: user._id }, options);
     if (deleted.deletedCount !== 1) throw new Error('Account could not be deleted.');
   };
 
