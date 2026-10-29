@@ -156,8 +156,8 @@ Set only the variables required for the features you are deploying. Add producti
 | `MONGODB_URI` | MongoDB connection string for account services |
 | `MONGODB_DATABASE` | MongoDB database name; required in production |
 | `SESSION_SECRET` | Secret used to sign session and account tokens |
-| `ADMIN_EMAIL` and `ADMIN_PASSWORD` | Admin sign-in credentials |
-| `ADMIN_SEED_PHONE` and `ADMIN_SEED_PASSWORD` | Optional phone-based admin credential pair |
+| `ADMIN_EMAIL` and `ADMIN_PASSWORD` | Optional credentials to provision or refresh the MongoDB admin account during setup; deployed sign-in checks the stored admin account |
+| `ADMIN_SEED_PHONE` and `ADMIN_SEED_PASSWORD` | Optional phone-based admin account provisioning pair |
 | `GEMINI_API_KEY` | Enables Gemini-powered AI features |
 | `GEMINI_MODEL` | Optional Gemini model override |
 | `OPENAI_API_KEY` | Optional AI provider fallback |
@@ -166,7 +166,7 @@ Set only the variables required for the features you are deploying. Add producti
 | `FRONTEND_ORIGIN` | Optional frontend origin for local or split-host deployments |
 | `PORT` | Optional local server port (defaults to 3000) |
 
-Never commit `.env` files or private API keys. Vercel environment variables are scoped by deployment environment; production sign-in requires the admin credential pair to be set for **Production**.
+Never commit `.env` files or private API keys. Production admin sign-in uses the admin account stored in MongoDB; the admin credential variables are only needed when provisioning or refreshing that account.
 
 ## Judge access
 

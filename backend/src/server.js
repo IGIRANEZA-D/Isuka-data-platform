@@ -377,7 +377,6 @@ const publicDataLimiter = rateLimit({
 const assistantLimiter = rateLimit({ windowMs: 60 * 1000, limit: 24, standardHeaders: 'draft-8', legacyHeaders: false, message: { error: 'Please slow down and try again shortly.' } });
 const adminLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 60, standardHeaders: 'draft-8', legacyHeaders: false, store: new MongoRateLimitStore('admin'), message: { error: 'Too many administrator requests. Please try again later.' } });
 let accountsReadyPromise;
-let adminSeedPromise;
 function publicBaseUrlForRequest(request) {
   const configured = normalizedOrigin(process.env.PUBLIC_BASE_URL);
   if (configured && new URL(configured).protocol === 'https:') return configured;
@@ -394,27 +393,15 @@ async function requireAccountFeatures(request, response, next) {
   response.set('Cache-Control', 'private, no-store');
   const required = ['MONGODB_URI', 'SESSION_SECRET'];
   const isProduction = process.env.NODE_ENV === 'production' || Boolean(process.env.VERCEL);
-  const hasAdminIdentity = Boolean(String(process.env.ADMIN_SEED_PHONE || process.env.ADMIN_EMAIL || '').trim());
-  const hasAdminPassword = Boolean(String(process.env.ADMIN_SEED_PASSWORD || process.env.ADMIN_PASSWORD || '').trim());
   if (isProduction && (required.some((name) => !process.env[name]?.trim()) || !hasValidPublicBaseUrl(request))) {
     return response.status(503).set('Retry-After', '60').json({ error: 'This account service is not configured yet.' });
-  }
-  if (isProduction && request.baseUrl === '/api/admin' && (!hasAdminIdentity || !hasAdminPassword)) {
-    return response.status(503).set('Retry-After', '60').json({
-      error: 'Admin sign-in is not configured. Add ADMIN_EMAIL and ADMIN_PASSWORD, or the paired ADMIN_SEED_PHONE and ADMIN_SEED_PASSWORD, to this Vercel project Production environment, then redeploy.'
-    });
   }
   try {
     if (!accountsReadyPromise) accountsReadyPromise = initializeDatabase();
     await accountsReadyPromise;
-    if (request.baseUrl === '/api/admin' && request.path === '/login') {
-      if (!adminSeedPromise) adminSeedPromise = seedAdminUser();
-      await adminSeedPromise;
-    }
     return next();
   } catch (error) {
     accountsReadyPromise = undefined;
-    adminSeedPromise = undefined;
     log.warn({ event: 'account_service_unavailable', requestId: request.requestId, errorName: error?.name || 'Error' });
     return response.status(503).set('Retry-After', '5').json({ error: 'Account services are temporarily unavailable. Please try again shortly.' });
   }

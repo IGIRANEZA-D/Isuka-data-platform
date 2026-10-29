@@ -196,15 +196,14 @@ async function loginAccount({ identity, password, roles }) {
 }
 
 async function loginConfiguredAdmin({ identity, password }) {
-  const configuredEmail = normalizeEmail(process.env.ADMIN_EMAIL);
-  const configuredPhone = String(process.env.ADMIN_SEED_PHONE || '').trim();
-  const configuredPassword = process.env.ADMIN_SEED_PASSWORD || process.env.ADMIN_PASSWORD;
   const normalizedIdentity = String(identity || '').trim();
-  const emailLogin = configuredEmail && normalizeEmail(normalizedIdentity) === configuredEmail;
-  const phoneLogin = configuredPhone && normalizedIdentity === configuredPhone;
-  if (!configuredPassword || (!emailLogin && !phoneLogin)) throw new Error('Invalid email or password.');
+  if (!normalizedIdentity) throw new Error('Invalid email or password.');
   const databaseCollections = await initializeDatabase();
-  const user = await databaseCollections.users.findOne({ ...(emailLogin ? { email: configuredEmail } : { phone: configuredPhone }), role: 'admin' });
+  const normalizedEmail = normalizeEmail(normalizedIdentity);
+  const user = await databaseCollections.users.findOne({
+    $or: [{ email: normalizedEmail }, { phone: normalizedIdentity }],
+    role: 'admin'
+  });
   const passwordValue = String(password || '');
   if (!user || !(await verifyPassword(passwordValue, user.passwordHash))) throw new Error('Invalid email or password.');
   await upgradePasswordHash(databaseCollections, user, passwordValue);
