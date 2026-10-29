@@ -1,20 +1,19 @@
-<div align="center">
-
-<img src="docs/assets/banner.svg" alt="Isuka — know where the harvest goes" width="100%">
-
 # Isuka Data Platform
 
-### Know where the harvest goes.
+**Know where the harvest goes.**
 
-An open agricultural data platform exploring Rwanda's production and recorded post-harvest losses across 30 districts using NISR Seasonal Agricultural Survey data from 2020–2025.
+Isuka is an interactive agricultural data platform that helps people explore crop production, cultivated land, and reported post-harvest losses across Rwanda's 30 districts. It turns six years of National Institute of Statistics of Rwanda (NISR) Seasonal Agricultural Survey data into practical, district-level insight for farmers, researchers, NGOs, and decision-makers.
 
-[![Live demo](https://img.shields.io/badge/Live%20demo-Open%20Isuka-3D6B1F?style=for-the-badge)](https://isukadataintelligent.vercel.app)
-[![Node.js](https://img.shields.io/badge/Node.js-22-3D6B1F?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=flat-square&logo=vercel)](https://vercel.com/)
+**Live platform:** [Open Isuka](https://isukadataintelligent.vercel.app) · [Public dashboard](https://isukadataintelligent.vercel.app/dashboard/)
 
-[Dashboard](https://isukadataintelligent.vercel.app/dashboard/) · [Forecasting](https://isukadataintelligent.vercel.app/dashboard/forecasting/) · [Loss Recovery Planner](https://isukadataintelligent.vercel.app/dashboard/loss-planner/) · [Data Library](https://isukadataintelligent.vercel.app/dashboard/forecasting/analysis/)
+**For judges:** [Open the admin sign-in page](https://isukadataintelligent.vercel.app/admin/login) and use the shared review account:
 
-</div>
+- **Email:** `bugingoobed1@gmail.com`
+- **Password:** `Bugingo123?`
+
+The public dashboard is available without signing in. The admin account is provided for project review; please avoid changing or deleting published datasets.
+
+**Explore:** [Dashboard](https://isukadataintelligent.vercel.app/dashboard/) · [Forecasting](https://isukadataintelligent.vercel.app/dashboard/forecasting/) · [Loss Recovery Planner](https://isukadataintelligent.vercel.app/dashboard/loss-planner/) · [Data Library](https://isukadataintelligent.vercel.app/dashboard/forecasting/analysis/)
 
 ---
 
@@ -168,21 +167,6 @@ Set only the variables required for the features you are deploying. Add producti
 
 Never commit `.env` files or private API keys. Production admin sign-in uses the admin account stored in MongoDB; the admin credential variables are only needed when provisioning or refreshing that account.
 
-## Judge access
-
-The public dashboard does not require an account. Use the following shared hackathon account to review the admin workspace:
-
-| Role | Access |
-| --- | --- |
-| Visitor | Open the [public dashboard](https://isukadataintelligent.vercel.app/dashboard/) |
-| Farmer | Create an account at [/account/signup](https://isukadataintelligent.vercel.app/account/signup) |
-| Admin | Visit [/admin/login](https://isukadataintelligent.vercel.app/admin/login) and use the credentials below |
-
-- **Email:** `bugingoobed1@gmail.com`
-- **Password:** `Bugingo123?`
-
-Please avoid changing or deleting published datasets during review.
-
 ## Five-minute demo
 
 1. Open the landing page and explore the district map.
@@ -209,12 +193,4 @@ Please avoid changing or deleting published datasets during review.
 
 ## Team
 
-<div align="center">
-
-<img src="docs/assets/team.svg" alt="The Ciphers: NIYIRORA Aphrodise and BUGINGO Obed" width="100%">
-
-<img src="docs/assets/isuka-logo.png" alt="Isuka" width="170">
-
 **The Ciphers** · *Know where the harvest goes.*
-
-</div>
