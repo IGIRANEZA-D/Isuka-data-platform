@@ -288,15 +288,32 @@ async function changePassword(user, currentPassword, newPassword) {
 async function deleteAccount(user) {
   if (user.role === 'admin') throw new Error('The admin account cannot be deleted here.');
   const databaseCollections = await initializeDatabase();
-  await withTransaction(async (session) => {
-    await databaseCollections.sessions.deleteMany({ userId: user._id }, { session });
-    await databaseCollections.passwordResets.deleteMany({ userId: user._id }, { session });
-    await databaseCollections.farmRecords.deleteMany({ userId: user._id }, { session });
-    await databaseCollections.alerts.deleteMany({ userId: user._id }, { session });
-    await databaseCollections.assistantMessages.deleteMany({ userId: user._id }, { session });
-    const deleted = await databaseCollections.users.deleteOne({ _id: user._id, role: { $ne: 'admin' } }, { session });
+
+  const removeAccountData = async (session) => {
+    const options = session ? { session } : undefined;
+    await databaseCollections.sessions.deleteMany({ userId: user._id }, options);
+    await databaseCollections.passwordResets.deleteMany({ userId: user._id }, options);
+    await databaseCollections.farmRecords.deleteMany({ userId: user._id }, options);
+    await databaseCollections.alerts.deleteMany({ userId: user._id }, options);
+    await databaseCollections.assistantMessages.deleteMany({ userId: user._id }, options);
+    const deleted = await databaseCollections.users.deleteOne({ _id: user._id, role: { $ne: 'admin' } }, options);
     if (deleted.deletedCount !== 1) throw new Error('Account could not be deleted.');
-  });
+  };
+
+  try {
+    await withTransaction(removeAccountData);
+  } catch (error) {
+    const transactionUnsupported = error?.code === 20
+      || error?.codeName === 'IllegalOperation'
+      || /transaction numbers are only allowed|transactions? (?:are )?not supported|does not support transactions/i.test(error?.message || '');
+    if (!transactionUnsupported) throw error;
+
+    // Some MongoDB-compatible deployments accept regular writes but do not
+    // support multi-document transactions. Cleanup is ordered and idempotent:
+    // remove child data first and delete the user record last, so a retry can
+    // safely finish if any write fails partway through.
+    await removeAccountData();
+  }
 }
 
 async function seedAdminUser() {

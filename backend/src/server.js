@@ -718,7 +718,7 @@ app.delete('/api/auth/account', requireUser, async (request, response) => {
     response.clearCookie('isukaSession', { path: '/', httpOnly: true, sameSite: 'lax', secure: sessionCookie.secure });
     response.json({ deleted: true });
   } catch (error) {
-    log.warn({ event: 'account_deletion_failed', requestId: request.requestId, errorName: error?.name || 'Error' });
+    log.warn({ event: 'account_deletion_failed', requestId: request.requestId, errorName: error?.name || 'Error', errorCode: error?.codeName || error?.code || null });
     response.status(503).json({ error: 'We could not delete your account right now. Please try again shortly.' });
   }
 });
