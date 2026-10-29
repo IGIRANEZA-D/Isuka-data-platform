@@ -196,43 +196,35 @@ async function loginAccount({ identity, password, roles }) {
 }
 
 async function loginConfiguredAdmin({ identity, password }) {
-  const normalizedIdentity = String(identity || '').trim();
-  if (!normalizedIdentity) throw new Error('Invalid email or password.');
-  const databaseCollections = await initializeDatabase();
-  const normalizedEmail = normalizeEmail(normalizedIdentity);
-  const adminQuery = {
-    $or: [{ email: normalizedEmail }, { phone: normalizedIdentity }],
-    role: 'admin'
-  };
+  const normalizedIdentity = normalizeEmail(identity);
   const passwordValue = String(password || '');
-  let user = await databaseCollections.users.findOne(adminQuery);
-
-  // If account settings deleted the configured admin, or a stale admin record
-  // has an old password hash, restore it only after both credentials match the
-  // deployment configuration.
-  let passwordIsValid = user ? await verifyPassword(passwordValue, user.passwordHash) : false;
-  if (!passwordIsValid) {
-    const configuredEmail = normalizeEmail(process.env.ADMIN_EMAIL);
-    const configuredPhone = String(process.env.ADMIN_SEED_PHONE || '').trim();
-    const configuredPassword = process.env.ADMIN_SEED_PASSWORD || process.env.ADMIN_PASSWORD || '';
-    const identityMatches = Boolean(
-      (configuredEmail && normalizedEmail === configuredEmail) ||
-      (configuredPhone && normalizedIdentity === configuredPhone)
-    );
-    const suppliedBytes = Buffer.from(passwordValue);
-    const configuredBytes = Buffer.from(String(configuredPassword));
-    const passwordMatches = configuredBytes.length > 0 && suppliedBytes.length === configuredBytes.length &&
-      crypto.timingSafeEqual(suppliedBytes, configuredBytes);
-
-    if (identityMatches && passwordMatches) {
-      await seedAdminUser();
-      user = await databaseCollections.users.findOne(adminQuery);
-      passwordIsValid = user ? await verifyPassword(passwordValue, user.passwordHash) : false;
-    }
+  const configuredEmail = normalizeEmail(process.env.ADMIN_EMAIL);
+  const configuredPassword = String(process.env.ADMIN_PASSWORD || process.env.ADMIN_SEED_PASSWORD || '');
+  if (!configuredEmail || !configuredPassword) {
+    throw new Error('Admin sign-in is not configured. Set ADMIN_EMAIL and ADMIN_PASSWORD in the Vercel Production environment.');
+  }
+  const suppliedBytes = Buffer.from(passwordValue);
+  const expectedBytes = Buffer.from(configuredPassword);
+  if (normalizedIdentity !== configuredEmail || suppliedBytes.length !== expectedBytes.length || !crypto.timingSafeEqual(suppliedBytes, expectedBytes)) {
+    throw new Error('Invalid email or password.');
   }
 
-  if (!user || !passwordIsValid) throw new Error('Invalid email or password.');
-  await upgradePasswordHash(databaseCollections, user, passwordValue);
+  const databaseCollections = await initializeDatabase();
+  const existingUser = await databaseCollections.users.findOne({ email: configuredEmail });
+  const passwordHash = existingUser && await verifyPassword(passwordValue, existingUser.passwordHash)
+    ? existingUser.passwordHash
+    : await hashPassword(passwordValue);
+  const now = new Date();
+  await databaseCollections.users.updateOne(
+    { email: configuredEmail },
+    {
+      $set: { role: 'admin', passwordHash, updatedAt: now },
+      $setOnInsert: { email: configuredEmail, createdAt: now, profile: {} }
+    },
+    { upsert: true }
+  );
+  const user = await databaseCollections.users.findOne({ email: configuredEmail, role: 'admin' });
+  if (!user) throw new Error('Admin account could not be initialized.');
   return { user, session: await createSession(user) };
 }
 
