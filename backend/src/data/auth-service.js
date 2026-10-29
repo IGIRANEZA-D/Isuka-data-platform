@@ -207,9 +207,11 @@ async function loginConfiguredAdmin({ identity, password }) {
   const passwordValue = String(password || '');
   let user = await databaseCollections.users.findOne(adminQuery);
 
-  // If account settings deleted the configured admin, restore the admin record
-  // only after the submitted identity and password both match deployment config.
-  if (!user) {
+  // If account settings deleted the configured admin, or a stale admin record
+  // has an old password hash, restore it only after both credentials match the
+  // deployment configuration.
+  let passwordIsValid = user ? await verifyPassword(passwordValue, user.passwordHash) : false;
+  if (!passwordIsValid) {
     const configuredEmail = normalizeEmail(process.env.ADMIN_EMAIL);
     const configuredPhone = String(process.env.ADMIN_SEED_PHONE || '').trim();
     const configuredPassword = process.env.ADMIN_SEED_PASSWORD || process.env.ADMIN_PASSWORD || '';
@@ -225,10 +227,11 @@ async function loginConfiguredAdmin({ identity, password }) {
     if (identityMatches && passwordMatches) {
       await seedAdminUser();
       user = await databaseCollections.users.findOne(adminQuery);
+      passwordIsValid = user ? await verifyPassword(passwordValue, user.passwordHash) : false;
     }
   }
 
-  if (!user || !(await verifyPassword(passwordValue, user.passwordHash))) throw new Error('Invalid email or password.');
+  if (!user || !passwordIsValid) throw new Error('Invalid email or password.');
   await upgradePasswordHash(databaseCollections, user, passwordValue);
   return { user, session: await createSession(user) };
 }
