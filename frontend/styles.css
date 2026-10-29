@@ -132,17 +132,31 @@ body.is-navigating a[aria-busy="true"] {
   pointer-events: none;
 }
 
-.dashboard-shell > main.dashboard-nav-enter {
-  animation: dashboard-section-enter 240ms cubic-bezier(.2,.75,.25,1) both;
+.dashboard-shell > main.dashboard-nav-enter > .overview-banner .banner-content,
+.dashboard-shell > main.dashboard-nav-enter > .land-hero .land-hero-content,
+.dashboard-shell > main.dashboard-nav-enter > .climate-hero .climate-hero-content,
+.dashboard-shell > main.dashboard-nav-enter > .inputs-hero .inputs-hero-content,
+.dashboard-shell > main.dashboard-nav-enter > .district-hero .district-hero-content,
+.dashboard-shell > main.dashboard-nav-enter > .forecast-hero .forecast-hero-content,
+.dashboard-shell > main.dashboard-nav-enter > .lp-hero .lp-hero-content,
+.dashboard-shell > main.dashboard-nav-enter > .analysis-header {
+  animation: dashboard-heading-enter 140ms cubic-bezier(.2,.75,.25,1) both;
 }
 
-@keyframes dashboard-section-enter {
-  from { opacity: .45; transform: translate3d(0, 10px, 0); }
+@keyframes dashboard-heading-enter {
+  from { opacity: .72; transform: translate3d(0, 4px, 0); }
   to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dashboard-shell > main.dashboard-nav-enter { animation: none; }
+  .dashboard-shell > main.dashboard-nav-enter > .overview-banner .banner-content,
+  .dashboard-shell > main.dashboard-nav-enter > .land-hero .land-hero-content,
+  .dashboard-shell > main.dashboard-nav-enter > .climate-hero .climate-hero-content,
+  .dashboard-shell > main.dashboard-nav-enter > .inputs-hero .inputs-hero-content,
+  .dashboard-shell > main.dashboard-nav-enter > .district-hero .district-hero-content,
+  .dashboard-shell > main.dashboard-nav-enter > .forecast-hero .forecast-hero-content,
+  .dashboard-shell > main.dashboard-nav-enter > .lp-hero .lp-hero-content,
+  .dashboard-shell > main.dashboard-nav-enter > .analysis-header { animation: none; }
 }
 
 .nav-item:active,
