@@ -201,26 +201,7 @@
     @media (max-width: 520px) { .section { padding: 66px 7vw; } .phone-visual { width: 145px; right: 1vw; } .hero-content { padding-bottom: 140px; } .hero-copy { max-width: 340px; font-size: 15px; } .footer-top { grid-template-columns: 1fr; } .footer-bottom { flex-direction: column; } }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
   </style>
-  <script>
-(() => {
-  const transitionKey = 'isuka-page-loader-transition';
-  let transition = null;
-  let showLoader = false;
-  try {
-    transition = JSON.parse(sessionStorage.getItem(transitionKey) || 'null');
-    sessionStorage.removeItem(transitionKey);
-    if (!transition || transition.to !== window.location.pathname) transition = null;
-    const navigation = performance.getEntriesByType('navigation')[0];
-    const hasVisited = sessionStorage.getItem('isuka-page-seen') === '1';
-    showLoader = Boolean(transition) || navigation?.type === 'reload' || !hasVisited;
-    sessionStorage.setItem('isuka-page-seen', '1');
-  } catch {
-    showLoader = true;
-  }
-  window.__isukaLoaderEntry = { show: showLoader, startedAt: transition?.startedAt || Date.now() };
-  if (showLoader) document.documentElement.classList.add('isuka-loader-enabled');
-})();
-</script>
+  <script src="/page-loader-bootstrap.js"></script>
   <link rel="stylesheet" href="/page-loader.css">
   <script src="/page-loader.js" defer></script>
 </head>

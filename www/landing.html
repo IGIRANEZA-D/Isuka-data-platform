@@ -11,26 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/landing.css">
   <script src="/landing.js" defer></script>
-  <script>
-(() => {
-  const transitionKey = 'isuka-page-loader-transition';
-  let transition = null;
-  let showLoader = false;
-  try {
-    transition = JSON.parse(sessionStorage.getItem(transitionKey) || 'null');
-    sessionStorage.removeItem(transitionKey);
-    if (!transition || transition.to !== window.location.pathname) transition = null;
-    const navigation = performance.getEntriesByType('navigation')[0];
-    const hasVisited = sessionStorage.getItem('isuka-page-seen') === '1';
-    showLoader = Boolean(transition) || navigation?.type === 'reload' || !hasVisited;
-    sessionStorage.setItem('isuka-page-seen', '1');
-  } catch {
-    showLoader = true;
-  }
-  window.__isukaLoaderEntry = { show: showLoader, startedAt: transition?.startedAt || Date.now() };
-  if (showLoader) document.documentElement.classList.add('isuka-loader-enabled');
-})();
-</script>
+  <script src="/page-loader-bootstrap.js"></script>
   <link rel="stylesheet" href="/page-loader.css">
   <script src="/page-loader.js" defer></script>
 </head>
