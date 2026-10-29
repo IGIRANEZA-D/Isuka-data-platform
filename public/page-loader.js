@@ -1,107 +1,86 @@
 (() => {
+  const entry = window.__isukaLoaderEntry || { show: false, startedAt: Date.now() };
   const loader = document.querySelector('[data-isuka-page-loader]');
-  if (!loader) return;
+  if (!loader || !entry.show) return;
 
-  const progressBar = loader.querySelector('[data-loader-progress]');
-  const percentage = loader.querySelector('[data-loader-percent]');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const minimumVisibleMs = reducedMotion ? 140 : 480;
-  const entry = window.__isukaLoaderEntry || { show: true, startedAt: Date.now() };
-  let startedAt = entry.startedAt;
-  let navigating = false;
-  let hidden = !entry.show;
-  let animationFrame = 0;
-  let hideTimer = 0;
+  const progress = loader.querySelector('[data-loader-progress]');
+  const percent = loader.querySelector('[data-loader-percent]');
+  const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 180 : 760;
+  let domReady = document.readyState !== 'loading';
+  let hidden = false;
 
-  function setProgress(value) {
-    const boundedValue = Math.min(100, Math.max(0, Math.round(value)));
-    progressBar.style.width = `${boundedValue}%`;
-    percentage.textContent = `${boundedValue}%`;
-  }
+  loader.removeAttribute('aria-hidden');
 
   function hideLoader() {
-    if (hidden || navigating) return;
-    hidden = true;
-    setProgress(100);
-    window.clearTimeout(hideTimer);
-    hideTimer = window.setTimeout(() => {
-      loader.classList.add('is-hidden');
-      document.documentElement.classList.remove('isuka-loader-enabled');
-      loader.setAttribute('aria-hidden', 'true');
-      window.cancelAnimationFrame(animationFrame);
-    }, reducedMotion ? 30 : 120);
-  }
-
-  function animateProgress() {
     if (hidden) return;
-    const elapsed = Date.now() - startedAt;
-    setProgress(Math.min(92, (elapsed / (reducedMotion ? 180 : 1100)) * 92));
-    if (elapsed < (reducedMotion ? 180 : 1100)) animationFrame = window.requestAnimationFrame(animateProgress);
+    hidden = true;
+    if (progress) progress.style.width = '100%';
+    if (percent) percent.textContent = '100%';
+    loader.classList.add('is-hidden');
+    document.documentElement.classList.remove('isuka-loader-enabled');
   }
 
-  function finishWhenReady() {
-    const remaining = Math.max(0, minimumVisibleMs - (Date.now() - startedAt));
-    hideTimer = window.setTimeout(hideLoader, remaining);
+  function animate() {
+    if (hidden) return;
+    const elapsed = Math.max(0, Date.now() - entry.startedAt);
+    const value = Math.min(100, Math.round((elapsed / duration) * 100));
+    if (progress) progress.style.width = `${value}%`;
+    if (percent) percent.textContent = `${value}%`;
+
+    if (domReady && elapsed >= duration) {
+      hideLoader();
+      return;
+    }
+    window.requestAnimationFrame(animate);
   }
 
-  function showForTransition(destinationPath) {
-    navigating = true;
-    hidden = false;
-    startedAt = Date.now();
-    window.clearTimeout(hideTimer);
-    loader.classList.remove('is-hidden');
-    loader.removeAttribute('aria-hidden');
-    document.documentElement.classList.add('isuka-loader-enabled');
-    setProgress(0);
-    try {
-      sessionStorage.setItem('isuka-page-loader-transition', JSON.stringify({ to: destinationPath, startedAt }));
-    } catch {}
-    animationFrame = window.requestAnimationFrame(animateProgress);
+  if (!domReady) {
+    document.addEventListener('DOMContentLoaded', () => {
+      domReady = true;
+    }, { once: true });
   }
+  window.requestAnimationFrame(animate);
 
-  if (entry.show) {
-    loader.removeAttribute('aria-hidden');
-    animationFrame = window.requestAnimationFrame(animateProgress);
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', finishWhenReady, { once: true });
-    else finishWhenReady();
-  } else {
-    loader.setAttribute('aria-hidden', 'true');
-  }
+  // A page restored from the back/forward cache should never retain a stale
+  // full-screen overlay.
+  window.addEventListener('pageshow', (event) => {
+    if (!event.persisted) return;
+    hidden = true;
+    loader.classList.add('is-hidden');
+    document.documentElement.classList.remove('isuka-loader-enabled');
+  }, { once: true });
 
-  function shouldAnimateTransition(from, to) {
-    const isHome = (pathname) => pathname === '/' || pathname === '/index.html';
-    const isDashboard = (pathname) => /^\/dashboard(?:\/|$)/.test(pathname);
-    const isLogin = (pathname) => pathname === '/account/login' || pathname === '/account/login/' || pathname === '/admin/login' || pathname === '/admin/login/';
-    return (isHome(from) && isDashboard(to))
-      || (isDashboard(from) && isHome(to))
-      || isLogin(to)
-      || (isLogin(from) && isHome(to));
+  const transitionKey = 'isuka-page-loader-transition';
+  const dashboardPath = (path) => /^\/dashboard(?:\/|$)/.test(path);
+  const loginPath = (path) => /^\/(?:account|admin)\/login\/?$/.test(path);
+  const homePath = (path) => path === '/' || path === '/index.html';
+
+  function shouldAnimate(from, to) {
+    return (homePath(from) && dashboardPath(to))
+      || (dashboardPath(from) && homePath(to))
+      || loginPath(to)
+      || (loginPath(from) && homePath(to));
   }
 
   document.addEventListener('click', (event) => {
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-
-    const logoutAction = event.target.closest('[data-logout], [data-settings-logout], [data-admin-logout]');
-    if (logoutAction) {
-      showForTransition('/');
+    if (!(event.target instanceof Element)) return;
+    const logout = event.target.closest('[data-logout], [data-settings-logout], [data-admin-logout]');
+    if (logout) {
+      try { sessionStorage.setItem(transitionKey, JSON.stringify({ to: '/' })); } catch { /* storage may be disabled */ }
       return;
     }
 
-    if (event.defaultPrevented) return;
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const link = event.target.closest('a[href]');
-    if (link) {
-      if (link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
-      const destination = new URL(link.href, window.location.href);
-      if (destination.origin !== window.location.origin) return;
-      if (destination.pathname === window.location.pathname && destination.search === window.location.search) return;
-      if (shouldAnimateTransition(window.location.pathname, destination.pathname)) showForTransition(destination.pathname);
-    }
-  });
+    if (!link || link.target === '_blank' || link.hasAttribute('download')) return;
 
-  window.addEventListener('pageshow', (event) => {
-    if (event.persisted) {
-      hidden = true;
-      loader.classList.add('is-hidden');
-    }
+    let destination;
+    try { destination = new URL(link.href, window.location.href); } catch { return; }
+    if (destination.origin !== window.location.origin) return;
+    if (!shouldAnimate(window.location.pathname, destination.pathname)) return;
+
+    try {
+      sessionStorage.setItem(transitionKey, JSON.stringify({ to: destination.pathname }));
+    } catch { /* destination will still render normally */ }
   });
 })();

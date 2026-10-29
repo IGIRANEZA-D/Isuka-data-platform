@@ -16,6 +16,8 @@
     showLoader = true;
   }
 
-  window.__isukaLoaderEntry = { show: showLoader, startedAt: transition?.startedAt || Date.now() };
+  // Start the animation on the destination page. Carrying the source-page
+  // timestamp made slow navigations land with the bar already complete.
+  window.__isukaLoaderEntry = { show: showLoader, startedAt: Date.now() };
   if (showLoader) document.documentElement.classList.add('isuka-loader-enabled');
 })();
