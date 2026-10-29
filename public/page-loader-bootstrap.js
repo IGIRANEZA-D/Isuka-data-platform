@@ -3,10 +3,15 @@
   let transition = null;
   let showLoader = false;
 
+  const normalizePath = (pathname) => {
+    if (pathname === '/index.html') return '/';
+    return pathname.replace(/\/+$/, '') || '/';
+  };
+
   try {
     transition = JSON.parse(sessionStorage.getItem(transitionKey) || 'null');
     sessionStorage.removeItem(transitionKey);
-    if (!transition || transition.to !== window.location.pathname) transition = null;
+    if (!transition || normalizePath(transition.to) !== normalizePath(window.location.pathname)) transition = null;
 
     const navigation = performance.getEntriesByType('navigation')[0];
     const hasVisited = sessionStorage.getItem('isuka-page-seen') === '1';

@@ -34,7 +34,7 @@
     try {
       sessionStorage.setItem(transitionKey, JSON.stringify({ to: destination.pathname }));
     } catch { /* destination will still render normally */ }
-  });
+  }, true);
 
   if (!loader || !entry.show) return;
 
