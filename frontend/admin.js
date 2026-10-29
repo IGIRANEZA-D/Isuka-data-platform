@@ -170,13 +170,17 @@ function setupAdminLogin() {
     setAdminNote('');
     try {
       const response = await fetch('/api/admin/login', { method: 'POST', credentials: 'include', cache: 'no-store', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ identity: email, password: passwordValue }) });
-      const result = await response.json();
+      const responseText = await response.text();
+      let result;
+      try { result = JSON.parse(responseText); } catch { result = null; }
       if (!response.ok) {
         if (response.status === 401) {
           setAdminLoginBanner('');
           setAdminNote('Invalid credentials.');
         } else {
-          const message = typeof result.error === 'string' ? result.error : 'Admin sign-in is temporarily unavailable. Please try again shortly.';
+          const message = typeof result?.error === 'string'
+            ? result.error
+            : `Sign-in endpoint returned HTTP ${response.status} without a JSON error. Check the deployment logs.`;
           setAdminLoginBanner(message, 'error');
           setAdminNote(message);
         }

@@ -393,14 +393,16 @@ function hasValidPublicBaseUrl(request) {
 async function requireAccountFeatures(request, response, next) {
   response.set('Cache-Control', 'private, no-store');
   const required = ['MONGODB_URI', 'SESSION_SECRET'];
-  const hasAdminCredentials = Boolean(
-    (process.env.ADMIN_SEED_PHONE || process.env.ADMIN_EMAIL)
-    && (process.env.ADMIN_SEED_PASSWORD || process.env.ADMIN_PASSWORD)
-  );
-  if ((process.env.NODE_ENV === 'production' || process.env.VERCEL)
-    && (required.some((name) => !process.env[name]?.trim()) || !hasValidPublicBaseUrl(request)
-      || (request.baseUrl === '/api/admin' && !hasAdminCredentials))) {
+  const isProduction = process.env.NODE_ENV === 'production' || Boolean(process.env.VERCEL);
+  const hasAdminIdentity = Boolean(String(process.env.ADMIN_SEED_PHONE || process.env.ADMIN_EMAIL || '').trim());
+  const hasAdminPassword = Boolean(String(process.env.ADMIN_SEED_PASSWORD || process.env.ADMIN_PASSWORD || '').trim());
+  if (isProduction && (required.some((name) => !process.env[name]?.trim()) || !hasValidPublicBaseUrl(request))) {
     return response.status(503).set('Retry-After', '60').json({ error: 'This account service is not configured yet.' });
+  }
+  if (isProduction && request.baseUrl === '/api/admin' && (!hasAdminIdentity || !hasAdminPassword)) {
+    return response.status(503).set('Retry-After', '60').json({
+      error: 'Admin sign-in is not configured. Add ADMIN_EMAIL and ADMIN_PASSWORD, or the paired ADMIN_SEED_PHONE and ADMIN_SEED_PASSWORD, to this Vercel project Production environment, then redeploy.'
+    });
   }
   try {
     if (!accountsReadyPromise) accountsReadyPromise = initializeDatabase();
