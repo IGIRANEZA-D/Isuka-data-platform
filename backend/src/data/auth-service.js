@@ -200,11 +200,34 @@ async function loginConfiguredAdmin({ identity, password }) {
   if (!normalizedIdentity) throw new Error('Invalid email or password.');
   const databaseCollections = await initializeDatabase();
   const normalizedEmail = normalizeEmail(normalizedIdentity);
-  const user = await databaseCollections.users.findOne({
+  const adminQuery = {
     $or: [{ email: normalizedEmail }, { phone: normalizedIdentity }],
     role: 'admin'
-  });
+  };
   const passwordValue = String(password || '');
+  let user = await databaseCollections.users.findOne(adminQuery);
+
+  // If account settings deleted the configured admin, restore the admin record
+  // only after the submitted identity and password both match deployment config.
+  if (!user) {
+    const configuredEmail = normalizeEmail(process.env.ADMIN_EMAIL);
+    const configuredPhone = String(process.env.ADMIN_SEED_PHONE || '').trim();
+    const configuredPassword = process.env.ADMIN_SEED_PASSWORD || process.env.ADMIN_PASSWORD || '';
+    const identityMatches = Boolean(
+      (configuredEmail && normalizedEmail === configuredEmail) ||
+      (configuredPhone && normalizedIdentity === configuredPhone)
+    );
+    const suppliedBytes = Buffer.from(passwordValue);
+    const configuredBytes = Buffer.from(String(configuredPassword));
+    const passwordMatches = configuredBytes.length > 0 && suppliedBytes.length === configuredBytes.length &&
+      crypto.timingSafeEqual(suppliedBytes, configuredBytes);
+
+    if (identityMatches && passwordMatches) {
+      await seedAdminUser();
+      user = await databaseCollections.users.findOne(adminQuery);
+    }
+  }
+
   if (!user || !(await verifyPassword(passwordValue, user.passwordHash))) throw new Error('Invalid email or password.');
   await upgradePasswordHash(databaseCollections, user, passwordValue);
   return { user, session: await createSession(user) };
@@ -286,7 +309,6 @@ async function changePassword(user, currentPassword, newPassword) {
 }
 
 async function deleteAccount(user) {
-  if (user.role === 'admin') throw new Error('The admin account cannot be deleted here.');
   const databaseCollections = await initializeDatabase();
 
   const removeAccountData = async (session) => {

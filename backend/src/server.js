@@ -711,9 +711,6 @@ app.post('/api/auth/password', requireUser, async (request, response) => {
 });
 
 app.delete('/api/auth/account', requireUser, async (request, response) => {
-  if (request.user.role === 'admin') {
-    return response.status(403).json({ error: 'Administrator accounts cannot be deleted from account settings.' });
-  }
   try {
     const token = sessionToken(request);
     await deleteAccount(request.user);
