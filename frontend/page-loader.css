@@ -1,0 +1,66 @@
+.isuka-page-loader {
+  position: fixed;
+  z-index: 2147483000;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 18px;
+  padding: 24px;
+  background: #f4f6f1;
+  color: #376d22;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 240ms ease, visibility 240ms ease;
+}
+
+.isuka-page-loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.isuka-page-loader__logo {
+  display: block;
+  width: min(132px, 42vw);
+  height: auto;
+}
+
+.isuka-page-loader__track {
+  width: min(260px, 70vw);
+  height: 5px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(61, 107, 31, .14);
+}
+
+.isuka-page-loader__progress {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: #6fa83c;
+  transition: width 90ms linear;
+}
+
+.isuka-page-loader__status {
+  display: flex;
+  justify-content: space-between;
+  width: min(260px, 70vw);
+  color: #697266;
+  font: 500 12px/1.4 'Work Sans', 'Segoe UI', sans-serif;
+  letter-spacing: .02em;
+}
+
+.isuka-page-loader__status strong {
+  color: #376d22;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .isuka-page-loader,
+  .isuka-page-loader__progress {
+    transition-duration: 100ms;
+  }
+}

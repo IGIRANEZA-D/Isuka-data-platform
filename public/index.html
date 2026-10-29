@@ -11,8 +11,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/landing.css">
   <script src="/landing.js" defer></script>
+  <link rel="stylesheet" href="/page-loader.css">
+  <script src="/page-loader.js" defer></script>
 </head>
 <body>
+  <div class="isuka-page-loader" data-isuka-page-loader role="status" aria-live="polite" aria-label="Loading Isuka">
+    <img class="isuka-page-loader__logo" src="/assets/isuka-logo.png" alt="Isuka">
+    <div class="isuka-page-loader__track" aria-hidden="true"><span class="isuka-page-loader__progress" data-loader-progress></span></div>
+    <div class="isuka-page-loader__status"><span>Loading Isuka</span><strong data-loader-percent>0%</strong></div>
+  </div>
   <header class="site-header">
     <a class="brand" href="/" aria-label="Isuka home">
       <img src="/assets/isuka-logo.png" alt="Isuka">

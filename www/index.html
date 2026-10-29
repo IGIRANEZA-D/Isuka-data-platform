@@ -14,14 +14,6 @@
     html { scroll-behavior: smooth; }
     body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'Work Sans', sans-serif; }
     a { color: inherit; }
-    .app-loader { position: fixed; z-index: 100; inset: 0; display: grid; place-content: center; gap: 18px; padding: 24px; background: #f4f6f1; color: #376d22; transition: opacity 240ms ease, visibility 240ms ease; }
-    .app-loader.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .app-loader-mark { display: grid; place-items: center; min-height: 54px; }
-    .app-loader-mark img { width: 118px; height: auto; }
-    .app-loader-track { width: min(260px, 70vw); height: 5px; overflow: hidden; border-radius: 99px; background: rgba(61,107,31,.14); }
-    .app-loader-track span { display: block; width: 1%; height: 100%; border-radius: inherit; background: #6fa83c; transition: width 80ms linear; }
-    .app-loader-status { display: flex; justify-content: space-between; color: #697266; font-size: 12px; letter-spacing: .02em; }
-    .app-loader-status strong { color: #376d22; font-weight: 700; }
     .site-header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 64px; padding: 0 5.5vw; background: rgba(255,255,255,.94); border-bottom: 1px solid rgba(25,50,24,.08); backdrop-filter: blur(14px); }
     .brand { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px; color: var(--green); text-decoration: none; }
     .brand img { width: 82px; height: auto; }
@@ -209,12 +201,14 @@
     @media (max-width: 520px) { .section { padding: 66px 7vw; } .phone-visual { width: 145px; right: 1vw; } .hero-content { padding-bottom: 140px; } .hero-copy { max-width: 340px; font-size: 15px; } .footer-top { grid-template-columns: 1fr; } .footer-bottom { flex-direction: column; } }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
   </style>
+  <link rel="stylesheet" href="/page-loader.css">
+  <script src="/page-loader.js" defer></script>
 </head>
 <body>
-  <div class="app-loader" data-app-loader aria-live="polite">
-    <div class="app-loader-mark"><img src="isuka-logo.png" alt="Isuka"></div>
-    <div class="app-loader-track"><span data-loader-progress></span></div>
-    <div class="app-loader-status"><span>Loading Isuka</span><strong data-loader-percent>1%</strong></div>
+  <div class="isuka-page-loader" data-isuka-page-loader role="status" aria-live="polite" aria-label="Loading Isuka">
+    <img class="isuka-page-loader__logo" src="/assets/isuka-logo.png" alt="Isuka">
+    <div class="isuka-page-loader__track" aria-hidden="true"><span class="isuka-page-loader__progress" data-loader-progress></span></div>
+    <div class="isuka-page-loader__status"><span>Loading Isuka</span><strong data-loader-percent>0%</strong></div>
   </div>
   <header class="site-header" id="top">
     <a class="brand" href="#top" aria-label="Isuka Agricultural Intelligence System home"><img src="isuka-logo.png" alt="Isuka"><span class="brand-tagline">AGRICULTURAL INTELLIGENCE SYSTEM</span></a>
@@ -309,22 +303,7 @@
 
   <footer class="footer"><div class="footer-top"><div class="footer-partner"><h3>NISR BIG DATA HACKATHON COMPETITION</h3><img class="nisr-footer-logo" src="NISR_LOGO-removebg-preview.png" alt="National Institute of Statistics of Rwanda"></div><section class="team-footer" aria-labelledby="team-name"><div class="team-brand"><h2 class="team-name" id="team-name">The Ciphers</h2></div><p class="team-kicker">The team behind this project</p><div class="team-members"><figure class="team-member"><img src="Obed%20Photo.png" alt="Obed Bugingo"><figcaption><strong>BUGINGO Obed</strong><span>Team Leader</span></figcaption></figure><figure class="team-member"><img src="Aphrodise%20Image.png" alt="Niyirora Aphrodise"><figcaption><strong>NIYIRORA Aphrodise</strong><span>Team Member</span></figcaption></figure></div></section></div><div class="footer-bottom"><span>© 2026 Isuka Agriculture Data Platform. All rights reserved.</span><span><a href="#">Privacy Policy</a> · <a href="#">Cookie Policy</a> · <a class="admin-entry-link" href="/admin/login">Enter as admin</a></span></div></footer>
   <script>
-    const loader = document.querySelector('[data-app-loader]');
-    const progress = loader.querySelector('[data-loader-progress]');
-    const percent = loader.querySelector('[data-loader-percent]');
-    const loaderStartedAt = performance.now();
-    let loaderFinished = false;
-    const finishLoader = () => { if (loaderFinished) return; loaderFinished = true; loader.classList.add('is-hidden'); };
-    function animateLoader(now) {
-      const value = Math.min(100, Math.max(1, Math.round(((now - loaderStartedAt) / 460) * 100)));
-      progress.style.width = `${value}%`;
-      percent.textContent = `${value}%`;
-      if (value < 100) window.requestAnimationFrame(animateLoader);
-      else finishLoader();
-    }
-    window.requestAnimationFrame(animateLoader);
-    window.setTimeout(finishLoader, 1600);
-    const landingChart = document.querySelector('[data-landing-chart]');
+const landingChart = document.querySelector('[data-landing-chart]');
     const trendPeriod = document.querySelector('[data-trend-period]');
     const trendDistricts = document.querySelector('[data-trend-districts]');
     const trendProduction = document.querySelector('[data-trend-production]');

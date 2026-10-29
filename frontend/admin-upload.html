@@ -5,8 +5,15 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1.0">
 	<title>Isuka | Upload Data</title>
 	<link rel="stylesheet" href="/admin.css">
+  <link rel="stylesheet" href="/page-loader.css">
+  <script src="/page-loader.js" defer></script>
 </head>
 <body class="admin-upload-page">
+  <div class="isuka-page-loader" data-isuka-page-loader role="status" aria-live="polite" aria-label="Loading Isuka">
+    <img class="isuka-page-loader__logo" src="/assets/isuka-logo.png" alt="Isuka">
+    <div class="isuka-page-loader__track" aria-hidden="true"><span class="isuka-page-loader__progress" data-loader-progress></span></div>
+    <div class="isuka-page-loader__status"><span>Loading Isuka</span><strong data-loader-percent>0%</strong></div>
+  </div>
 	<div class="admin-shell">
 		<aside class="admin-sidebar">
 			<a class="admin-brand" href="/"><img src="/assets/Logo%20in%20white.png" alt="Isuka">Admin</a>

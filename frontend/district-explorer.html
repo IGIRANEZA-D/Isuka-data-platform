@@ -6,8 +6,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/district-explorer.css"><link rel="stylesheet" href="/rwanda-map.css"><link rel="stylesheet" href="/assistant/assistant.css">
+  <link rel="stylesheet" href="/page-loader.css">
+  <script src="/page-loader.js" defer></script>
 </head>
-<body><div class="dashboard-shell">
+<body>
+  <div class="isuka-page-loader" data-isuka-page-loader role="status" aria-live="polite" aria-label="Loading Isuka">
+    <img class="isuka-page-loader__logo" src="/assets/isuka-logo.png" alt="Isuka">
+    <div class="isuka-page-loader__track" aria-hidden="true"><span class="isuka-page-loader__progress" data-loader-progress></span></div>
+    <div class="isuka-page-loader__status"><span>Loading Isuka</span><strong data-loader-percent>0%</strong></div>
+  </div><div class="dashboard-shell">
   <aside class="sidebar" aria-label="Sidebar navigation"><div class="sidebar-inner"><div class="sidebar-header"><img src="/assets/Logo%20in%20white.png" alt="Isuka logo" class="sidebar-logo"><div class="sidebar-title">Data Hub</div><p class="sidebar-subtitle">Select a lens to explore Rwanda's agricultural metrics.</p></div><nav class="sidebar-nav" aria-label="Main navigation">
     <a class="nav-item" href="/dashboard/"><span class="nav-icon">▦</span><span class="nav-label">Overview</span><span class="nav-chevron">›</span></a><a class="nav-item" href="/dashboard/land-crops/"><span class="nav-icon">◇</span><span class="nav-label">Land &amp; Crops</span><span class="nav-chevron">›</span></a><a class="nav-item" href="/dashboard/climate-risk/"><span class="nav-icon">♆</span><span class="nav-label">Climate &amp; Risk</span><span class="nav-chevron">›</span></a><a class="nav-item" href="/dashboard/inputs-practices/"><span class="nav-icon">▤</span><span class="nav-label">Inputs &amp; Practices</span><span class="nav-chevron">›</span></a><a class="nav-item active" href="/dashboard/district-explorer/"><span class="nav-icon">⌖</span><span class="nav-label">District Explorer</span><span class="nav-chevron">›</span></a><a class="nav-item" href="/dashboard/forecasting/"><span class="nav-icon">↗</span><span class="nav-label">Forecasting</span><span class="nav-chevron">›</span></a><a class="nav-item" href="/dashboard/loss-planner/"><span class="nav-icon">▧</span><span class="nav-label">Loss Planner</span><span class="nav-chevron">›</span></a>
   </nav><div class="sidebar-spacer"></div><div class="info-card"><div class="info-header"><span class="info-icon">i</span><span class="info-label">PUBLIC INFORMATION</span></div><p class="info-body">Data sourced from NISR Seasonal Agricultural Survey, 2020–2025.</p></div><button class="collapse-toggle" type="button" aria-label="Collapse sidebar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6l6 6-6 6"/></svg></button></div></aside>
