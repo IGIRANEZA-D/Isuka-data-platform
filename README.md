@@ -1,8 +1,16 @@
+<table align="center">
+  <tr>
+    <td align="center" valign="middle">
+      <img src="www/isuka-logo.png" width="190" alt="Isuka logo">
+    </td>
+    <td align="left" valign="middle">
+      <h1>ISUKA</h1>
+      <h3>Agricultural Data Intelligence<br>for Rwanda</h3>
+    </td>
+  </tr>
+</table>
+
 <div align="center">
-
-# ISUKA
-
-### Agricultural Data Intelligence for Rwanda
 
 **Know where the harvest goes.**
 
