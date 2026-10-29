@@ -1,11 +1,11 @@
 <table align="center">
   <tr>
     <td align="center" valign="middle">
-      <img src="www/isuka-logo.png" width="190" alt="Isuka logo">
+      <img src="www/isuka-white-logo-panel.png" width="210" alt="White Isuka logo on a deep green panel">
     </td>
     <td align="left" valign="middle">
-      <h1>ISUKA</h1>
-      <h3>Agricultural Data Intelligence<br>for Rwanda</h3>
+      <h2>Agricultural Data Intelligence<br>for Rwanda</h2>
+      <sub>National survey evidence · District-level insight</sub>
     </td>
   </tr>
 </table>
