@@ -57,7 +57,6 @@
 
   function open() {
     if (!overlay) build();
-    overlay.querySelector('.isuka-assistant-context').textContent = contextText();
     overlay.hidden = false;
     requestAnimationFrame(() => overlay.classList.add('open'));
     overlay.querySelector('.isuka-assistant-close').focus();
@@ -91,7 +90,6 @@
       '<strong>Ask Isuka</strong>',
       '<button type="button" class="isuka-assistant-close" aria-label="Close">×</button>',
       '</header>',
-      '<div class="isuka-assistant-context"></div>',
       '<nav class="isuka-assistant-tabs" aria-label="Mode">',
       '<button type="button" data-tab="ask" aria-selected="true">Ask</button>',
       '<button type="button" data-tab="form" aria-selected="false">Build</button>',
