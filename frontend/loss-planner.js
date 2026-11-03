@@ -330,10 +330,10 @@ function currentPeriodText() {
 }
 
 function formatMoneyLabel(result) {
-  if (result.totals.priceBasis === 'district') return 'District median price';
-  if (result.totals.priceBasis === 'national') return 'National crop price';
-  if (result.totals.priceBasis === 'mixed') return 'District and national prices';
-  return 'No price available';
+  if (result.totals.priceBasis === 'district') return 'District price';
+  if (result.totals.priceBasis === 'national') return 'National price';
+  if (result.totals.priceBasis === 'mixed') return 'Mixed prices';
+  return 'Price unavailable';
 }
 
 function animateTonnes(value) {
@@ -369,18 +369,18 @@ function renderAnswer(result) {
   elements.empty.hidden = !empty;
   elements.slider.disabled = empty;
   animateTonnes(empty ? null : totals.recoveredKg);
-  elements.answerValue.textContent = totals.valueRwf === null ? 'Value not available' : `about ${formatRwf(totals.valueRwf)}`;
+  elements.answerValue.textContent = totals.valueRwf === null ? 'Value unavailable' : formatRwf(totals.valueRwf);
   elements.answerValue.classList.toggle('is-muted', totals.valueRwf === null);
   elements.answerSacks.textContent = totals.recoveredKg >= 0 ? `about ${formatSacks(totals.recoveredKg)} of 50 kg` : 'Not available';
   elements.answerSentence.textContent = `${state.reductionPct}% reduction | ${selectedName} | ${districtText}`;
-  elements.rangeLine.textContent = `20%: ${toTonnes(range20?.totals.recoveredKg)} | 40%: ${toTonnes(range40?.totals.recoveredKg)}`;
+  elements.rangeLine.textContent = `20% -> ${toTonnes(range20?.totals.recoveredKg)} | 40% -> ${toTonnes(range40?.totals.recoveredKg)}`;
   const band = coverageBand(totals.coveragePct);
-  const coverageText = Number.isFinite(totals.coveragePct) ? `${band[0].toUpperCase()}${band.slice(1)} · ${totals.coveragePct.toFixed(1)}% stage-data coverage` : 'Coverage not available';
-  elements.answerChips.innerHTML = `<span class="lp-chip ${band === 'high' ? 'is-high' : band === 'unavailable' ? '' : 'is-medium'}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 7 3v5c0 4.6-3 8.3-7 10-4-1.7-7-5.4-7-10V6l7-3Z"/><path d="m8.5 12 2.3 2.3 4.8-5"/></svg>Coverage: ${escapeHtml(coverageText)}</span><span class="lp-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v10m3-7H9m6 4H9"/></svg>${escapeHtml(formatMoneyLabel(result))}</span><span class="lp-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v7c0 1.7 3.1 3 7 3s7-1.3 7-3V5M5 12v7c0 1.7 3.1 3 7 3s7-1.3 7-3v-7"/></svg>${escapeHtml(formatCount(totals.includedRecords))} survey records</span>`;
+  const coverageText = Number.isFinite(totals.coveragePct) ? `${totals.coveragePct.toFixed(1)}% coverage` : 'Coverage unavailable';
+  elements.answerChips.innerHTML = `<span class="lp-chip ${band === 'high' ? 'is-high' : band === 'unavailable' ? '' : 'is-medium'}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 7 3v5c0 4.6-3 8.3-7 10-4-1.7-7-5.4-7-10V6l7-3Z"/><path d="m8.5 12 2.3 2.3 4.8-5"/></svg>${escapeHtml(coverageText)}</span><span class="lp-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v10m3-7H9m6 4H9"/></svg>${escapeHtml(formatMoneyLabel(result))}</span><span class="lp-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v7c0 1.7 3.1 3 7 3s7-1.3 7-3V5M5 12v7c0 1.7 3.1 3 7 3s7-1.3 7-3v-7"/></svg>${escapeHtml(formatCount(totals.includedRecords))} records</span>`;
   elements.lowCoverage.hidden = band !== 'low';
   elements.suppressed.hidden = totals.suppressedCount === 0;
-  if (totals.suppressedCount) elements.suppressed.textContent = `${formatCount(totals.suppressedCount)} crop-district groups omitted (<${baseline.meta.minRecords} records).`;
-  elements.disclaimer.textContent = `Scenario estimate | NISR survey | ${currentPeriodText()} | not a forecast`;
+  if (totals.suppressedCount) elements.suppressed.textContent = `${formatCount(totals.suppressedCount)} groups omitted (<${baseline.meta.minRecords} records).`;
+  elements.disclaimer.textContent = `Scenario estimate | NISR | ${currentPeriodText()} | not a forecast`;
   announce(`${elements.answerTonnes.textContent} estimated harvest saved. Coverage ${coverageText}.`);
 }
 

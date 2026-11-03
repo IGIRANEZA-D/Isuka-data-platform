@@ -246,7 +246,6 @@ function renderOverview(overview) {
 }
 
 function setupSidebar() {
-  elements.collapseToggle.addEventListener('click', () => elements.sidebar.classList.toggle('collapsed'));
   const refresh = async () => {
     elements.filterBar.classList.add('is-loading');
     elements.filterStatus.textContent = 'Updating insights...';

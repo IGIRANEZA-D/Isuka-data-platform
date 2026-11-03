@@ -142,7 +142,6 @@ async function renderMap() {
 }
 
 async function init() {
-  elements.collapse.addEventListener('click', () => elements.sidebar.classList.toggle('collapsed'));
   elements.district.addEventListener('change', () => renderSelection().catch(showError));
   elements.crop.addEventListener('change', () => renderSelection().catch(showError));
   forecastFilterReset.addEventListener('click', () => { elements.district.value = 'all'; elements.crop.value = 'all'; forecastFilterStatus.textContent = 'Reset to national view'; renderSelection().catch(showError); });

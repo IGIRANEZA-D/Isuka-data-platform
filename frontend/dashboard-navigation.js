@@ -35,8 +35,9 @@ if (dashboardSidebar && dashboardSidebarToggle) {
     requestAnimationFrame(() => dashboardSidebar.classList.remove('sidebar-state-restoring'));
   }
   updateSidebarState(dashboardSidebar, dashboardSidebarToggle);
-  document.addEventListener('click', (event) => {
-    if (event.target.closest('.collapse-toggle')) updateSidebarState(dashboardSidebar, dashboardSidebarToggle, true);
+  dashboardSidebarToggle.addEventListener('click', () => {
+    dashboardSidebar.classList.toggle('collapsed');
+    updateSidebarState(dashboardSidebar, dashboardSidebarToggle, true);
   });
 }
 

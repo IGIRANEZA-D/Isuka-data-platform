@@ -75,7 +75,6 @@ function renderForecastStatistics(cache) {
   document.querySelector('[data-naive-baseline-note]').textContent = `On the ${backtest.holdoutPeriods || '2025 holdout'}, the ensemble matched ${displayPercent(backtest.riskTierMatchPercent, 2)} of risk tiers with ${Number.isFinite(backtest.lossMaePercent) ? `${backtest.lossMaePercent.toFixed(2)} pp` : 'Not available'} loss MAE; the most-common-tier baseline matched ${displayPercent(commonTier.tierMatchPercent, 2)} with ${Number.isFinite(commonTier.lossMaePercent) ? `${commonTier.lossMaePercent.toFixed(2)} pp` : 'Not available'} MAE, and the last-observed baseline matched ${displayPercent(lastObserved.tierMatchPercent, 2)} with ${Number.isFinite(lastObserved.lossMaePercent) ? `${lastObserved.lossMaePercent.toFixed(2)} pp` : 'Not available'} MAE.`;
 }
 
-document.querySelector('.collapse-toggle')?.addEventListener('click', () => document.querySelector('.sidebar')?.classList.toggle('collapsed'));
 revealCards();
 fetch('/api/metadata').then((response) => response.ok ? response.json() : Promise.reject(new Error('Metadata unavailable'))).then(renderLibrary).catch(renderFallbackLibrary);
 fetch('/api/forecast?model=ensemble').then((response) => response.ok ? response.json() : Promise.reject(new Error('Forecast statistics unavailable'))).then(renderForecastStatistics).catch(() => {});

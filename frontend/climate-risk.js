@@ -41,6 +41,5 @@ elements.district.addEventListener('change', () => { selectedFilter = elements.d
 elements.filterReset.addEventListener('click', () => { selectedFilter = 'all'; selectedKey = undefined; elements.year.value = 'all'; elements.district.value = 'all'; applyDistrictFilter(); if (boundaryLayer) boundaryLayer.eachLayer((layer) => layer.setStyle(defaultStyle(layer.feature))); render().catch(showError); });
 elements.previous.addEventListener('click', () => { tablePage -= 1; renderTable(); });
 elements.next.addEventListener('click', () => { tablePage += 1; renderTable(); });
-elements.collapse.addEventListener('click', () => elements.sidebar.classList.toggle('collapsed'));
 function showError(error) { elements.mapStatus.textContent = 'Data unavailable'; elements.registerStatus.textContent = error.message; }
 render().catch(showError);
