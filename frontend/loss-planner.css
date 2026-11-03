@@ -307,6 +307,7 @@
 .lp-kicker { margin-bottom:2px; font-size:9px; }
 .lp-example { padding:5px 9px; font-size:10px; }
 .lp-filter-toolbar { gap:10px; padding:0; border:0; background:transparent; }
+.lp-filter-toolbar.is-pinned { border:1px solid #dbe5d5; border-radius:10px; background:#f8faf6; box-shadow:0 10px 28px rgba(31,46,23,.16); }
 .lp-field { gap:5px; }
 .lp-field label,.lp-reduction-heading label { font-size:10px; }
 .lp-field select,.lp-select-pill { min-height:40px; padding:7px 10px; border-color:#d8e2d2; border-radius:7px; font-size:12px; }
