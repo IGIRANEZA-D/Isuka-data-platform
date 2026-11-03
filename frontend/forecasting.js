@@ -16,6 +16,15 @@ const key = (value) => String(value || '').toLowerCase().replace(/[^a-z]/g,'').r
 const riskColor = (tier) => tier==='high'?'#a83c3c':tier==='moderate'?'#c08a3e':'#6fa83c';
 const modelEntry = (entry) => entry?.models?.[activeModel] || {};
 const futureModel = (period) => period?.productionKg !== undefined ? period : period?.models?.[activeModel] || {};
+function boundaryCollection(artifact) {
+  if(!Array.isArray(artifact?.districts)||artifact.districts.length!==30)throw new Error(`District boundary data is incomplete (${artifact?.districts?.length||0} of 30).`);
+  const degreesPerMap=2.1;
+  return {type:'FeatureCollection',features:artifact.districts.map((district)=>{
+    const polygons=district.polygons.map((polygon)=>polygon.map((ring)=>ring.map(([x,y])=>[29.87+(x-.5)*degreesPerMap,-1.94-(y-.5)*degreesPerMap])));
+    const isPolygon=polygons.length===1;
+    return {type:'Feature',properties:{district:district.name,name:district.name,code_dist:district.code},geometry:{type:isPolygon?'Polygon':'MultiPolygon',coordinates:isPolygon?polygons[0]:polygons}};
+  })};
+}
 function filteredForecasts() { return cache.forecasts.filter((item)=>(elements.district.value==='all'||item.districtCode===elements.district.value)&&(elements.crop.value==='all'||item.cropCode===elements.crop.value)); }
 function selectedForecast() { return filteredForecasts()[0]; }
 function updateSelectors() {
@@ -93,7 +102,7 @@ async function renderMap() {
   const version=++mapRenderVersion, visibleForecasts=cache?filteredForecasts():[];
   elements.mapStatus.textContent=cache?'Updating map':'Loading district boundaries...';
   if(!window.L)throw new Error('District map renderer unavailable.');
-  if(!boundaryDataPromise)boundaryDataPromise=fetch('/api/rwanda-districts',{cache:'no-store',signal:AbortSignal.timeout(15000)}).then((response)=>{if(!response.ok)throw new Error(`District boundary service returned ${response.status}`);return response.json();}).then((geojson)=>{if(!Array.isArray(geojson.features)||geojson.features.length!==30)throw new Error(`District boundary data is incomplete (${geojson.features?.length||0} of 30).`);return geojson;}).catch((error)=>{boundaryDataPromise=null;throw error;});
+  if(!boundaryDataPromise)boundaryDataPromise=fetch('/data/landing-art.json',{cache:'force-cache',signal:AbortSignal.timeout(10000)}).then((response)=>{if(!response.ok)throw new Error(`District map asset returned ${response.status}`);return response.json();}).then(boundaryCollection).catch((error)=>{boundaryDataPromise=null;throw error;});
   const geojson=await boundaryDataPromise; if(version!==mapRenderVersion)return;
   const totals=new Map(); visibleForecasts.forEach((entry)=>{const data=futureModel(entry.future?.[0]||entry), productionKg=Number(data.productionKg), lossPercent=Number(data.lossPercent);if(!Number.isFinite(productionKg)||!Number.isFinite(lossPercent))return;const k=key(entry.districtCode),row=totals.get(k)||{productionKg:0,weightedLoss:0,cropCount:0};row.productionKg+=productionKg;row.weightedLoss+=productionKg*lossPercent;row.cropCount++;totals.set(k,row);});
   const forecastByDistrict=new Map([...totals].map(([k,row])=>{const lossPercent=row.productionKg?row.weightedLoss/row.productionKg:null;return[k,{...row,lossPercent,riskTier:lossPercent>=30?'high':lossPercent>=15?'moderate':'low'}]}));
