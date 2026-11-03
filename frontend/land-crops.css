@@ -8,7 +8,7 @@
 .land-kpis article { min-width:0; min-height:158px; padding:19px 20px; border:1px solid #dce7d7; border-radius:14px; background:linear-gradient(140deg,#fff 0%,#fff 58%,#f5f9f1 100%); box-shadow:0 5px 18px rgba(31,46,23,.045); transition:border-color 180ms ease,box-shadow 180ms ease; }
 .land-kpis article:hover { border-color:#bfd3b3; box-shadow:0 9px 24px rgba(31,46,23,.085); }
 .land-kpi-heading { display:flex; min-height:36px; align-items:center; gap:11px; }
-.land-kpi-icon { display:grid; width:36px; height:36px; flex:0 0 36px; place-items:center; border:1px solid #e1ebdc; border-radius:11px; background:#eff5eb; color:var(--green); }
+.land-kpi-icon { display:grid; width:36px; height:36px; flex:0 0 36px; place-items:center; border:1px solid rgba(255,255,255,.58); border-radius:11px; background:rgba(255,255,255,.15); color:#fff; }
 .land-kpi-icon svg { width:19px; height:19px; }
 .metric-label { display:block; min-width:0; color:#64715f; font-size:10px; font-weight:700; line-height:1.35; text-transform:uppercase; letter-spacing:.075em; }
 .land-kpis strong { display:block; margin:17px 0 3px; color:#25451d; font:700 clamp(25px,2vw,30px)/1.1 'Baloo 2',sans-serif; font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
