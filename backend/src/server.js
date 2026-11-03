@@ -40,7 +40,7 @@ const {
   normalizeProfileUpdate
 } = require('./data/auth-service');
 const { sendPasswordResetEmail } = require('./data/mailer');
-const { getWeather, askAssistant, reviewDatasetWithAI, saveAssistantMessage } = require('./data/providers');
+const { getWeather, askAssistant, answerProjectQuestion, reviewDatasetWithAI, saveAssistantMessage } = require('./data/providers');
 const { buildLandingSummary } = require('./data/landing-summary');
 const { getWeatherForecast, getRwandaWeather, validateCoordinates } = require('./data/weather-service');
 const { findRwandaDistrict } = require('./data/rwanda-locations');
@@ -462,18 +462,93 @@ app.get('/api/data/export.csv', publicDataLimiter, (request, response) => {
   response.set('Content-Type','text/csv; charset=utf-8').set('Content-Disposition',`attachment; filename="${slug}.csv"`);
   if(request.acceptsEncodings('gzip'))response.vary('Accept-Encoding').set('Content-Encoding','gzip').send(gzipSync(csv));else response.send(csv);
 });
+function isExplicitBuildRequest(text) {
+  if (isProjectExplanationQuestion(text)) return false;
+  return /\b(?:build|create|generate|make|visuali[sz]e|draw)\b.{0,60}\b(?:chart|graph|plot|visualization|table|dashboard)\b|\b(?:show|display|give)\s+(?:me\s+)?(?:a\s+|the\s+|this\s+)?(?:chart|graph|plot|visualization|table)\b|\b(?:as|in)\s+(?:a\s+)?(?:chart|graph|table)\b|\b(?:plot|graph)\s+(?:the\s+)?(?:production|yield|area|loss|harvest|data)\b|\b(?:i\s+want|i\s+need)\s+(?:a\s+)?(?:chart|graph|plot|visualization|table)\b|\bput\b.+\b(?:on|into)\s+(?:the\s+)?dashboard\b/i.test(text);
+}
+function isProjectExplanationQuestion(text, request) {
+  const asksForExplanation = /\b(?:what(?:'s|\s+is|\s+are|\s+does|\s+do|\s+can)|tell\s+me\s+about|describe|define|meaning\s+of|explain|how\s+(?:is|are|does|do|can)|why\s+(?:is|are|does|do))\b/i.test(text);
+  const asksForData = /\b(?:how\s+much|how\s+many|total|average|mean|highest|top|lowest|amount|percentage|percent|compare|trend|over\s+time|which\s+(?:district|crop)|by\s+(?:district|year|season|stage)|20(?:2[0-5]))\b/i.test(text);
+  const asksForMeasure = /\b(?:production|produce[sd]?|yield|area|hectares?|loss|tonnes?|tons?)\b/i.test(text);
+  const scopedDataRequest = asksForMeasure && request
+    && (request.crop !== 'all' || request.districts !== 'all' || request.breakdown !== 'none' || /20(?:2[0-5])/.test(text));
+  return asksForExplanation && !asksForData && !scopedDataRequest;
+}
+function isGeneralFarmAdviceQuestion(text) {
+  return /\b(?:what\s+should\s+i|should\s+i|how\s+should\s+i|how\s+do\s+i|how\s+can\s+i)\s+(?:plant|grow|treat|control|spray|fertili[sz]e|water|irrigate)\b|\b(?:recommend|diagnos(?:e|is)|pest\s+control|crop\s+disease|fertili[sz]er|pesticide|livestock|animal\s+health)\b/i.test(text);
+}
+function formatAssistantMetricValue(row, metric) {
+  if (row.status !== 'ok' || !Number.isFinite(Number(row.value))) return 'not available';
+  const value = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(Number(row.value));
+  return metric === 'lossRate' ? `${value}%` : `${value} ${row.unit || METRICS[metric]?.unit || ''}`.trim();
+}
+function summarizeAssistantData(result, catalog) {
+  const validRows = result.rows.filter((row) => row.status === 'ok');
+  const metric = METRICS[result.request.metric]?.label || 'Survey result';
+  const years = result.request.years.length > 2
+    && result.request.years.every((year, index, list) => index === 0 || Number(year) === Number(list[index - 1]) + 1)
+    ? `${result.request.years[0]}-${result.request.years.at(-1)}`
+    : result.request.years.join(', ');
+  const seasons = result.request.seasons.length === 3 ? 'all seasons' : result.request.seasons.map((season) => `Season ${season}`).join(', ');
+  const crop = result.request.crop === 'all' ? '' : catalog.crops.find((item) => item.code === result.request.crop)?.name;
+  const districts = result.request.districts === 'all' ? '' : result.request.districts.map((code) => catalog.districts.find((item) => item.code === code)?.name || code).join(', ');
+  const selection = [crop && `for ${crop}`, districts && `in ${districts}`, `${years}; ${seasons}`].filter(Boolean).join(' | ');
+  const title = `${metric} | ${selection}`;
+  if (!validRows.length) return `I couldn't find enough published survey data for ${title}. Try another crop, district, year, or season.`;
+  let summary;
+  if (validRows.length === 1) {
+    summary = `${title}: ${formatAssistantMetricValue(validRows[0], result.request.metric)}.`;
+  } else if (result.request.breakdown === 'year') {
+    const series = [...validRows].sort((left, right) => Number(left.label) - Number(right.label));
+    const first = series[0];
+    const last = series.at(-1);
+    const change = Number(first.value) === 0 ? null : (Number(last.value) - Number(first.value)) / Math.abs(Number(first.value)) * 100;
+    const direction = change === null ? '' : change > 0.05 ? `, up ${Math.abs(change).toFixed(1)}%` : change < -0.05 ? `, down ${Math.abs(change).toFixed(1)}%` : ', broadly unchanged';
+    summary = `${title}: ${first.label}, ${formatAssistantMetricValue(first, result.request.metric)}; ${last.label}, ${formatAssistantMetricValue(last, result.request.metric)}${direction}.`;
+  } else {
+    const leaders = [...validRows].sort((left, right) => Number(right.value) - Number(left.value)).slice(0, 3);
+    summary = `${title}. Highest values: ${leaders.map((row) => `${row.label}, ${formatAssistantMetricValue(row, result.request.metric)}`).join('; ')}.`;
+    if (validRows.length > leaders.length) summary += ` ${validRows.length} groups have usable data.`;
+  }
+  if (result.meta?.suppressedCells) summary += ' Some groups are hidden where survey counts are too small.';
+  if (result.caveats?.includes('Loss figures are recorded losses, not total waste.')) summary += ' This is recorded loss, not total waste.';
+  summary += ` Source: NISR Seasonal Agricultural Survey (${result.meta?.periods?.join(', ') || 'selected period'}).`;
+  return summary;
+}
 app.post('/api/assistant', assistantLimiter, async (request, response) => {
   const requestId = request.requestId;
   const text = typeof request.body?.text === 'string' ? request.body.text.trim().slice(0,300) : '';
   const parsedOutput = await parseAssistantQuestion(text, assistantCatalog());
   const parsed = parsedOutput.parsed;
+  const farmAdviceQuestion = isGeneralFarmAdviceQuestion(text);
+  const wantsProjectExplanation = !parsed.clarification
+    && (parsed.refusal || !parsed.request || (!isExplicitBuildRequest(text) && isProjectExplanationQuestion(text, parsed.request)));
+  if (!parsed.greeting && (farmAdviceQuestion || wantsProjectExplanation)) {
+    try {
+      const catalog = assistantCatalog();
+      const answer = await answerProjectQuestion(text, {
+        platform: 'Isuka Data Platform, a Rwanda agricultural data intelligence project',
+        source: 'NISR Seasonal Agricultural Survey aggregates',
+        years: catalog.years,
+        crops: catalog.crops.map((item) => item.name),
+        districts: catalog.districts.map((item) => item.name),
+        sections: ['Overview', 'Land & Crops', 'Climate & Risk', 'Inputs & Practices', 'District Explorer', 'Forecasting', 'Loss Planner'],
+        measures: Object.values(METRICS).map((item) => item.label)
+      });
+      return sendAssistantJson(request,response,{ result:{ answer }, parserUsed:'project-answer', requestId });
+    } catch (error) {
+      log.warn({ event: 'public_project_answer_unavailable', requestId, errorName: error?.name || 'Error' });
+      return sendAssistantJson(request,response,{ result:{ answer:'I can answer questions about Isuka’s platform, NISR survey data, dashboard features, or calculation methods. The project answer service is unavailable right now; please try again shortly.' }, parserUsed:'project-answer', requestId });
+    }
+  }
   if (parsed.greeting) return sendAssistantJson(request,response,{ result:{ greeting:true, message:'Ask about NISR survey data (2020–2025): crops, districts, production, area, yield, or recorded loss.' }, parserUsed:'deterministic', requestId });
-  if (parsed.refusal) return sendAssistantJson(request,response,{ result:{ refusal:true, message:'I can answer questions about NISR survey data 2020-2025. For farming advice, please contact your local RAB extension officer.' }, parserUsed:'deterministic', requestId });
+  if (parsed.refusal) return sendAssistantJson(request,response,{ result:{ refusal:true, message:'I can help with the Isuka platform, its Rwanda agricultural survey data, dashboard features, and calculation methods.' }, parserUsed:'deterministic', requestId });
   if (parsed.clarification) return sendAssistantJson(request,response,{ result:parsed.clarification, parserUsed:'deterministic', requestId });
   const result = requestQuery(parsed.request, request);
   if (result.errors) return response.status(400).json({ error:result.errors[0].code, requestId });
   if (parsedOutput.parserUsed === 'deterministic' && parsed.reviewNote) result.caveats.push(parsed.reviewNote);
   if (Array.isArray(parsed.related) && parsed.related.length) result.related = parsed.related;
+  if (!isExplicitBuildRequest(text)) return sendAssistantJson(request,response,{ result:{ answer:summarizeAssistantData(result, assistantCatalog()) }, parserUsed:'deterministic-answer', requestId });
   sendAssistantJson(request,response,{ result, parserUsed:parsedOutput.parserUsed, requestId });
 });
 const sessionCookie = { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 14 * 24 * 60 * 60 * 1000, path: '/' };

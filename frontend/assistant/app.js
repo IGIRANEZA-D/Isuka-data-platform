@@ -170,22 +170,22 @@
     const page = shortPageName();
     const out = [];
     if (covered('all', [2025])) {
-      out.push(['Production by district, 2025', {
+      out.push(['Chart: production by district, 2025', {
         metric: 'production', crop: 'all', districts: 'all', years: ['2025'], seasons: 'all', breakdown: 'district'
       }]);
     }
     if (maize && covered(maize.code, [2020, 2021, 2022, 2023, 2024, 2025])) {
-      out.push([`${maize.name} production, 2020–2025`, {
+      out.push([`Chart: ${maize.name} production, 2020–2025`, {
         metric: 'production', crop: maize.code, districts: 'all',
         years: ['2020', '2021', '2022', '2023', '2024', '2025'], seasons: 'all', breakdown: 'year'
       }]);
     }
     if (/Climate|Loss/i.test(page) && covered('all', [2025])) {
-      out.push(['Recorded loss by district', {
+      out.push(['Chart: recorded loss by district', {
         metric: 'lossRate', crop: 'all', districts: 'all', years: ['2025'], seasons: 'all', breakdown: 'district'
       }]);
     } else if (covered('all', [2025]) && out.length < 2) {
-      out.push(['Recorded loss by district', {
+      out.push(['Chart: recorded loss by district', {
         metric: 'lossRate', crop: 'all', districts: 'all', years: ['2025'], seasons: 'all', breakdown: 'district'
       }]);
     }
@@ -211,7 +211,7 @@
     const heading = document.createElement('strong');
     heading.textContent = 'What do you need?';
     const line = document.createElement('span');
-    line.textContent = 'Ask in your own words — charts, production, yield, area, or recorded loss.';
+    line.textContent = 'Ask about Isuka data, methods or features. Request a chart or table when you want one.';
     welcome.append(heading, line);
     empty.append(welcome);
 
@@ -238,8 +238,8 @@
     input.name = 'question';
     input.maxLength = 300;
     input.autocomplete = 'off';
-    input.placeholder = 'Ask anything about the survey data…';
-    input.setAttribute('aria-label', 'Ask a question about survey data');
+    input.placeholder = 'Ask about Isuka data or the project…';
+    input.setAttribute('aria-label', 'Ask about Isuka data or the project');
     const send = document.createElement('button');
     send.type = 'submit';
     send.textContent = 'Send';
@@ -414,7 +414,7 @@
     const controller = aborter;
     appendUser(log, question);
     const slot = appendAssistantSlot(log);
-    const timer = setTimeout(() => controller.abort(), 12000);
+    const timer = setTimeout(() => controller.abort(), 27000);
     try {
       const response = await fetch(`${API}/assistant`, {
         method: 'POST',
@@ -423,6 +423,13 @@
         signal: controller.signal
       });
       const data = await response.json();
+      if (typeof data.result?.answer === 'string') {
+        const answer = document.createElement('p');
+        answer.className = 'isuka-assistant-note isuka-assistant-conversation-answer';
+        slot.replaceChildren(answer);
+        revealText(answer, data.result.answer, () => scrollAsk(log));
+        return;
+      }
       if (data.result?.greeting || data.result?.refusal) {
         const note = document.createElement('p');
         note.className = 'isuka-assistant-note';

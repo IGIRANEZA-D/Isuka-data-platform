@@ -160,7 +160,7 @@ function parseQuestion(text, catalog) {
   if(!uniqueMetrics.length&&/\b(chart|graph|plot|show|give)\b/.test(n))uniqueMetrics=['production'];
   if(!uniqueMetrics.length)uniqueMetrics=['production'];
   let metric=uniqueMetrics[0];
-  const breakdown=/by district|districts/.test(n)?'district':/by season/.test(n)?'season':/by stage/.test(n)||metric==='lossByStage'?'stage':/trend|over time|by year/.test(n)?'year':'none';
+  const breakdown=/by districts?|which districts?|districts?\s+(?:with|has|have)/.test(n)?'district':/by crops?|which crops?|top crops?|crops?\s+(?:with|has|have)/.test(n)?'crop':/by season/.test(n)?'season':/by stage/.test(n)||metric==='lossByStage'?'stage':/trend|over time|by year/.test(n)?'year':'none';
   if (!cropHit&&!districtHit&&!years.length&&!season&&breakdown==='none'&&!/production|loss|yield|area|crop|survey|harvest|chart|graph|tonnes?|tons?/.test(n)) return {refusal:true};
   if ((!cropHit && !districtHit && !years.length && !/production|loss|yield|area|crop|chart|graph|tonnes?|tons?/.test(n)) || (!cropHit&&!districtHit&&!years.length&&!season&&breakdown==='none'&&uniqueMetrics.length===1&&metric==='production'&&!/production|harvest|tonnes?|tons?|chart|graph|show|give|how much/.test(n))) return { clarification:{ question:'Which crop, district, or measure should I look up?', options:catalog.crops.slice(0,3).map(c=>({label:c.name,request:{metric:'production',crop:c.code,districts:'all',years:['2025'],seasons:'all'}})) } };
   const compareIntent=/\b(vs\.?|versus|compared with)\b/.test(n);

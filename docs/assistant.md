@@ -8,13 +8,15 @@ Ask Isuka is a public, aggregate-only request interface. Its request schema is `
 - `POST /api/data/query`: validates and evaluates a request against the existing detailed aggregate series.
 - `GET /api/data/query?...`: permalink form of the same request, with ETag caching.
 - `GET /api/data/export.csv?...`: metadata and aggregate result rows; exports are capped at 5,000 rows.
-- `POST /api/assistant`: deterministic natural-language parser entry point. Unsupported/personal-data requests are refused with a fixed response.
+- `POST /api/assistant`: public Ask Isuka intent router. Project questions receive a scoped text answer; data questions return a concise answer from verified aggregates; chart or table requests return the visualization result. Unsupported topics are refused.
 
 Cells with fewer than 30 underlying records are suppressed. No survey microdata is returned. Every result includes a calculation version, selected periods, coverage grid, caveats, citation, and permalink. Citation format: “Source: NISR Seasonal Agricultural Survey ([periods]), processed by Isuka (calculation [calcVersion]). Not an official NISR statement.”
 
 ## Parsing and provider configuration
 
-The deterministic parser is always available. Optional translation uses `LLM_API_KEY`, `LLM_MODEL`, and `LLM_BASE_URL` with an OpenAI-compatible chat-completions endpoint; `LLM_PROVIDER` is reserved for configuration display, and `LLM_DAILY_BUDGET` limits calls per server process per UTC day. The request contains only the question and catalog names/codes, uses structured tool output, has an 8-second timeout and 160-token limit, validates against the schema/catalog, caches normalized question hashes in memory, and silently falls back to deterministic parsing on failure or budget exhaustion. Model output is never shown. No provider is currently configured in this workspace. Never place identity or data values in a model request. User questions are not written to application logs.
+The deterministic parser is always available. Optional request translation uses `LLM_API_KEY`, `LLM_MODEL`, and `LLM_BASE_URL` with an OpenAI-compatible chat-completions endpoint; `LLM_PROVIDER` is reserved for configuration display, and `LLM_DAILY_BUDGET` limits calls per server process per UTC day. The request contains only the question and catalog names/codes, uses structured tool output, has an 8-second timeout and 160-token limit, validates against the schema/catalog, caches normalized question hashes in memory, and silently falls back to deterministic parsing on failure or budget exhaustion.
+
+Public project explanations use `GEMINI_API_KEY` and optional `GEMINI_MODEL`. The prompt is restricted to Isuka's platform, dashboard, NISR survey aggregates, metric definitions, and documented features. Gemini does not supply numeric survey results; those are computed by the deterministic query engine. Text questions stay text-only. A visualization is returned only when the user explicitly requests a chart, graph, table, or similar output, or uses the Build form. If Gemini is unavailable, the endpoint returns a concise service message. Never place identity or raw survey records in a model request. User questions are not written to application logs.
 
 ## Evaluation
 
