@@ -49,6 +49,9 @@ function setCardValue(cardKey, numericValue, formatter, trend) {
   const trendElement = card.querySelector('[data-type="trend"]');
   animateMetric(value, numericValue, formatter);
   value.title = Number.isFinite(Number(numericValue)) ? '' : 'Data unavailable for this period';
+  const hasTrend = Boolean(trend?.text && trend.text !== '—');
+  trendElement.hidden = !hasTrend;
+  if (!hasTrend) return;
   trendElement.textContent = trend.text;
   trendElement.classList.remove('trend-positive', 'trend-negative');
   if (trend.tone !== 'neutral') trendElement.classList.add(`trend-${trend.tone}`);
@@ -59,7 +62,7 @@ function renderKpis(overview) {
   setCardValue('land', kpis.arableLandHa, (value) => formatCompact(value, 'Ha'), trendBadge(trends.arableLandPercent));
   setCardValue('harvest', kpis.weightedProductionKg / 1000, (value) => formatCompact(value, 'Tons'), trendBadge(trends.weightedProductionPercent));
   setCardValue('loss', kpis.postHarvestLossPercent, formatPercent, trendBadge(trends.postHarvestLossPercent, true));
-  setCardValue('risk', kpis.highRiskDistrictCount, (value) => Number.isFinite(value) ? String(Math.round(value)) : '—', { text: 'Reported tier', tone: 'neutral' });
+  setCardValue('risk', kpis.highRiskDistrictCount, (value) => Number.isFinite(value) ? String(Math.round(value)) : '—', null);
 }
 
 function renderChart(overview) {
