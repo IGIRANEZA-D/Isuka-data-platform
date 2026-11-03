@@ -90,19 +90,24 @@
   text-transform: uppercase;
 }
 
-.public-kpi-icon {
+.public-kpi-heading .public-kpi-icon {
   display: grid;
   width: 36px;
   height: 36px;
   flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
   place-items: center;
   border: 1px solid rgba(255, 255, 255, .58);
   border-radius: 11px;
   background: #e4efdd;
   color: #356d25;
+  font-size: 0;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
-.public-kpi-icon svg { width: 19px; height: 19px; }
+.public-kpi-heading .public-kpi-icon svg { display: block; width: 19px; height: 19px; flex: 0 0 19px; }
 
 .climate-kpis #climate-period-card #climate-period {
   white-space: nowrap;
