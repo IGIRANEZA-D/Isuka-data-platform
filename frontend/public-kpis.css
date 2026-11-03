@@ -1,0 +1,99 @@
+/* Shared brand treatment for KPI cards across the public Data Hub. */
+:is(
+  .kpi-row .kpi-card,
+  .land-kpis article,
+  .climate-kpis article,
+  .inputs-kpis article,
+  .district-kpis article,
+  .forecast-kpis article,
+  .backtest-metrics > div
+) {
+  border: 1px solid #d4e3cc;
+  border-radius: 15px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(111, 168, 60, .16), transparent 42%),
+    linear-gradient(145deg, #f7faf4 0%, #edf5e8 100%);
+  box-shadow: 0 7px 22px rgba(42, 82, 31, .065);
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+:is(
+  .kpi-row .kpi-card,
+  .land-kpis article,
+  .climate-kpis article,
+  .inputs-kpis article,
+  .district-kpis article,
+  .forecast-kpis article,
+  .backtest-metrics > div
+):hover {
+  border-color: #bcd3af;
+  box-shadow: 0 9px 25px rgba(42, 82, 31, .105);
+}
+
+:is(
+  .kpi-row .kpi-card,
+  .land-kpis article,
+  .climate-kpis article,
+  .inputs-kpis article,
+  .district-kpis article,
+  .forecast-kpis article,
+  .backtest-metrics > div
+) strong,
+.kpi-row .kpi-value {
+  color: #23461f;
+  font-variant-numeric: tabular-nums;
+}
+
+:is(
+  .land-kpis .metric-label,
+  .climate-kpis .metric-label,
+  .inputs-kpis article > span:first-child,
+  .district-kpis article > span:first-child,
+  .forecast-kpis article > span:first-child,
+  .backtest-metrics > div span
+) {
+  color: #526b4b;
+  font-weight: 700;
+}
+
+:is(
+  .land-kpis small,
+  .climate-kpis small,
+  .inputs-kpis small,
+  .district-kpis small,
+  .forecast-kpis small,
+  .backtest-metrics > div small
+) {
+  color: #687765;
+}
+
+.kpi-row .kpi-icon,
+.kpi-row .kpi-icon.primary-tint,
+.kpi-row .kpi-icon.accent-tint,
+.kpi-row .kpi-icon.warning-tint {
+  border: 1px solid #d5e5cd;
+  background: #e4efdd;
+  color: #356d25;
+}
+
+.kpi-row .kpi-trend {
+  background: #e2efda;
+  color: #356d25;
+}
+
+.kpi-row .kpi-trend.trend-negative {
+  background: #f5e9df;
+  color: #95552f;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(
+    .kpi-row .kpi-card,
+    .land-kpis article,
+    .climate-kpis article,
+    .inputs-kpis article,
+    .district-kpis article,
+  .forecast-kpis article,
+  .backtest-metrics > div
+  ) { transition: none; }
+}
