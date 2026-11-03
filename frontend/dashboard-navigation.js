@@ -24,13 +24,16 @@ function updateSidebarState(sidebar, toggle, persist = false) {
 const dashboardSidebar = document.querySelector('.sidebar');
 const dashboardSidebarToggle = document.querySelector('.collapse-toggle');
 if (dashboardSidebar && dashboardSidebarToggle) {
+  let restoreCollapsedSidebar = document.documentElement.classList.contains('sidebar-collapsed-onload');
   try {
-    if (localStorage.getItem(dashboardSidebarKey) === 'true') {
-      dashboardSidebar.classList.add('sidebar-state-restoring', 'collapsed');
-      void dashboardSidebar.offsetWidth;
-      requestAnimationFrame(() => dashboardSidebar.classList.remove('sidebar-state-restoring'));
-    }
+    restoreCollapsedSidebar = restoreCollapsedSidebar || localStorage.getItem(dashboardSidebarKey) === 'true';
   } catch { /* use the expanded default when storage is disabled */ }
+  if (restoreCollapsedSidebar) {
+    dashboardSidebar.classList.add('sidebar-state-restoring', 'collapsed');
+    void dashboardSidebar.offsetWidth;
+    document.documentElement.classList.remove('sidebar-collapsed-onload');
+    requestAnimationFrame(() => dashboardSidebar.classList.remove('sidebar-state-restoring'));
+  }
   updateSidebarState(dashboardSidebar, dashboardSidebarToggle);
   document.addEventListener('click', (event) => {
     if (event.target.closest('.collapse-toggle')) updateSidebarState(dashboardSidebar, dashboardSidebarToggle, true);
@@ -63,11 +66,6 @@ function playDashboardEntry() {
   } catch { /* storage may be disabled */ }
 
   if (!target || normalizePath(target) !== normalizePath(window.location.pathname)) return;
-  const main = document.querySelector('.dashboard-shell > main');
-  if (!main) return;
-  main.classList.add('dashboard-nav-enter');
-  main.addEventListener('animationend', () => main.classList.remove('dashboard-nav-enter'), { once: true });
-
   const activeLink = document.querySelector('.sidebar-nav .nav-item.active');
   if (activeLink) {
     activeLink.classList.add('is-arriving');

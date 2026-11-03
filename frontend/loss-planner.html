@@ -10,7 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="/styles.css">
+  <script>try{if(localStorage.getItem('isuka-dashboard-sidebar-collapsed')==='true')document.documentElement.classList.add('sidebar-collapsed-onload')}catch{}</script>
+<link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/loss-planner.css">
   <link rel="stylesheet" href="/assistant/assistant.css">
   <link rel="stylesheet" href="/rwanda-map.css">
@@ -83,7 +84,7 @@
         </section>
 
         <section class="lp-card lp-answer" aria-labelledby="answer-title" aria-live="off">
-          <header class="lp-card-heading"><div class="lp-heading-title"><span class="lp-section-icon lp-section-icon-result" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 19 6v5c0 4.6-3 8.3-7 10-4-1.7-7-5.4-7-10V6l7-3Z"/><path d="M8.5 12.5 11 15l5-5"/></svg></span><div class="lp-heading-copy"><p class="lp-kicker">Estimated harvest saved</p><h2 class="lp-sr-only" id="answer-title">Scenario result</h2></div></div><div class="lp-actions"><button type="button" class="lp-icon-button" data-copy-link aria-label="Copy link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M14 11a5 5 0 0 0-7.1 0l-2 2A5 5 0 0 0 14 20l1.1-1.1"/></svg><span>Copy link</span></button><button type="button" class="lp-icon-button" data-download-csv aria-label="Download CSV"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 18v3h14v-3"/></svg><span>Download CSV</span></button></div></header>
+          <header class="lp-card-heading"><div class="lp-heading-title"><span class="lp-section-icon lp-section-icon-result" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 19 6v5c0 4.6-3 8.3-7 10-4-1.7-7-5.4-7-10V6l7-3Z"/><path d="M8.5 12.5 11 15l5-5"/></svg></span><div class="lp-heading-copy"><p class="lp-kicker">Harvest saved</p><h2 class="lp-sr-only" id="answer-title">Scenario result</h2></div></div><div class="lp-actions"><button type="button" class="lp-icon-button" data-copy-link aria-label="Copy link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M14 11a5 5 0 0 0-7.1 0l-2 2A5 5 0 0 0 14 20l1.1-1.1"/></svg><span>Copy link</span></button><button type="button" class="lp-icon-button" data-download-csv aria-label="Download CSV"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 18v3h14v-3"/></svg><span>Download CSV</span></button></div></header>
           <div class="lp-skeleton-layer" data-answer-skeleton hidden aria-hidden="true"><i class="sk-line sk-short"></i><i class="sk-title"></i><i class="sk-line sk-wide"></i><i class="sk-line"></i><i class="sk-chip"></i><i class="sk-line sk-wide"></i></div>
           <div class="lp-answer-main" data-answer-content>
             <strong class="lp-tonnes" data-answer-tonnes>Not available</strong>
