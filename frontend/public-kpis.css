@@ -8,13 +8,13 @@
   .forecast-kpis article,
   .backtest-metrics > div
 ) {
-  border: 1px solid #d4e3cc;
+  border: 1px solid rgba(255, 255, 255, .22);
   border-radius: 15px;
   background:
-    radial-gradient(circle at 100% 0%, rgba(111, 168, 60, .16), transparent 42%),
-    linear-gradient(145deg, #f7faf4 0%, #edf5e8 100%);
-  box-shadow: 0 7px 22px rgba(42, 82, 31, .065);
-  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+    radial-gradient(circle at 100% 0%, rgba(180, 220, 139, .25), transparent 42%),
+    linear-gradient(145deg, #44782a 0%, #35671f 55%, #2e5b1b 100%);
+  box-shadow: 0 8px 22px rgba(31, 66, 22, .16);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
 :is(
@@ -26,8 +26,8 @@
   .forecast-kpis article,
   .backtest-metrics > div
 ):hover {
-  border-color: #bcd3af;
-  box-shadow: 0 9px 25px rgba(42, 82, 31, .105);
+  border-color: rgba(255, 255, 255, .4);
+  box-shadow: 0 10px 26px rgba(31, 66, 22, .22);
 }
 
 :is(
@@ -40,7 +40,7 @@
   .backtest-metrics > div
 ) strong,
 .kpi-row .kpi-value {
-  color: #23461f;
+  color: #fff;
   font-variant-numeric: tabular-nums;
 }
 
@@ -52,7 +52,7 @@
   .forecast-kpis article > span:first-child,
   .backtest-metrics > div span
 ) {
-  color: #526b4b;
+  color: rgba(255, 255, 255, .94);
   font-weight: 700;
 }
 
@@ -64,27 +64,35 @@
   .forecast-kpis small,
   .backtest-metrics > div small
 ) {
-  color: #687765;
+  color: rgba(255, 255, 255, .76);
+}
+
+.kpi-row .kpi-label {
+  color: rgba(255, 255, 255, .94);
+  font-weight: 700;
 }
 
 .kpi-row .kpi-icon,
 .kpi-row .kpi-icon.primary-tint,
 .kpi-row .kpi-icon.accent-tint,
 .kpi-row .kpi-icon.warning-tint {
-  border: 1px solid #d5e5cd;
+  border: 1px solid rgba(255, 255, 255, .58);
   background: #e4efdd;
   color: #356d25;
 }
 
 .kpi-row .kpi-trend {
-  background: #e2efda;
-  color: #356d25;
+  border: 1px solid rgba(255, 255, 255, .4);
+  background: rgba(255, 255, 255, .16);
+  color: #fff;
 }
 
 .kpi-row .kpi-trend.trend-negative {
-  background: #f5e9df;
-  color: #95552f;
+  background: rgba(40, 49, 25, .28);
+  color: #fff;
 }
+
+.backtest-metrics > div { border-radius: 10px; }
 
 @media (prefers-reduced-motion: reduce) {
   :is(
