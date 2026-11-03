@@ -10,6 +10,7 @@ import {
   stageIds
 } from './lib/loss-scenario.js';
 import { attachTooltip } from './chart-tooltip.js';
+import { renderChartGrid } from './chart-kit.js';
 
 const stageGroups = [
   { id: 'field', label: 'In the field', members: ['pests', 'animals'], icon: '<path d="M12 21V9M12 14c-4 0-7-2.5-7-6 4 0 7 2.5 7 6ZM12 11c0-3.5 3-6 7-6 0 3.5-3 6-7 6Z"/>' },
@@ -330,10 +331,10 @@ function currentPeriodText() {
 }
 
 function formatMoneyLabel(result) {
-  if (result.totals.priceBasis === 'district') return 'District median price';
-  if (result.totals.priceBasis === 'national') return 'National crop price';
-  if (result.totals.priceBasis === 'mixed') return 'District and national prices';
-  return 'No price available';
+  if (result.totals.priceBasis === 'district') return 'District price';
+  if (result.totals.priceBasis === 'national') return 'National price';
+  if (result.totals.priceBasis === 'mixed') return 'Mixed prices';
+  return 'Price unavailable';
 }
 
 function animateTonnes(value) {
@@ -363,25 +364,24 @@ function animateTonnes(value) {
 
 function renderAnswer(result) {
   const selectedName = baseline.crops.find((crop) => crop.code === state.cropCode)?.name || 'Not available';
-  const stageName = stageGroups.find((group) => group.id === state.stage)?.label || 'all recorded stages';
   const districtText = selectedDistricts === 'all' ? 'all districts' : `${selectedDistricts.size} districts`;
   const totals = result.totals;
   const empty = !totals.hasSelectedLoss;
   elements.empty.hidden = !empty;
   elements.slider.disabled = empty;
   animateTonnes(empty ? null : totals.recoveredKg);
-  elements.answerValue.textContent = totals.valueRwf === null ? 'Value not available' : `about ${formatRwf(totals.valueRwf)}`;
+  elements.answerValue.textContent = totals.valueRwf === null ? 'Value unavailable' : formatRwf(totals.valueRwf);
   elements.answerValue.classList.toggle('is-muted', totals.valueRwf === null);
   elements.answerSacks.textContent = totals.recoveredKg >= 0 ? `about ${formatSacks(totals.recoveredKg)} of 50 kg` : 'Not available';
-  elements.answerSentence.textContent = `Cutting ${stageName} loss in ${selectedName} by ${state.reductionPct}% across ${districtText}, based on ${currentPeriodText()} survey data.`;
-  elements.rangeLine.textContent = `A 20% cut saves about ${toTonnes(range20?.totals.recoveredKg)}. A 40% cut about ${toTonnes(range40?.totals.recoveredKg)}.`;
+  elements.answerSentence.textContent = `${state.reductionPct}% reduction | ${selectedName} | ${districtText}`;
+  elements.rangeLine.textContent = `20% -> ${toTonnes(range20?.totals.recoveredKg)} | 40% -> ${toTonnes(range40?.totals.recoveredKg)}`;
   const band = coverageBand(totals.coveragePct);
-  const coverageText = Number.isFinite(totals.coveragePct) ? `${band[0].toUpperCase()}${band.slice(1)} · ${totals.coveragePct.toFixed(1)}% stage-data coverage` : 'Coverage not available';
-  elements.answerChips.innerHTML = `<span class="lp-chip ${band === 'high' ? 'is-high' : band === 'unavailable' ? '' : 'is-medium'}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 7 3v5c0 4.6-3 8.3-7 10-4-1.7-7-5.4-7-10V6l7-3Z"/><path d="m8.5 12 2.3 2.3 4.8-5"/></svg>Coverage: ${escapeHtml(coverageText)}</span><span class="lp-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v10m3-7H9m6 4H9"/></svg>${escapeHtml(formatMoneyLabel(result))}</span><span class="lp-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v7c0 1.7 3.1 3 7 3s7-1.3 7-3V5M5 12v7c0 1.7 3.1 3 7 3s7-1.3 7-3v-7"/></svg>${escapeHtml(formatCount(totals.includedRecords))} survey records</span>`;
+  const coverageText = Number.isFinite(totals.coveragePct) ? `${totals.coveragePct.toFixed(1)}% coverage` : 'Coverage unavailable';
+  elements.answerChips.innerHTML = `<span class="lp-chip ${band === 'high' ? 'is-high' : band === 'unavailable' ? '' : 'is-medium'}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 7 3v5c0 4.6-3 8.3-7 10-4-1.7-7-5.4-7-10V6l7-3Z"/><path d="m8.5 12 2.3 2.3 4.8-5"/></svg>${escapeHtml(coverageText)}</span><span class="lp-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v10m3-7H9m6 4H9"/></svg>${escapeHtml(formatMoneyLabel(result))}</span><span class="lp-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v7c0 1.7 3.1 3 7 3s7-1.3 7-3V5M5 12v7c0 1.7 3.1 3 7 3s7-1.3 7-3v-7"/></svg>${escapeHtml(formatCount(totals.includedRecords))} records</span>`;
   elements.lowCoverage.hidden = band !== 'low';
   elements.suppressed.hidden = totals.suppressedCount === 0;
-  if (totals.suppressedCount) elements.suppressed.textContent = `${formatCount(totals.suppressedCount)} district-crop combinations excluded (fewer than ${baseline.meta.minRecords} survey records).`;
-  elements.disclaimer.textContent = `What-if estimate based on NISR survey data (${currentPeriodText()}). Not a forecast or a guarantee.`;
+  if (totals.suppressedCount) elements.suppressed.textContent = `${formatCount(totals.suppressedCount)} groups omitted (<${baseline.meta.minRecords} records).`;
+  elements.disclaimer.textContent = `Scenario estimate | NISR | ${currentPeriodText()} | not a forecast`;
   announce(`${elements.answerTonnes.textContent} estimated harvest saved. Coverage ${coverageText}.`);
 }
 
@@ -397,25 +397,21 @@ function renderStageTable(result) {
 }
 
 function renderStages(result) {
-  const selected = new Set(selectedStageIds());
-  const availableStageRows = result.totals.stageRows.filter((row) => row.available);
-  const stageRows = availableStageRows.map((row) => {
-    const selectedGroup = row.id === 'field' ? selected.has('pests') || selected.has('animals') : selected.has(row.id);
-    const width = row.barWidthPct;
-    const lossPart = selectedGroup ? `<span class="lp-stage-fill is-saved" style="width:${row.savedBarPct}%"></span><span class="lp-stage-fill is-remaining" style="width:${row.remainingBarPct}%"></span>` : `<span class="lp-stage-fill is-neutral" style="width:${width}%"></span>`;
-    const value = `<span>${Number.isFinite(row.productionSharePct) ? `${row.productionSharePct.toFixed(1)}%` : 'Not available'} · ${toTonnes(row.lossKg)}</span><small>${escapeHtml(formatCount(row.records))} survey records with stage data</small>`;
-    const tooltip = `${row.label}; ${toTonnes(row.lossKg)}; ${Number.isFinite(row.productionSharePct) ? `${row.productionSharePct.toFixed(1)}% of total production` : 'share not available'}; ${formatCount(row.records)} survey records with stage data`;
-    return `<div class="lp-stage-row" title="${escapeHtml(tooltip)}"><span class="lp-stage-label">${stageIcon(row.id)}${escapeHtml(row.label)}</span><div class="lp-stage-track" aria-label="${escapeHtml(tooltip)}">${lossPart}</div><span class="lp-stage-value">${value}</span></div>`;
-  });
-  stageRows.push(`<div class="lp-stage-row" title="Not attributed to a stage; ${toTonnes(result.totals.unattributedKg)}"><span class="lp-stage-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 10h16M10 4v16"/></svg>Not attributed to a stage</span><div class="lp-stage-track"><span class="lp-stage-fill is-unattributed" style="width:${result.totals.unattributedBarPct}%"></span></div><span class="lp-stage-value">${escapeHtml(result.totals.includedProductionKg > 0 ? `${(result.totals.unattributedKg / result.totals.includedProductionKg * 100).toFixed(1)}%` : 'Not available')} | ${escapeHtml(toTonnes(result.totals.unattributedKg))}</span></div>`);
-  elements.stageChart.innerHTML = stageRows.join('');
-  elements.stageChart.querySelectorAll('.lp-stage-row').forEach((row, index) => {
-    const item = availableStageRows[index];
-    if (!item) return;
-    attachTooltip(row, `<strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(toTonnes(item.lossKg))} · ${Number.isFinite(item.productionSharePct) ? `${item.productionSharePct.toFixed(1)}% of production` : 'Not recorded'}</span><b>${escapeHtml(formatCount(item.records))} survey records</b>`);
-  });
+  const selectedStages = new Set(selectedStageIds());
+  const available = result.totals.stageRows.filter((row) => row.available && Number.isFinite(row.lossKg) && (row.id === 'field' ? selectedStages.has('pests') || selectedStages.has('animals') : selectedStages.has(row.id)));
+  const cropLabel = baseline.crops.find((crop) => crop.code === state.cropCode)?.name || 'All crops';
+  const stageLabel = elements.stage.selectedOptions[0]?.textContent || 'All stages';
+  const context = `${currentPeriodText()} · ${cropLabel} · ${stageLabel} · ${state.reductionPct}% scenario`;
+  const districts = result.byDistrict.filter((row) => !row.suppressed && Number.isFinite(row.recoveredKg)).slice().sort((a,b) => b.recoveredKg-a.recoveredKg).slice(0,10);
+  const recoverySteps = [0,20,40,60,80,100].map((reductionPct) => ({ label:`${reductionPct}%`, value:result.totals.selectedStageLossKg * reductionPct / 100 / 1000, period:`${reductionPct}% loss reduction scenario` }));
+  renderChartGrid(elements.stageChart, [
+    { type:'bar', title:'Recorded Loss by Stage', eyebrow:'LOSS BY STAGE', description:'Reported losses for the selected stages and survey records.', categoryLabel:'Stage', measureLabel:'Recorded loss (tonnes)', unit:'T', context, data:available.map((row) => ({ label:row.label, value:row.lossKg / 1000 })) },
+    { type:'donut', title:'Share of Recorded Loss by Stage', eyebrow:'LOSS COMPOSITION', description:'Each stage’s share of the recorded loss total.', categoryLabel:'Stage', measureLabel:'Recorded loss (tonnes)', unit:'T', centerLabel:'TONNES', context, data:available.map((row) => ({ label:row.label, value:row.lossKg / 1000 })) },
+    { type:'bar', title:'Top 10 Districts for Harvest Recovery', eyebrow:'DISTRICT SCENARIO', description:`Estimated saved production at the selected ${state.reductionPct}% reduction setting.`, categoryLabel:'District', measureLabel:'Estimated harvest saved (tonnes)', unit:'T', context, data:districts.slice().sort((a,b) => b.recoveredKg-a.recoveredKg).slice(0,10).map((row) => ({ label:districtName(row.code), value:row.recoveredKg / 1000 })) },
+    { type:'line', title:'Harvest Saved by Reduction Level', eyebrow:'SCENARIO RANGE', description:'Estimated harvest saved at several reduction settings for the selected records.', categoryLabel:'Assumed loss reduction', measureLabel:'Estimated harvest saved (tonnes)', unit:'T', context, data:recoverySteps }
+  ]);
   elements.stageSummary.textContent = Number.isFinite(result.totals.recordedLossPct) && Number.isFinite(result.totals.lossAfterPct)
-    ? `Recorded loss: ${result.totals.recordedLossPct.toFixed(1)}% of production; ${result.totals.lossAfterPct.toFixed(1)}% after this change. ${availableStageRows.length} of 7 reported stages shown.`
+    ? `Loss ${result.totals.recordedLossPct.toFixed(1)}% -> ${result.totals.lossAfterPct.toFixed(1)}% | ${availableStageRows.length}/7 stages`
     : `${availableStageRows.length} of 7 reported stages shown.`;
   renderStageTable(result);
 }
@@ -528,7 +524,7 @@ function updateMapStyles(result) {
   });
   const shownDistricts = result.byDistrict.filter((row) => !row.suppressed && Number.isFinite(metricValue(row))).length;
   const omittedDistricts = Math.max(0, baseline.districts.length - shownDistricts);
-  elements.mapNote.textContent = `Showing ${formatCount(shownDistricts)} districts with at least ${formatCount(baseline.meta.minRecords)} survey records; ${formatCount(omittedDistricts)} omitted.`;
+  elements.mapNote.textContent = `${formatCount(shownDistricts)} districts shown | ${formatCount(omittedDistricts)} low sample (<${formatCount(baseline.meta.minRecords)} records)`;
   const legend = elements.map.parentElement.querySelector('.lp-map-legend');
   if (legend) {
     const labels = legend.querySelectorAll(':scope > span');
@@ -607,7 +603,7 @@ function highlightMapDistrict(code, active) {
 
 function renderMethod() {
   const excluded = formatCount(scenarioResult?.totals?.suppressedCount);
-  elements.method.innerHTML = `<p><strong>Estimate:</strong> measured loss × selected reduction. RWF uses self-reported prices when available.</p><p><strong>Included:</strong> district–crop groups with at least ${escapeHtml(formatCount(baseline.meta.minRecords))} survey records. ${escapeHtml(excluded)} lower-count groups are omitted; missing or unconfirmed stage data is not estimated.</p><p><strong>Limits:</strong> coverage is the share of production with reported stage data, not a confidence level. NISR Seasonal Agricultural Survey · ${escapeHtml(currentPeriodText())} · ${escapeHtml(baseline.meta.calcVersion)}. Storage reporting is incomplete.</p>`;
+  elements.method.innerHTML = `<p><strong>Estimate:</strong> recorded loss × selected reduction. Values use reported prices where available.</p><p><strong>Coverage:</strong> groups need at least ${escapeHtml(formatCount(baseline.meta.minRecords))} survey records. ${escapeHtml(excluded)} low-count groups are excluded; unconfirmed stage data is not estimated.</p><p><strong>Limits:</strong> coverage is reported stage-data share, not confidence. NISR Seasonal Agricultural Survey · ${escapeHtml(currentPeriodText())} · ${escapeHtml(baseline.meta.calcVersion)}. Storage reports are incomplete.</p>`;
 }
 
 function renderScenario() {

@@ -13,3 +13,22 @@
 @media (max-width:900px) { .land-sidebar { width:210px; flex-basis:210px; } .land-main { padding:14px; } .land-kpis { grid-template-columns:repeat(2,1fr); } .land-controls { grid-template-columns:1fr 1fr; } .land-controls > div:first-child { grid-column:1/-1; } .land-filter-actions { grid-column:1/-1; justify-content:space-between; } .land-grid { grid-template-columns:1fr; } }
 @media (max-width:620px) { .land-shell { display:block; } .land-sidebar { width:100%; padding:14px 18px; } .land-side-title,.land-side-copy,.land-side-footer { display:none; } .land-brand img { width:90px; } .land-nav { grid-template-columns:repeat(2,1fr); gap:3px; margin-top:14px; } .land-nav a { padding:8px; font-size:11px; } .land-hero { min-height:220px; padding:22px; } .land-hero h1 { font-size:30px; } .land-controls,.land-kpis { grid-template-columns:1fr; } }
 .land-kpi-icon { border:1px solid rgba(255,255,255,.58); background:rgba(255,255,255,.15); color:#fff; }
+/* Capsule bars with a soft striped harvest texture. */
+.bar-row { padding:4px 8px; border-radius:10px; transition:background-color 160ms ease; }
+.bar-row:hover { background:#f3f8ef; }
+.bar-track { height:14px; border:1px solid rgba(61,107,31,.08); border-radius:999px; background:linear-gradient(180deg,#edf3e8,#e5eddf); box-shadow:inset 0 1px 2px rgba(31,46,23,.07); }
+.bar-track span { border-radius:inherit; background:repeating-linear-gradient(135deg,rgba(255,255,255,.17) 0 2px,transparent 2px 8px),linear-gradient(90deg,#83b45a,#3d6b1f); box-shadow:0 2px 5px rgba(40,85,26,.2); }
+.bar-row strong { font-variant-numeric:tabular-nums; }
+@media (prefers-reduced-motion:reduce) { .bar-row { transition:none; } }
+/* Ranked crop comparisons use lollipop marks to expose small differences clearly. */
+.land-bars .bar-track { height:3px; overflow:visible; border:0; border-radius:99px; background:#e5ecdf; box-shadow:none; }
+.land-bars .bar-track span { position:relative; height:3px; border-radius:99px; background:linear-gradient(90deg,#9bc876,#3d6b1f); box-shadow:none; }
+.land-bars .bar-track span::after { position:absolute; top:50%; right:-6px; width:12px; height:12px; border:2px solid #fff; border-radius:50%; background:#3d6b1f; box-shadow:0 1px 4px rgba(31,46,23,.24); content:''; transform:translateY(-50%); }
+.land-bars .bar-row:hover .bar-track span::after { background:#c08a3e; transform:translateY(-50%) scale(1.15); }
+
+/* NISR-inspired readable rank bars with a precise hover spotlight. */
+.land-bars .bar-track { height:12px; overflow:hidden; border:0; border-radius:2px; background:#e7ede3; box-shadow:none; }
+.land-bars .bar-track span { position:relative; height:100%; border-radius:2px; background:linear-gradient(90deg,#9bc876,#3d6b1f); box-shadow:none; }
+.land-bars .bar-track span::after { display:none; }
+.land-bars:has(.bar-row:hover) .bar-row:not(:hover) { opacity:.38; }
+.land-bars .bar-row { transition:opacity 140ms ease,background-color 140ms ease; }

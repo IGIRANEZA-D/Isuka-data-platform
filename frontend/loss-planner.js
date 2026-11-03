@@ -10,6 +10,7 @@ import {
   stageIds
 } from './lib/loss-scenario.js';
 import { attachTooltip } from './chart-tooltip.js';
+import { renderChartGrid } from './chart-kit.js';
 
 const stageGroups = [
   { id: 'field', label: 'In the field', members: ['pests', 'animals'], icon: '<path d="M12 21V9M12 14c-4 0-7-2.5-7-6 4 0 7 2.5 7 6ZM12 11c0-3.5 3-6 7-6 0 3.5-3 6-7 6Z"/>' },
@@ -396,23 +397,19 @@ function renderStageTable(result) {
 }
 
 function renderStages(result) {
-  const selected = new Set(selectedStageIds());
-  const availableStageRows = result.totals.stageRows.filter((row) => row.available);
-  const stageRows = availableStageRows.map((row) => {
-    const selectedGroup = row.id === 'field' ? selected.has('pests') || selected.has('animals') : selected.has(row.id);
-    const width = row.barWidthPct;
-    const lossPart = selectedGroup ? `<span class="lp-stage-fill is-saved" style="width:${row.savedBarPct}%"></span><span class="lp-stage-fill is-remaining" style="width:${row.remainingBarPct}%"></span>` : `<span class="lp-stage-fill is-neutral" style="width:${width}%"></span>`;
-    const value = `<span>${Number.isFinite(row.productionSharePct) ? `${row.productionSharePct.toFixed(1)}%` : 'Not available'} · ${toTonnes(row.lossKg)}</span><small>${escapeHtml(formatCount(row.records))} survey records with stage data</small>`;
-    const tooltip = `${row.label}; ${toTonnes(row.lossKg)}; ${Number.isFinite(row.productionSharePct) ? `${row.productionSharePct.toFixed(1)}% of total production` : 'share not available'}; ${formatCount(row.records)} survey records with stage data`;
-    return `<div class="lp-stage-row" title="${escapeHtml(tooltip)}"><span class="lp-stage-label">${stageIcon(row.id)}${escapeHtml(row.label)}</span><div class="lp-stage-track" aria-label="${escapeHtml(tooltip)}">${lossPart}</div><span class="lp-stage-value">${value}</span></div>`;
-  });
-  stageRows.push(`<div class="lp-stage-row" title="Not attributed to a stage; ${toTonnes(result.totals.unattributedKg)}"><span class="lp-stage-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 10h16M10 4v16"/></svg>Not attributed to a stage</span><div class="lp-stage-track"><span class="lp-stage-fill is-unattributed" style="width:${result.totals.unattributedBarPct}%"></span></div><span class="lp-stage-value">${escapeHtml(result.totals.includedProductionKg > 0 ? `${(result.totals.unattributedKg / result.totals.includedProductionKg * 100).toFixed(1)}%` : 'Not available')} | ${escapeHtml(toTonnes(result.totals.unattributedKg))}</span></div>`);
-  elements.stageChart.innerHTML = stageRows.join('');
-  elements.stageChart.querySelectorAll('.lp-stage-row').forEach((row, index) => {
-    const item = availableStageRows[index];
-    if (!item) return;
-    attachTooltip(row, `<strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(toTonnes(item.lossKg))} · ${Number.isFinite(item.productionSharePct) ? `${item.productionSharePct.toFixed(1)}% of production` : 'Not recorded'}</span><b>${escapeHtml(formatCount(item.records))} survey records</b>`);
-  });
+  const selectedStages = new Set(selectedStageIds());
+  const available = result.totals.stageRows.filter((row) => row.available && Number.isFinite(row.lossKg) && (row.id === 'field' ? selectedStages.has('pests') || selectedStages.has('animals') : selectedStages.has(row.id)));
+  const cropLabel = baseline.crops.find((crop) => crop.code === state.cropCode)?.name || 'All crops';
+  const stageLabel = elements.stage.selectedOptions[0]?.textContent || 'All stages';
+  const context = `${currentPeriodText()} · ${cropLabel} · ${stageLabel} · ${state.reductionPct}% scenario`;
+  const districts = result.byDistrict.filter((row) => !row.suppressed && Number.isFinite(row.recoveredKg)).slice().sort((a,b) => b.recoveredKg-a.recoveredKg).slice(0,10);
+  const recoverySteps = [0,20,40,60,80,100].map((reductionPct) => ({ label:`${reductionPct}%`, value:result.totals.selectedStageLossKg * reductionPct / 100 / 1000, period:`${reductionPct}% loss reduction scenario` }));
+  renderChartGrid(elements.stageChart, [
+    { type:'bar', title:'Recorded Loss by Stage', eyebrow:'LOSS BY STAGE', description:'Reported losses for the selected stages and survey records.', categoryLabel:'Stage', measureLabel:'Recorded loss (tonnes)', unit:'T', context, data:available.map((row) => ({ label:row.label, value:row.lossKg / 1000 })) },
+    { type:'donut', title:'Share of Recorded Loss by Stage', eyebrow:'LOSS COMPOSITION', description:'Each stage’s share of the recorded loss total.', categoryLabel:'Stage', measureLabel:'Recorded loss (tonnes)', unit:'T', centerLabel:'TONNES', context, data:available.map((row) => ({ label:row.label, value:row.lossKg / 1000 })) },
+    { type:'bar', title:'Top 10 Districts for Harvest Recovery', eyebrow:'DISTRICT SCENARIO', description:`Estimated saved production at the selected ${state.reductionPct}% reduction setting.`, categoryLabel:'District', measureLabel:'Estimated harvest saved (tonnes)', unit:'T', context, data:districts.slice().sort((a,b) => b.recoveredKg-a.recoveredKg).slice(0,10).map((row) => ({ label:districtName(row.code), value:row.recoveredKg / 1000 })) },
+    { type:'line', title:'Harvest Saved by Reduction Level', eyebrow:'SCENARIO RANGE', description:'Estimated harvest saved at several reduction settings for the selected records.', categoryLabel:'Assumed loss reduction', measureLabel:'Estimated harvest saved (tonnes)', unit:'T', context, data:recoverySteps }
+  ]);
   elements.stageSummary.textContent = Number.isFinite(result.totals.recordedLossPct) && Number.isFinite(result.totals.lossAfterPct)
     ? `Loss ${result.totals.recordedLossPct.toFixed(1)}% -> ${result.totals.lossAfterPct.toFixed(1)}% | ${availableStageRows.length}/7 stages`
     : `${availableStageRows.length} of 7 reported stages shown.`;

@@ -286,6 +286,21 @@
 .isuka-assistant-legend .insufficient{background:#F5E6D0}
 .isuka-assistant-legend .none{background:#EEF0EB}
 
+/* Styling only for AI-created chart output; the AI request and data stay untouched. */
+.isuka-assistant-chart {
+  overflow:hidden;
+  border:1px solid rgba(61,107,31,.12);
+  border-radius:14px;
+  background:radial-gradient(ellipse at 50% 0%,rgba(111,168,60,.09),transparent 68%),linear-gradient(180deg,#fbfcf9,#f5f8f2);
+  animation:assistant-chart-arrive 260ms cubic-bezier(.2,.75,.25,1) both;
+}
+.isuka-assistant-chart rect[fill="#F4F6F1"] { fill:transparent; }
+.isuka-assistant-chart path[stroke="#E5E9E0"] { stroke:rgba(61,107,31,.13); }
+.isuka-assistant-chart rect[fill="#3D6B1F"] { fill:#3d6b1f; stroke:rgba(255,255,255,.24); stroke-width:1; rx:7px; filter:drop-shadow(0 2px 3px rgba(37,76,25,.17)); }
+.isuka-assistant-chart rect[fill="#C08A3E"] { fill:#c08a3e; stroke:rgba(255,255,255,.24); stroke-width:1; rx:7px; filter:drop-shadow(0 2px 3px rgba(108,75,27,.15)); }
+@keyframes assistant-chart-arrive { from { opacity:.5; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+@media(prefers-reduced-motion:reduce) { .isuka-assistant-chart { animation:none; } }
+
 .isuka-assistant-error{
   margin:0;padding:14px;background:var(--white,#fff);
   border:1px solid var(--border,#E5E9E0);color:#8c2525;font-size:13px;

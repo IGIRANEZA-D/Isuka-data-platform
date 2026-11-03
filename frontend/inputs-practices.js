@@ -1,20 +1,66 @@
-import { attachTooltip } from './chart-tooltip.js';
 import { animateMetric } from './lib/metric-animation.js';
+import { renderChartGrid, chartFormat } from './chart-kit.js';
 
-const elements = { year: document.getElementById('inputs-year'), district: document.getElementById('inputs-district'), rows: document.getElementById('inputs-rows'), districts: document.getElementById('inputs-district-count'), crops: document.getElementById('inputs-crop-count'), production: document.getElementById('inputs-production'), bars: document.getElementById('inputs-bars'), status: document.getElementById('inputs-status'), table: document.getElementById('inputs-table'), registerStatus: document.getElementById('inputs-register-status'), registerRange: document.getElementById('inputs-register-range'), previous: document.getElementById('inputs-prev-page'), next: document.getElementById('inputs-next-page'), signalRecords: document.getElementById('signal-records'), signalDistricts: document.getElementById('signal-districts'), signalCrops: document.getElementById('signal-crops'), recordsBar: document.getElementById('signal-records-bar'), districtsBar: document.getElementById('signal-districts-bar'), cropsBar: document.getElementById('signal-crops-bar'), sidebar: document.querySelector('.sidebar'), collapse: document.querySelector('.collapse-toggle') };
-const filterBar = document.querySelector('.inputs-controls');
-filterBar.insertAdjacentHTML('beforeend', '<div class="shared-filter-actions"><span data-shared-filter-status>Ready</span><button type="button" data-shared-filter-reset>Reset</button></div>');
-elements.filterStatus = filterBar.querySelector('[data-shared-filter-status]');
-elements.filterReset = filterBar.querySelector('[data-shared-filter-reset]');
-let tableEntries = [];
-let tablePage = 0;
-const tablePageSize = 5;
-function compact(value, suffix = '') { if (!Number.isFinite(value)) return '—'; if (Math.abs(value) >= 1000000) return `${(value / 1000000).toFixed(1)}M ${suffix}`.trim(); if (Math.abs(value) >= 1000) return `${(value / 1000).toFixed(1)}K ${suffix}`.trim(); return `${value.toFixed(value >= 100 ? 0 : 1)} ${suffix}`.trim(); }
-function districtName(value) { return String(value).replace(/\b\w/g, (character) => character.toUpperCase()); }
-function updateFilters(filters) { elements.year.innerHTML = `<option value="all">All years</option>${filters.availableYears.map((year) => `<option value="${year}">${year}</option>`).join('')}`; elements.year.value = filters.year; elements.district.innerHTML = `<option value="all">All districts</option>${filters.availableDistricts.map((district) => `<option value="${district}">${districtName(district)}</option>`).join('')}`; elements.district.value = filters.district; }
-function districtKey(value) { return String(value ?? '').toLowerCase().replace(/[^a-z]/g, '').replace('nyarugenege', 'nyarugenge'); }
-function mergeDistricts(entries) { const merged = new Map(); entries.forEach((entry) => { const key = districtKey(entry.district); const current = merged.get(key) || { ...entry, district: key, productionKg: 0, rows: 0, areaHa: 0 }; current.productionKg += entry.productionKg || 0; current.rows += entry.rows || 0; current.areaHa += entry.areaHa || 0; current.lossPercent = Math.max(current.lossPercent || 0, entry.lossPercent || 0); merged.set(key, current); }); return [...merged.values()]; }
-function renderTable() { const start = tablePage * tablePageSize; const visible = tableEntries.slice(start, start + tablePageSize); elements.table.innerHTML = visible.map((entry) => `<tr><td>${districtName(entry.district)}</td><td>${compact(entry.productionKg / 1000, 'T')}</td><td>${entry.rows.toLocaleString()}</td><td>${entry.primaryCrop}</td><td><span class="signal-label">${entry.lossPercent < 15 ? 'stable' : entry.lossPercent < 30 ? 'watch' : 'priority'}</span></td></tr>`).join('') || '<tr><td colspan="5">No districts in view.</td></tr>'; elements.registerStatus.textContent = `${tableEntries.length} districts in view`; elements.registerRange.textContent = tableEntries.length ? `Showing ${start + 1}–${Math.min(start + tablePageSize, tableEntries.length)} of ${tableEntries.length} districts` : 'No districts in view'; elements.previous.disabled = tablePage === 0; elements.next.disabled = start + tablePageSize >= tableEntries.length; }
-function render(overview) { const mergedDistricts = mergeDistricts(overview.districtPerformance); const maxProduction = Math.max(...mergedDistricts.map((entry) => entry.productionKg), 1); updateFilters(overview.filters); tableEntries = mergedDistricts; tablePage = 0; animateMetric(elements.rows, overview.dataQuality.rowsUsed); animateMetric(elements.districts, mergedDistricts.length); animateMetric(elements.crops, overview.productionByCrop.length); animateMetric(elements.production, overview.kpis.weightedProductionKg / 1000, (value) => compact(value, 'T')); elements.status.textContent = `${overview.period.year} · ${overview.period.season}`; elements.bars.innerHTML = mergedDistricts.slice(0, 8).map((entry) => `<div class="practice-row"><span>${districtName(entry.district)}</span><div class="practice-track"><i style="width:${(entry.productionKg / maxProduction) * 100}%"></i></div><strong>${compact(entry.productionKg / 1000, 'T')}</strong></div>`).join(''); elements.bars.querySelectorAll('.practice-row').forEach((row, index) => attachTooltip(row, `<strong>Actual: ${compact(mergedDistricts[index].productionKg / 1000, 'T')}</strong><span>${districtName(mergedDistricts[index].district)} · ${overview.period.year} Season ${overview.period.season}</span><b>Weighted production</b>`)); renderTable(); animateMetric(elements.signalRecords, overview.dataQuality.rowsUsed); animateMetric(elements.signalDistricts, mergedDistricts.length); animateMetric(elements.signalCrops, overview.productionByCrop.length); elements.recordsBar.style.width = `${Math.min(100, (overview.dataQuality.rowsUsed / 400000) * 100)}%`; elements.districtsBar.style.width = `${(mergedDistricts.length / 30) * 100}%`; elements.cropsBar.style.width = `${Math.min(100, (overview.productionByCrop.length / 25) * 100)}%`; }
-async function load() { document.body.classList.add('is-loading'); try { const params = new URLSearchParams({ year: elements.year.value, district: elements.district.value }); const response = await fetch(`/api/overview?${params}`); if (!response.ok) throw new Error(`Inputs API returned ${response.status}`); render(await response.json()); } catch (error) { elements.status.textContent = 'Data unavailable'; elements.registerStatus.textContent = error.message; } finally { document.body.classList.remove('is-loading'); } }
-elements.year.addEventListener('change', load); elements.district.addEventListener('change', load); elements.filterReset.addEventListener('click', () => { elements.year.value = 'all'; elements.district.value = 'all'; load(); }); elements.previous.addEventListener('click', () => { tablePage -= 1; renderTable(); }); elements.next.addEventListener('click', () => { tablePage += 1; renderTable(); }); load();
+const apiBaseUrl = window.__ISUKA_API_BASE_URL__ || '';
+const elements = {
+  year:document.getElementById('inputs-year'), district:document.getElementById('inputs-district'),
+  rows:document.getElementById('inputs-rows'), districts:document.getElementById('inputs-district-count'), crops:document.getElementById('inputs-crop-count'), production:document.getElementById('inputs-production'),
+  charts:document.getElementById('inputs-charts'), table:document.getElementById('inputs-table'), status:document.getElementById('inputs-register-status'), range:document.getElementById('inputs-register-range'), previous:document.getElementById('inputs-prev-page'), next:document.getElementById('inputs-next-page'),
+  filterBar:document.querySelector('.inputs-controls'), filterStatus:document.querySelector('[data-shared-filter-status]'), filterReset:document.querySelector('[data-shared-filter-reset]')
+};
+elements.filterBar.insertAdjacentHTML('beforeend','<div class="shared-filter-actions"><span data-shared-filter-status>Ready</span><button type="button" data-shared-filter-reset>Reset</button></div>');
+elements.filterStatus=elements.filterBar.querySelector('[data-shared-filter-status]');
+elements.filterReset=elements.filterBar.querySelector('[data-shared-filter-reset]');
+const compact = chartFormat.compact;
+let entries = [], page = 0, controller;
+const pageSize = 5;
+const title = (value) => String(value || '').replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+function setOptions(filters) {
+  elements.year.innerHTML = `<option value="all">All years</option>${filters.availableYears.map((year) => `<option value="${year}">${year}</option>`).join('')}`;
+  elements.year.value = filters.year;
+  elements.district.innerHTML = `<option value="all">All districts</option>${filters.availableDistricts.map((district) => `<option value="${district}">${title(district)}</option>`).join('')}`;
+  elements.district.value = filters.district;
+}
+function renderTable() {
+  const start = page * pageSize, visible = entries.slice(start, start + pageSize);
+  elements.table.innerHTML = visible.map((entry) => `<tr><td>${title(entry.district)}</td><td>${compact(entry.productionKg / 1000, 'T')}</td><td>${Number(entry.rows || 0).toLocaleString()}</td><td>${title(entry.primaryCrop)}</td><td>${Number.isFinite(entry.lossPercent) ? `${entry.lossPercent.toFixed(1)}%` : '—'}</td></tr>`).join('') || '<tr><td colspan="5">No districts in view.</td></tr>';
+  elements.status.textContent = `${entries.length} districts in view`;
+  elements.range.textContent = entries.length ? `Showing ${start + 1}–${Math.min(start + pageSize, entries.length)} of ${entries.length} districts` : 'No districts in view';
+  elements.previous.disabled = page === 0; elements.next.disabled = start + pageSize >= entries.length;
+}
+function renderCharts(overview, districtSeries) {
+  const context = `${elements.year.selectedOptions[0].textContent} · ${elements.district.selectedOptions[0].textContent}`;
+  const crops = overview.productionByCrop.slice(0, 8);
+  const rankedDistricts = entries.slice().sort((a,b) => b.productionKg - a.productionKg);
+  const trend = districtSeries.filter((row) => elements.year.value === 'all' || String(row.year) === elements.year.value).map((row) => ({ label:`${String(row.year).slice(-2)} ${row.season}`, period:`${row.year} Season ${row.season}`, value:row.weightedProductionKg / 1000 }));
+  renderChartGrid(elements.charts, [
+    { type:'bar', title:'Top 10 Crops by Weighted Production', eyebrow:'CROP OUTPUT', description:'Leading crop categories ranked by weighted production.', categoryLabel:'Crop', measureLabel:'Weighted production (tonnes)', unit:'T', context, data:crops.slice(0,10).map((row) => ({ label:row.crop, value:row.productionKg / 1000 })) },
+    { type:'donut', title:'Production Share by Crop', eyebrow:'CROP SHARE', description:'Contribution of leading crops to weighted production.', categoryLabel:'Crop', measureLabel:'Weighted production (tonnes)', unit:'T', centerLabel:'TONNES', context, data:crops.slice(0,5).map((row) => ({ label:row.crop, value:row.productionKg / 1000 })) },
+    { type:'bar', title:'Top 10 Districts by Production', eyebrow:'DISTRICT COMPARISON', description:'Leading districts ranked by weighted production.', categoryLabel:'District', measureLabel:'Weighted production (tonnes)', unit:'T', context, data:rankedDistricts.slice(0,10).map((row) => ({ label:title(row.district), value:row.productionKg / 1000 })) },
+    { type:'line', title:'Production by Survey Season', eyebrow:'SURVEY TREND', description:'Observed production across available survey periods.', categoryLabel:'Year and season', measureLabel:'Weighted production (tonnes)', unit:'T', context, data:trend }
+  ]);
+}
+async function load() {
+  controller?.abort(); controller = new AbortController();
+  elements.filterBar.classList.add('is-loading'); elements.filterStatus.textContent = 'Updating insights…';
+  try {
+    const query = new URLSearchParams({ year:elements.year.value, district:elements.district.value });
+    const trendQuery = new URLSearchParams({ districtCode:elements.district.value });
+    const [overviewResponse, seriesResponse] = await Promise.all([
+      fetch(`${apiBaseUrl}/api/overview?${query}`, { signal:controller.signal }), fetch(`${apiBaseUrl}/api/timeseries?${trendQuery}`, { signal:controller.signal })
+    ]);
+    if (!overviewResponse.ok || !seriesResponse.ok) throw new Error('Survey data could not be loaded.');
+    const [overview, series] = await Promise.all([overviewResponse.json(), seriesResponse.json()]);
+    setOptions(overview.filters); entries = overview.districtPerformance; page = 0;
+    animateMetric(elements.rows, overview.dataQuality.rowsUsed, (value) => Number.isFinite(value) ? Math.round(value).toLocaleString() : '—');
+    animateMetric(elements.districts, entries.length); animateMetric(elements.crops, overview.productionByCrop.length);
+    animateMetric(elements.production, overview.kpis.weightedProductionKg / 1000, (value) => compact(value, 'T'));
+    renderCharts(overview, series); renderTable();
+  } catch (error) { if (error.name !== 'AbortError') { elements.filterStatus.textContent = 'Data unavailable'; elements.status.textContent = error.message; } }
+  finally { elements.filterBar.classList.remove('is-loading'); if (!controller.signal.aborted) elements.filterStatus.textContent = 'Updated just now'; }
+}
+elements.year.addEventListener('change', load); elements.district.addEventListener('change', load);
+elements.filterReset.addEventListener('click', () => { elements.year.value = 'all'; elements.district.value = 'all'; load(); });
+elements.previous.addEventListener('click', () => { page -= 1; renderTable(); }); elements.next.addEventListener('click', () => { page += 1; renderTable(); });
+load();

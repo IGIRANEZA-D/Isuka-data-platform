@@ -12,3 +12,27 @@
 @media (max-width:1000px) { .inputs-main { padding:14px; }.inputs-grid { grid-template-columns:1fr; }.inputs-kpis { grid-template-columns:repeat(2,1fr); } }.inputs-controls { grid-template-columns:minmax(200px,1fr) 160px 180px; }
 .inputs-controls { position:sticky; top:12px; z-index:8; grid-template-columns:minmax(250px,1fr) 180px 210px auto; box-shadow:0 10px 24px rgba(31,46,23,.08); }.shared-filter-actions { display:flex; align-items:center; justify-content:flex-end; gap:12px; min-height:38px; color:var(--inputs-muted); font-size:11px; white-space:nowrap; }.shared-filter-actions button { padding:8px 10px; border:1px solid var(--inputs-line); border-radius:6px; color:var(--inputs-green); font-size:11px; font-weight:700; }
 @media (max-width:620px) { .inputs-main { padding:14px 12px 30px; }.inputs-hero { min-height:220px; padding:22px; }.inputs-hero h1 { font-size:30px; }.inputs-controls,.inputs-kpis { grid-template-columns:1fr; }.inputs-heading { flex-direction:column; gap:8px; }.inputs-pagination { align-items:flex-start; flex-direction:column; } }
+
+/* Practice comparisons use the same polished, subtly animated bars. */
+.practice-row { padding:4px 7px; border-radius:10px; transition:background-color 160ms ease; animation:practice-row-in 360ms ease-out both; }
+.practice-row:nth-child(2) { animation-delay:35ms; }.practice-row:nth-child(3) { animation-delay:70ms; }.practice-row:nth-child(4) { animation-delay:105ms; }.practice-row:nth-child(5) { animation-delay:140ms; }.practice-row:nth-child(6) { animation-delay:175ms; }.practice-row:nth-child(7) { animation-delay:210ms; }.practice-row:nth-child(8) { animation-delay:245ms; }
+.practice-row:hover { background:#f3f8ef; }
+.practice-track { height:14px; border:1px solid rgba(61,107,31,.08); border-radius:999px; background:linear-gradient(180deg,#edf3e8,#e5eddf); box-shadow:inset 0 1px 2px rgba(31,46,23,.07); }
+.practice-track i { border-radius:inherit; background:repeating-linear-gradient(135deg,rgba(255,255,255,.17) 0 2px,transparent 2px 8px),linear-gradient(90deg,#83b45a,#3d6b1f); box-shadow:0 2px 5px rgba(40,85,26,.2); animation:practice-bar-in 560ms cubic-bezier(.2,.8,.25,1) both; transform-origin:left center; }
+@keyframes practice-row-in { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+@keyframes practice-bar-in { from { transform:scaleX(.04); } to { transform:scaleX(1); } }
+@media (prefers-reduced-motion:reduce) { .practice-row,.practice-track i { animation:none; } .practice-row { transition:none; } }
+/* District practice comparisons use lollipop marks instead of thick progress bars. */
+.practice-track { position:relative; height:3px; overflow:visible; border:0; border-radius:99px; background:#e5ecdf; box-shadow:none; }
+.practice-track i { position:relative; height:3px; border-radius:99px; background:linear-gradient(90deg,#9bc876,#3d6b1f); box-shadow:none; }
+.practice-track i::after { position:absolute; top:50%; right:-6px; width:12px; height:12px; border:2px solid #fff; border-radius:50%; background:#3d6b1f; box-shadow:0 1px 4px rgba(31,46,23,.24); content:''; transform:translateY(-50%); }
+.practice-row:hover .practice-track i::after { background:#c08a3e; transform:translateY(-50%) scale(1.15); }
+
+/* Clear direct comparisons, with the hovered district kept in focus. */
+.practice-track { position:relative; height:12px; overflow:hidden; border:0; border-radius:2px; background:#e7ede3; box-shadow:none; }
+.practice-track i { height:100%; border-radius:2px; background:linear-gradient(90deg,#9bc876,#3d6b1f); box-shadow:none; }
+.practice-track i::after { display:none; }
+.practice-row { transition:opacity 140ms ease,background-color 140ms ease; }
+.practice-bars:has(.practice-row:hover) .practice-row:not(:hover) { opacity:.38; }
+.practice-row:hover { position:relative; background:#f2f7ee; }
+.inputs-data-note { margin:-8px 0 18px; padding:12px 15px; border:1px solid #e2e9dd; border-left:3px solid #78a94d; border-radius:8px; background:#f8faf6; color:#60705a; font:500 12px/1.5 'Work Sans',sans-serif; }

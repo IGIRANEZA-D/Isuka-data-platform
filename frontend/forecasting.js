@@ -1,155 +1,101 @@
-const apiBaseUrl = window.__ISUKA_API_BASE_URL__ || '';
-import { attachTooltip } from './chart-tooltip.js';
 import { animateMetric } from './lib/metric-animation.js';
+import { renderChartGrid, chartFormat } from './chart-kit.js';
+
+const apiBaseUrl = window.__ISUKA_API_BASE_URL__ || '';
 const elements = {
-  sidebar: document.querySelector('.sidebar'), collapse: document.querySelector('.collapse-toggle'), district: document.getElementById('forecast-district'), crop: document.getElementById('forecast-crop'), accuracy: document.getElementById('forecast-accuracy'), districts: document.getElementById('forecast-districts'), horizon: document.getElementById('forecast-horizon'), model: document.getElementById('forecast-model'), title: document.getElementById('selected-title'), status: document.getElementById('forecast-status'), chart: document.getElementById('forecast-chart'), metrics: document.getElementById('backtest-metrics'), backtest: document.getElementById('backtest-table'), importance: document.getElementById('feature-importance'), analysis: document.getElementById('forecast-analysis'), map: document.getElementById('forecast-map'), mapStatus: document.getElementById('map-status')
+  district:document.getElementById('forecast-district'), crop:document.getElementById('forecast-crop'), accuracy:document.getElementById('forecast-accuracy'), districts:document.getElementById('forecast-districts'), horizon:document.getElementById('forecast-horizon'), model:document.getElementById('forecast-model'), status:document.getElementById('forecast-status'), charts:document.getElementById('forecast-charts'), metrics:document.getElementById('backtest-metrics'), backtest:document.getElementById('backtest-table'), importance:document.getElementById('feature-importance'), analysis:document.getElementById('forecast-analysis'), map:document.getElementById('forecast-map'), mapStatus:document.getElementById('map-status')
 };
-const forecastControls = document.querySelector('.forecast-controls');
-forecastControls.insertAdjacentHTML('beforeend', '<div class="shared-filter-actions"><span data-shared-filter-status>Ready</span><button type="button" data-shared-filter-reset>Reset</button></div>');
-const forecastFilterStatus = forecastControls.querySelector('[data-shared-filter-status]');
-const forecastFilterReset = forecastControls.querySelector('[data-shared-filter-reset]');
-let cache;
-let activeModel = 'ensemble';
-let map;
-let boundaryLayer;
-
-function format(value, suffix = '') { if (!Number.isFinite(value)) return '—'; if (Math.abs(value) >= 1000000) return `${(value / 1000000).toFixed(1)}M ${suffix}`.trim(); if (Math.abs(value) >= 1000) return `${(value / 1000).toFixed(1)}K ${suffix}`.trim(); return `${value.toFixed(value >= 100 ? 0 : 1)} ${suffix}`.trim(); }
-function percent(value) { return Number.isFinite(value) ? `${value.toFixed(1)}%` : '—'; }
-function title(value) { return String(value || '').replace(/\b\w/g, (letter) => letter.toUpperCase()); }
-function districtKey(value) { return String(value || '').toLowerCase().replace(/[^a-z]/g, '').replace('nyarugenege', 'nyarugenge'); }
-function riskColor(tier) { return tier === 'high' ? '#a83c3c' : tier === 'moderate' ? '#c08a3e' : '#6fa83c'; }
-function selectedForecast() { return cache.forecasts.find((entry) => (elements.district.value === 'all' || entry.districtCode === elements.district.value) && (elements.crop.value === 'all' || entry.cropCode === elements.crop.value)) || cache.forecasts[0]; }
-function modelEntry(entry) { return entry?.models?.[activeModel] || {}; }
-function futureModel(period) { return period?.productionKg !== undefined ? period : period?.models?.[activeModel] || {}; }
-
+const controls = document.querySelector('.forecast-controls');
+controls.insertAdjacentHTML('beforeend','<div class="shared-filter-actions"><span data-shared-filter-status>Ready</span><button type="button" data-shared-filter-reset>Reset</button></div>');
+const filterStatus = controls.querySelector('[data-shared-filter-status]'), filterReset = controls.querySelector('[data-shared-filter-reset]');
+let cache, activeModel='ensemble', map, boundaryLayer, historyController, selectionVersion=0;
+const format = chartFormat.compact;
+const percent = (value) => Number.isFinite(value) ? `${value.toFixed(1)}%` : '—';
+const title = (value) => String(value || '').replace(/\b\w/g,(letter)=>letter.toUpperCase());
+const key = (value) => String(value || '').toLowerCase().replace(/[^a-z]/g,'').replace('nyarugenege','nyarugenge');
+const riskColor = (tier) => tier==='high'?'#a83c3c':tier==='moderate'?'#c08a3e':'#6fa83c';
+const modelEntry = (entry) => entry?.models?.[activeModel] || {};
+const futureModel = (period) => period?.productionKg !== undefined ? period : period?.models?.[activeModel] || {};
+function filteredForecasts() { return cache.forecasts.filter((item)=>(elements.district.value==='all'||item.districtCode===elements.district.value)&&(elements.crop.value==='all'||item.cropCode===elements.crop.value)); }
+function selectedForecast() { return filteredForecasts()[0]; }
 function updateSelectors() {
-  const districts = [...new Set(cache.forecasts.map((entry) => entry.districtCode))].sort();
-  const crops = [...new Map(cache.forecasts.map((entry) => [entry.cropCode, entry.cropName || entry.cropCode])).entries()].sort((left, right) => left[1].localeCompare(right[1]));
-  elements.district.innerHTML = '<option value="all">All districts</option>' + districts.map((value) => `<option value="${value}">${title(value)}</option>`).join('');
-  elements.crop.innerHTML = '<option value="all">All crops</option>' + crops.map(([value, label]) => `<option value="${value}">${title(label)}</option>`).join('');
+  const oldDistrict=elements.district.value, oldCrop=elements.crop.value;
+  const districts=[...new Set(cache.forecasts.map((row)=>row.districtCode))].sort();
+  const crops=[...new Map(cache.forecasts.map((row)=>[row.cropCode,row.cropName||row.cropCode])).entries()].sort((a,b)=>a[1].localeCompare(b[1]));
+  elements.district.innerHTML='<option value="all">All districts</option>'+districts.map((value)=>`<option value="${value}">${title(value)}</option>`).join('');
+  elements.crop.innerHTML='<option value="all">All crops</option>'+crops.map(([value,label])=>`<option value="${value}">${title(label)}</option>`).join('');
+  elements.district.value=districts.includes(oldDistrict)?oldDistrict:'all'; elements.crop.value=crops.some(([value])=>value===oldCrop)?oldCrop:'all';
 }
-
 function renderKpis() {
-  const match = cache.backtest?.riskTierMatchPercent;
-  animateMetric(elements.accuracy, match, percent);
-  animateMetric(elements.districts, new Set(cache.forecasts.map((entry) => entry.districtCode)).size);
-  elements.horizon.textContent = `${cache.horizon.startYear}–${cache.horizon.endYear}`;
-  elements.model.textContent = activeModel[0].toUpperCase() + activeModel.slice(1);
+  animateMetric(elements.accuracy,cache.backtest?.riskTierMatchPercent,percent);
+  animateMetric(elements.districts,new Set(filteredForecasts().map((row)=>row.districtCode)).size);
+  elements.horizon.textContent=`${cache.horizon.startYear}–${cache.horizon.endYear}`;
+  elements.model.textContent=title(activeModel);
 }
-
-function renderMetrics() {
-  const backtest = cache.backtest || {};
-  elements.metrics.innerHTML = [['Tier match', percent(backtest.riskTierMatchPercent)], ['Loss MAE', percent(backtest.lossMaePercent)], ['Production RMSE', format(backtest.productionRmseKg, 'kg')]].map(([label, value]) => `<div><span>${label}</span><strong>${value}</strong></div>`).join('');
-  const selected = selectedForecast();
-  const comparisons = (backtest.comparisons || []).filter((row) => (!selected || row.districtCode === selected.districtCode) && (!selected || row.cropCode === selected.cropCode));
-  elements.backtest.innerHTML = comparisons.length ? `<table><thead><tr><th>Season</th><th>Predicted</th><th>Actual</th><th>Loss tier</th></tr></thead><tbody>${comparisons.map((row) => `<tr><td>${row.season} 2025</td><td>${format(row.predicted?.productionKg, 'kg')}</td><td>${format(row.actual?.weightedProductionKg, 'kg')}</td><td>${row.predicted?.lossPercent == null ? '—' : `${percent(row.predicted.lossPercent)} → ${row.actual?.lossPercent == null ? '—' : percent(row.actual.lossPercent)}`}</td></tr>`).join('')}</tbody></table>` : '<p class="empty-state">No 2025 holdout comparison is available for this district-crop pair.</p>';
+function renderBacktest() {
+  const backtest=cache.backtest||{};
+  elements.metrics.innerHTML=[['Tier match',percent(backtest.riskTierMatchPercent)],['Loss MAE',percent(backtest.lossMaePercent)],['Production RMSE',format(backtest.productionRmseKg,'kg')]].map(([label,value])=>`<div><span>${label}</span><strong>${value}</strong></div>`).join('');
+  const selected=selectedForecast();
+  const comparisons=(backtest.comparisons||[]).filter((row)=>selected&&row.districtCode===selected.districtCode&&row.cropCode===selected.cropCode);
+  elements.backtest.innerHTML=comparisons.length?`<table><thead><tr><th>Season</th><th>Predicted</th><th>Actual</th><th>Loss tier</th></tr></thead><tbody>${comparisons.map((row)=>`<tr><td>${row.season} 2025</td><td>${format(row.predicted?.productionKg,'kg')}</td><td>${format(row.actual?.weightedProductionKg,'kg')}</td><td>${row.predicted?.lossPercent==null?'—':`${percent(row.predicted.lossPercent)} → ${row.actual?.lossPercent==null?'—':percent(row.actual.lossPercent)}`}</td></tr>`).join('')}</tbody></table>`:'<p class="empty-state">No holdout comparison for this selection.</p>';
+  return comparisons;
 }
-
 function renderImportance() {
-  const entries = cache.featureImportances || [];
-  const max = Math.max(...entries.map((entry) => entry.importance), 1);
-  elements.importance.innerHTML = entries.length ? `<p class="importance-note">The trained model compares recent loss, recent production, and season patterns. Bars are model signals, not proof that one factor causes the outcome.</p>${entries.map((entry) => `<div class="importance-row"><span>${entry.feature} <small>${entry.target || 'model'}</small></span><span class="importance-track"><i style="width:${(entry.importance / max) * 100}%"></i></span><span class="importance-value">${(entry.importance * 100).toFixed(1)}%</span></div>`).join('')}` : '<p class="empty-state">No model signal metadata is available in the forecast artifact.</p>';
+  const rows=cache.featureImportances||[], max=Math.max(...rows.map((row)=>row.importance),1);
+  elements.importance.innerHTML=rows.length?`<p class="importance-note">Model signals describe the fitted patterns; they are not evidence of cause.</p>${rows.map((row)=>`<div class="importance-row"><span>${row.feature} <small>${row.target||'model'}</small></span><span class="importance-track"><i style="width:${row.importance/max*100}%"></i></span><span class="importance-value">${(row.importance*100).toFixed(1)}%</span></div>`).join('')}`:'<p class="empty-state">No model signal metadata is available.</p>';
 }
-
 function renderAnalysis(forecast, series) {
-  const future = (forecast.future || []).map((row) => ({ ...row, model: futureModel(row) })).filter((row) => Number.isFinite(row.model.productionKg));
-  const actual = series.filter((row) => Number.isFinite(row.weightedProductionKg));
-  const first = future[0]?.model;
-  const last = future.at(-1)?.model;
-  const latestActual = actual.at(-1);
-  const movement = first && last && Number.isFinite(first.productionKg) && Number.isFinite(last.productionKg)
-    ? last.productionKg > first.productionKg * 1.05 ? 'The model expects production to rise gradually across the forecast horizon.' : last.productionKg < first.productionKg * 0.95 ? 'The model expects production to fall across the forecast horizon.' : 'The model expects production to stay broadly stable across the forecast horizon.'
-    : 'There is not enough supported history to describe a future movement.';
-  const confidence = forecast.lowHistory ? 'This selection has limited history, so its uncertainty is higher.' : `This selection has ${forecast.yearsAvailable} years of usable history.`;
-  elements.analysis.innerHTML = `<div class="analysis-summary"><strong>${movement}</strong><span>${confidence}</span></div><div class="analysis-grid"><div><span>Recent observed production</span><strong>${format(latestActual?.weightedProductionKg, 'kg')}</strong><small>${latestActual ? `${latestActual.year} Season ${latestActual.season}` : 'Unavailable'}</small></div><div><span>First forecast loss</span><strong>${percent(first?.lossPercent)}</strong><small>${future[0] ? `${future[0].year} Season ${future[0].season}` : 'Unavailable'}</small></div><div><span>Last forecast loss</span><strong>${percent(last?.lossPercent)}</strong><small>${future.at(-1) ? `${future.at(-1).year} Season ${future.at(-1).season}` : 'Unavailable'}</small></div><div><span>Risk interpretation</span><strong>${first?.riskTier ? `${title(first.riskTier)} risk` : 'Unavailable'}</strong><small>15% and 30% fixed thresholds</small></div></div><p>The forecast learns repeated patterns in the historical records. It does not know future weather, pests, prices, or policy changes unless those variables are included in the data. A large rise or drop should therefore be read as a signal to investigate, not as a guaranteed event.</p>`;
+  const future=(forecast.future||[]).map((row)=>({row,model:futureModel(row)})).filter((entry)=>Number.isFinite(entry.model.productionKg));
+  const actual=series.filter((row)=>Number.isFinite(row.weightedProductionKg)), recent=actual.at(-1), first=future[0]?.model, last=future.at(-1)?.model;
+  const movement=first&&last?last.productionKg>first.productionKg*1.05?'The model expects production to rise across the forecast horizon.':last.productionKg<first.productionKg*.95?'The model expects production to fall across the forecast horizon.':'The model expects production to stay broadly stable.':'There is not enough supported history to describe a future movement.';
+  const confidence=forecast.lowHistory?'Limited history means higher uncertainty.':`${forecast.yearsAvailable} years of usable history.`;
+  elements.analysis.innerHTML=`<div class="analysis-summary"><strong>${movement}</strong><span>${confidence}</span></div><div class="analysis-grid"><div><span>Recent observed production</span><strong>${format(recent?.weightedProductionKg,'kg')}</strong><small>${recent?`${recent.year} Season ${recent.season}`:'Unavailable'}</small></div><div><span>First forecast loss</span><strong>${percent(first?.lossPercent)}</strong><small>${future[0]?`${future[0].row.year} Season ${future[0].row.season}`:'Unavailable'}</small></div><div><span>Last forecast loss</span><strong>${percent(last?.lossPercent)}</strong><small>${future.at(-1)?`${future.at(-1).row.year} Season ${future.at(-1).row.season}`:'Unavailable'}</small></div><div><span>Risk tier</span><strong>${first?.riskTier?`${title(first.riskTier)} risk`:'Unavailable'}</strong><small>15% and 30% thresholds</small></div></div><p>Forecasts are estimates based on survey history; they do not include future weather, prices, pests, or policy changes.</p>`;
 }
-
-function renderChart(series, forecast) {
-  const future = (forecast.future || []).map((row) => {
-    const source = futureModel(row);
-    return { label: `${row.year} ${row.season}`, value: Number.isFinite(source.productionKg) ? source.productionKg / 1000 : null, source, clamping: row.clamping };
-  }).filter((row) => Number.isFinite(row.value));
-  if (!future.length) { elements.chart.innerHTML = '<p class="empty-state">No forecast is available for this selection.</p>'; return; }
-  const width = 1000;
-  const rowHeight = 28;
-  const height = Math.max(220, future.length * rowHeight + 36);
-  const pad = { left: 92, right: 90, top: 18, bottom: 18 };
-  const max = Math.max(...future.map((row) => row.value), 1);
-  const barWidth = width - pad.left - pad.right;
-  const x = (value) => pad.left + (value / max) * barWidth;
-  const rows = future.map((row, index) => {
-    const y = pad.top + index * rowHeight + 5;
-    const valueX = x(row.value);
-    const label = `<text class="forecast-bar-label" x="${pad.left - 12}" y="${y + 13}" text-anchor="end">${row.label}</text>`;
-    const track = `<rect class="forecast-bar-track" x="${pad.left}" y="${y}" width="${barWidth}" height="16" rx="4"/>`;
-    const bar = `<rect class="forecast-bar" x="${pad.left}" y="${y}" width="${Math.max(2, valueX - pad.left)}" height="16" rx="4"/>`;
-    const value = `<text class="forecast-bar-value" x="${Math.min(valueX + 9, width - 4)}" y="${y + 13}" text-anchor="start">${format(row.value * 1000, 'kg')}</text>`;
-    const hit = `<rect class="forecast-bar-hit" x="${pad.left}" y="${y - 5}" width="${barWidth}" height="26" data-kind="Forecast" data-period="${row.label}" data-value="${row.value * 1000}" data-band-low="${row.source?.confidenceBand?.productionKg?.[0] ?? ''}" data-band-high="${row.source?.confidenceBand?.productionKg?.[1] ?? ''}" data-clamp-reason="${row.clamping?.lowConfidence ? 'Low confidence: limited history variation.' : row.clamping?.applied ? 'Capped estimate: ensemble exceeded the historical cap.' : ''}" tabindex="0"/>`;
-    return `${label}${track}${bar}${value}${hit}`;
-  }).join('');
-  elements.chart.innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Forecast production by future season"><text class="forecast-chart-axis-title" x="${pad.left}" y="12">Forecast production</text>${rows}</svg>`;
-  elements.chart.querySelectorAll('.forecast-bar-hit').forEach((point) => {
-    const kind = point.dataset.kind;
-    const range = point.dataset.bandLow && point.dataset.bandHigh ? `<span>Confidence: ±${format((Number(point.dataset.bandHigh) - Number(point.dataset.bandLow)) / 2, 'kg')}</span>` : '';
-    const forecastLabel = kind === 'Forecast' ? `<b>Forecast: ${format(Number(point.dataset.value), 'kg')}</b>` : `<b>Actual: ${format(Number(point.dataset.value), 'kg')}</b>`;
-    const reason = point.dataset.clampReason ? `<span>${point.dataset.clampReason}</span>` : '';
-    attachTooltip(point, `<strong>${kind}</strong><span>${point.dataset.period} · Production</span>${forecastLabel}${range}${reason}`);
-  });
+function renderCharts(series, forecast, comparisons) {
+  const context=`${elements.district.selectedOptions[0].textContent} · ${elements.crop.selectedOptions[0].textContent} · ${title(activeModel)} model`;
+  const pairContext=`${title(forecast.districtCode)} · ${title(forecast.cropName||forecast.cropCode)} · ${title(activeModel)} model`;
+  const future=(forecast.future||[]).map((row)=>({label:`${String(row.year).slice(-2)} ${row.season}`,period:`Forecast · ${row.year} Season ${row.season}`,value:futureModel(row).productionKg/1000})).filter((row)=>Number.isFinite(row.value));
+  const actual=series.filter((row)=>Number.isFinite(row.weightedProductionKg)).slice(-6).map((row)=>({label:`${String(row.year).slice(-2)} ${row.season}`,period:`Observed · ${row.year} Season ${row.season}`,value:row.weightedProductionKg/1000}));
+  const allRows=filteredForecasts(), districtMap=new Map(), cropMap=new Map();
+  allRows.forEach((entry)=>{const data=futureModel(entry.future?.[0]||entry);if(!Number.isFinite(data.productionKg))return;const district=districtMap.get(entry.districtCode)||{value:0};district.value+=data.productionKg/1000;districtMap.set(entry.districtCode,district);const crop=cropMap.get(entry.cropName||entry.cropCode)||{value:0};crop.value+=data.productionKg/1000;cropMap.set(entry.cropName||entry.cropCode,crop);});
+  const riskCounts=['low','moderate','high'].map((tier)=>({label:`${title(tier)} risk`,value:allRows.filter((entry)=>futureModel(entry.future?.[0]||entry).riskTier===tier).length,color:riskColor(tier)}));
+  const groups=comparisons.map((row)=>({label:`${row.season} 2025`,period:`2025 Season ${row.season}`,series:[{name:'Predicted',value:Number.isFinite(row.predicted?.productionKg)?row.predicted.productionKg/1000:null,color:'#6fa83c'},{name:'Actual',value:Number.isFinite(row.actual?.weightedProductionKg)?row.actual.weightedProductionKg/1000:null,color:'#c08a3e'}]}));
+  renderChartGrid(elements.charts,[
+    {type:'line',title:'Forecast Production by Season',eyebrow:'OBSERVED + FORECAST',description:`Historical production for ${title(forecast.cropName||forecast.cropCode)} in ${title(forecast.districtCode)}, followed by the selected model forecast.`,categoryLabel:'Survey period',measureLabel:'Weighted production (tonnes)',unit:'T',context:pairContext,data:[...actual,...future]},
+    {type:'grouped',title:'2025 Backtest: Predicted vs Actual',eyebrow:'PREDICTED VS ACTUAL',description:'Holdout production comparison for this district and crop.',categoryLabel:'Season',measureLabel:'Weighted production (tonnes)',unit:'T',context:pairContext,data:groups},
+    {type:'bar',title:'Top 10 Districts by Forecast Output',eyebrow:'DISTRICT OUTLOOK',description:'Forecast production ranked across the current crop selection.',categoryLabel:'District',measureLabel:'Forecast production (tonnes)',unit:'T',context,data:[...districtMap].sort((a,b)=>b[1].value-a[1].value).slice(0,10).map(([label,row])=>({label:title(label),value:row.value}))},
+    {type:'donut',title:'Forecasts by Risk Tier',eyebrow:'RISK OUTLOOK',description:'Eligible district and crop forecasts grouped by risk tier.',categoryLabel:'Risk tier',measureLabel:'Forecast pairs',unit:'pairs',centerLabel:'PAIRS',context,data:riskCounts}
+  ]);
 }
-
 async function renderSelection() {
-  const forecast = selectedForecast();
-  if (!forecast) return;
-  const selectedDistrict = forecast.districtCode; const selectedCrop = forecast.cropCode;
-  elements.title.textContent = `${title(forecast.cropName || selectedCrop)} · ${title(selectedDistrict)}`;
-  const firstForecast = forecast.future?.[0];
-  elements.status.textContent = firstForecast?.clamping?.lowConfidence ? 'Low confidence' : firstForecast?.clamping?.applied ? 'Capped estimate' : forecast.lowHistory ? 'Limited history' : `${forecast.yearsAvailable} years available`;
-  const response = await fetch(`${apiBaseUrl}/api/timeseries?districtCode=${encodeURIComponent(selectedDistrict)}&cropCode=${encodeURIComponent(selectedCrop)}`);
-  if (!response.ok) throw new Error(`Historical series returned ${response.status}`);
-  const series = await response.json();
-  renderChart(series, forecast);
-  renderMetrics();
-  renderAnalysis(forecast, series);
+  const version=++selectionVersion;
+  historyController?.abort();
+  const forecast=selectedForecast();
+  if(!forecast){elements.status.textContent='No forecast for this filter';elements.charts.innerHTML='<p class="empty-state">No forecast is available for this district and crop.</p>';elements.backtest.innerHTML='<p class="empty-state">No matching backtest records.</p>';filterStatus.textContent='Updated just now';return;}
+  elements.status.textContent=forecast.future?.[0]?.clamping?.lowConfidence?'Low confidence':forecast.lowHistory?'Limited history':`${forecast.yearsAvailable} years available`;
+  const comparisons=renderBacktest();
+  renderKpis();renderCharts([],forecast,comparisons);renderAnalysis(forecast,[]);
+  filterStatus.textContent='Forecast ready - loading history...';
+  historyController=new AbortController();
+  fetch(`${apiBaseUrl}/api/timeseries?districtCode=${encodeURIComponent(forecast.districtCode)}&cropCode=${encodeURIComponent(forecast.cropCode)}`,{signal:historyController.signal,cache:'no-store'})
+    .then((response)=>{if(!response.ok)throw new Error(`Historical series returned ${response.status}`);return response.json();})
+    .then((series)=>{if(version!==selectionVersion)return;renderCharts(series,forecast,comparisons);renderAnalysis(forecast,series);filterStatus.textContent='Updated just now';})
+    .catch((error)=>{if(error.name==='AbortError'||version!==selectionVersion)return;console.warn('Forecast history unavailable; showing the published forecast.',error);filterStatus.textContent='Forecast ready - history unavailable';});
 }
-
 async function renderMap() {
-  const response = await fetch('/api/rwanda-districts');
-  if (!response.ok) throw new Error('Boundary service unavailable');
-  const geojson = await response.json();
-  const districtTotals = new Map();
-  cache.forecasts.forEach((entry) => {
-    const period = entry.future?.[0];
-    const next = period || modelEntry(entry);
-    const productionKg = Number(next.productionKg);
-    const lossPercent = Number(next.lossPercent);
-    if (!Number.isFinite(productionKg) || !Number.isFinite(lossPercent)) return;
-    const key = districtKey(entry.districtCode);
-    const current = districtTotals.get(key) || { productionKg: 0, weightedLoss: 0, cropCount: 0 };
-    current.productionKg += productionKg;
-    current.weightedLoss += productionKg * lossPercent;
-    current.cropCount += 1;
-    districtTotals.set(key, current);
-  });
-  const districtForecasts = new Map([...districtTotals.entries()].map(([key, value]) => {
-    const lossPercent = value.productionKg > 0 ? value.weightedLoss / value.productionKg : null;
-    return [key, { ...value, lossPercent, riskTier: lossPercent >= 30 ? 'high' : lossPercent >= 15 ? 'moderate' : 'low' }];
-  }));
-  if (!map) map = L.map(elements.map, { zoomControl: true, minZoom: 7, maxZoom: 11 }).setView([-1.94, 29.87], 8);
-  if (boundaryLayer) boundaryLayer.remove();
-  boundaryLayer = L.geoJSON(geojson, { style: (feature) => { const key = districtKey(feature.properties.district || feature.properties.name); const entry = districtForecasts.get(key); return { color:'#fff', weight:1.2, fillColor:riskColor(entry?.riskTier), fillOpacity:.78 }; }, onEachFeature: (feature, layer) => { const key = districtKey(feature.properties.district || feature.properties.name); const entry = districtForecasts.get(key); layer.bindTooltip(`<strong>${title(feature.properties.district || feature.properties.name)}</strong><br>Weighted forecast loss: ${percent(entry?.lossPercent)}<br>Risk: ${entry?.riskTier || 'Unavailable'}<br>${entry?.cropCount || 0} crop forecasts included`, { sticky:true }); } }).addTo(map);
-  window.requestAnimationFrame(() => { map.invalidateSize(); map.fitBounds(boundaryLayer.getBounds(), { padding: [12, 12] }); });
-  elements.mapStatus.textContent = `${districtForecasts.size} districts forecasted`;
+  const response=await fetch('/api/rwanda-districts'); if(!response.ok)throw new Error('Boundary service unavailable'); const geojson=await response.json();
+  const totals=new Map(); cache.forecasts.forEach((entry)=>{const data=futureModel(entry.future?.[0]||entry), productionKg=Number(data.productionKg), lossPercent=Number(data.lossPercent);if(!Number.isFinite(productionKg)||!Number.isFinite(lossPercent))return;const k=key(entry.districtCode),row=totals.get(k)||{productionKg:0,weightedLoss:0,cropCount:0};row.productionKg+=productionKg;row.weightedLoss+=productionKg*lossPercent;row.cropCount++;totals.set(k,row);});
+  const forecastByDistrict=new Map([...totals].map(([k,row])=>{const lossPercent=row.productionKg?row.weightedLoss/row.productionKg:null;return[k,{...row,lossPercent,riskTier:lossPercent>=30?'high':lossPercent>=15?'moderate':'low'}]}));
+  if(!map)map=L.map(elements.map,{zoomControl:true,minZoom:7,maxZoom:11}).setView([-1.94,29.87],8);if(boundaryLayer)boundaryLayer.remove();
+  boundaryLayer=L.geoJSON(geojson,{style:(feature)=>{const row=forecastByDistrict.get(key(feature.properties.district||feature.properties.name));return{color:'#fff',weight:1.2,fillColor:riskColor(row?.riskTier),fillOpacity:.78};},onEachFeature:(feature,layer)=>{const row=forecastByDistrict.get(key(feature.properties.district||feature.properties.name));layer.bindTooltip(`<strong>${title(feature.properties.district||feature.properties.name)}</strong><br>Weighted forecast loss: ${percent(row?.lossPercent)}<br>Risk: ${row?.riskTier||'Unavailable'}<br>${row?.cropCount||0} crop forecasts`,{sticky:true});}}).addTo(map);
+  requestAnimationFrame(()=>{map.invalidateSize();map.fitBounds(boundaryLayer.getBounds(),{padding:[12,12]});});elements.mapStatus.textContent=`${forecastByDistrict.size} districts forecasted`;
 }
-
+async function loadModel() { filterStatus.textContent='Loading forecast...';const response=await fetch(`${apiBaseUrl}/api/forecast?model=${activeModel}`,{cache:'no-store'});if(!response.ok)throw new Error(`Forecast data returned ${response.status}`);cache=await response.json();updateSelectors();renderImportance();await renderSelection();try{await renderMap();}catch(error){elements.mapStatus.textContent='Map unavailable';console.warn('Forecast map unavailable.',error);} }
 async function init() {
-  elements.district.addEventListener('change', () => renderSelection().catch(showError));
-  elements.crop.addEventListener('change', () => renderSelection().catch(showError));
-  forecastFilterReset.addEventListener('click', () => { elements.district.value = 'all'; elements.crop.value = 'all'; forecastFilterStatus.textContent = 'Reset to national view'; renderSelection().catch(showError); });
-  document.querySelectorAll('[data-model]').forEach((button) => button.addEventListener('click', () => { activeModel = button.dataset.model; document.querySelectorAll('[data-model]').forEach((item) => item.classList.toggle('is-active', item === button)); renderKpis(); renderSelection().catch(showError); renderMap().catch(showError); }));
-  const response = await fetch(`${apiBaseUrl}/api/forecast?model=${activeModel}`);
-  if (!response.ok) throw new Error(`Forecast cache returned ${response.status}`);
-  cache = await response.json();
-  updateSelectors(); renderKpis(); renderImportance(); await renderSelection(); await renderMap();
+  document.querySelectorAll('[data-model]').forEach((button)=>button.addEventListener('click',()=>{activeModel=button.dataset.model;document.querySelectorAll('[data-model]').forEach((item)=>{item.classList.toggle('is-active',item===button);item.setAttribute('aria-pressed',String(item===button));});loadModel().catch(showError);}));
+  elements.district.addEventListener('change',()=>renderSelection().catch(showError));elements.crop.addEventListener('change',()=>renderSelection().catch(showError));
+  filterReset.addEventListener('click',()=>{elements.district.value='all';elements.crop.value='all';renderSelection().catch(showError);});
+  await loadModel();
 }
-function showError(error) { elements.status.textContent = 'Data unavailable'; elements.mapStatus.textContent = error.message; elements.chart.innerHTML = `<p class="empty-state">${error.message}</p>`; }
+function showError(error) { elements.status.textContent='Data unavailable';elements.mapStatus.textContent=error.message;filterStatus.textContent='Update failed';elements.charts.innerHTML=`<p class="empty-state">${error.message}</p>`; }
 init().catch(showError);

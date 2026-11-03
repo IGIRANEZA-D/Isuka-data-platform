@@ -9,3 +9,13 @@
 .isuka-map .isuka-map-zoom button:hover,.isuka-map .isuka-map-zoom button:focus-visible { background: #edf5e8; }
 .isuka-map .isuka-map-tooltip { position: absolute; z-index: 3; max-width: min(280px,80%); padding: 8px 10px; border: 1px solid #cbd8c4; border-radius: 5px; background: rgba(255,255,255,.97); box-shadow: 0 4px 14px rgba(31,46,23,.14); color: #24351f; font: 500 11px/1.45 'Work Sans',sans-serif; pointer-events: none; }
 .isuka-map .isuka-map-tooltip[hidden] { display: none; }
+
+/* A shared cartographic finish for climate, district and loss views. */
+.isuka-map.leaflet-container { border:1px solid #d7e2d1; border-radius:14px; background:radial-gradient(ellipse at 50% 45%,#f8fbf5,#e8f1e4 72%); box-shadow:inset 0 1px 0 rgba(255,255,255,.8); }
+.isuka-map .isuka-district-shape { stroke:#f8fbf5; stroke-width:1.15px; stroke-linejoin:round; paint-order:stroke fill; transition:filter 160ms ease,stroke-width 160ms ease,stroke 160ms ease; }
+.isuka-map .isuka-district-shape:hover { filter:brightness(1.08) drop-shadow(0 2px 2px rgba(31,46,23,.22)); stroke:#26451d; stroke-width:2px; }
+.isuka-map .isuka-district-shape:focus-visible { filter:brightness(1.08) drop-shadow(0 0 3px rgba(31,46,23,.45)); stroke:#1f2e17; stroke-width:2.5px; }
+.isuka-map .isuka-map-zoom { border-color:#c9d8c1; border-radius:9px; box-shadow:0 5px 16px rgba(31,46,23,.12); }
+.isuka-map .isuka-map-zoom button { transition:background-color 140ms ease,color 140ms ease; }
+.isuka-map .isuka-map-tooltip { border-radius:9px; box-shadow:0 8px 22px rgba(31,46,23,.16); }
+@media(prefers-reduced-motion:reduce) { .isuka-map .isuka-district-shape,.isuka-map .isuka-map-zoom button { transition:none; } }

@@ -1832,6 +1832,38 @@ app.get('/api/overview', publicDataLimiter, async (request, response) => {
   }
 });
 
+app.get('/api/crop-district-breakdown', publicDataLimiter, (request, response) => {
+  try {
+    const year = request.query.year ? String(request.query.year) : 'all';
+    const districtFilter = request.query.district ? String(request.query.district).toLowerCase() : 'all';
+    const cropFilter = request.query.crop ? String(request.query.crop).toLowerCase() : 'all';
+    if (year !== 'all' && !/^20\d{2}$/.test(year)) return response.status(400).json({ error:'year must be all or a four-digit year' });
+    const periods = getAllPeriods().filter((period) => period.available && (year === 'all' || period.year === Number(year)));
+    const grouped = new Map();
+    periods.forEach((period) => period.aggregate?.districtAggregates?.forEach((district, rawDistrict) => {
+      const districtCode = rawDistrict === 'nyarugenege' ? 'nyarugenge' : rawDistrict;
+      if (districtFilter !== 'all' && districtCode !== districtFilter) return;
+      district.cropMap?.forEach((crop, rawCrop) => {
+        const cropCode = String(crop.cropCode || rawCrop).toLowerCase();
+        const cropName = String(crop.crop || rawCrop);
+        if (cropFilter !== 'all' && cropCode !== cropFilter && cropName.toLowerCase() !== cropFilter) return;
+        const key = `${districtCode}\u0000${cropCode}`;
+        const current = grouped.get(key) || { district:districtCode, crop:cropName, cropCode, productionKg:0, areaHa:0, lossKg:0, rows:0 };
+        current.productionKg += crop.productionKg || 0;
+        current.areaHa += crop.weightedAreaHa || 0;
+        current.lossKg += crop.lossKg || 0;
+        current.rows += crop.rows || 0;
+        grouped.set(key, current);
+      });
+    }));
+    const rows = [...grouped.values()].map((row) => ({ ...row, lossPercent:row.productionKg > 0 ? row.lossKg / row.productionKg * 100 : null }));
+    response.json({ filters:{ year, district:districtFilter, crop:cropFilter }, rows });
+  } catch (error) {
+    log.error({ event:'crop_district_breakdown_failed', requestId:request.requestId, errorName:error?.name || 'Error' });
+    response.status(503).json({ error:'Crop and district comparison data is unavailable.' });
+  }
+});
+
 function describeDatabaseConnectionFailure(error) {
   const message = String(error?.message || '');
   const name = String(error?.name || 'MongoDBError');

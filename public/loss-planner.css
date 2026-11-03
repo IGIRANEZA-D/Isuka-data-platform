@@ -319,4 +319,22 @@
 }
 @media (prefers-reduced-motion:reduce) {
   .lp-filter-toolbar,.lp-page-button { scroll-behavior:auto; }
-}
+}/* Softer stage and district comparison bars; data values remain unchanged. */
+.lp-stage-row { transition:background-color 150ms ease; }
+.lp-stage-row:hover { background:#f0f6eb; }
+.lp-stage-track { height:15px; box-shadow:inset 0 1px 2px rgba(31,46,23,.07); }
+.lp-stage-fill.is-saved { background:repeating-linear-gradient(135deg,rgba(255,255,255,.16) 0 2px,transparent 2px 8px),linear-gradient(90deg,#8abb61,#4f8834); }
+.lp-district-bar { height:11px; background:linear-gradient(180deg,#edf3e8,#e5eddf); box-shadow:inset 0 1px 2px rgba(31,46,23,.07); }
+.lp-district-bar span { background:repeating-linear-gradient(135deg,rgba(255,255,255,.16) 0 2px,transparent 2px 8px),linear-gradient(90deg,#8dbb67,#4f8834); }
+@media (prefers-reduced-motion:reduce) { .lp-stage-row { transition:none; } }
+.lp-district-bar { height:3px; overflow:visible; border-radius:99px; background:#e5ecdf; box-shadow:none; }
+.lp-district-bar span { position:relative; height:3px; border-radius:99px; background:linear-gradient(90deg,#9bc876,#3d6b1f); box-shadow:none; }
+.lp-district-bar span::after { position:absolute; top:50%; right:-6px; width:12px; height:12px; border:2px solid #fff; border-radius:50%; background:#3d6b1f; box-shadow:0 1px 4px rgba(31,46,23,.24); content:''; transform:translateY(-50%); }
+.lp-district-row-main:hover .lp-district-bar span::after { background:#c08a3e; }
+
+/* Keep district ranking bars legible at a glance; hover isolates the chosen district. */
+.lp-district-bar { height:10px; overflow:hidden; border-radius:2px; background:#e7ede3; box-shadow:none; }
+.lp-district-bar span { height:100%; border-radius:2px; background:linear-gradient(90deg,#9bc876,#3d6b1f); box-shadow:none; }
+.lp-district-bar span::after { display:none; }
+.lp-district-list:has(.lp-district-row-main:hover) .lp-district-row-main:not(:hover) { opacity:.42; }
+.lp-district-row-main { transition:opacity 140ms ease,background-color 140ms ease; }
