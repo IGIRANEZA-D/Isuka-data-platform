@@ -72,6 +72,44 @@
   font-weight: 700;
 }
 
+.public-kpi-heading {
+  display: flex;
+  min-width: 0;
+  min-height: 36px;
+  align-items: center;
+  gap: 10px;
+}
+
+.public-kpi-heading > span:last-child {
+  min-width: 0;
+  color: rgba(255, 255, 255, .94);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: .065em;
+  text-transform: uppercase;
+}
+
+.public-kpi-icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .58);
+  border-radius: 11px;
+  background: #e4efdd;
+  color: #356d25;
+}
+
+.public-kpi-icon svg { width: 19px; height: 19px; }
+
+.climate-kpis #climate-period-card #climate-period {
+  white-space: nowrap;
+  font-size: clamp(18px, 1.5vw, 22px);
+  line-height: 1.15;
+}
+
 .kpi-row .kpi-icon,
 .kpi-row .kpi-icon.primary-tint,
 .kpi-row .kpi-icon.accent-tint,
