@@ -250,10 +250,15 @@ export function renderChartGrid(container, specs) {
   specs.forEach((spec) => {
     const frame = chartFrame(spec);
     container.appendChild(frame.card);
-    if (spec.type === 'line') drawLine(frame.stage, spec);
-    else if (spec.type === 'donut') drawDonut(frame.stage, spec);
-    else if (spec.type === 'grouped') drawGrouped(frame.stage, spec);
-    else drawBar(frame.stage, spec, spec.type === 'bar');
+    try {
+      if (spec.type === 'line') drawLine(frame.stage, spec);
+      else if (spec.type === 'donut') drawDonut(frame.stage, spec);
+      else if (spec.type === 'grouped') drawGrouped(frame.stage, spec);
+      else drawBar(frame.stage, spec, spec.type === 'bar');
+    } catch (error) {
+      console.error(`Could not render chart: ${spec.title}`, error);
+      frame.stage.innerHTML = '<div class="analytics-empty">This chart could not be drawn. Other dashboard data is still available.</div>';
+    }
     setupActions(frame, spec);
   });
 }

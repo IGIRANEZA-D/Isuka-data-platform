@@ -40,3 +40,6 @@
 .land-bars .bar-track span::after { display:none; }
 .land-bars:has(.bar-row:hover) .bar-row:not(:hover) { opacity:.38; }
 .land-bars .bar-row { transition:opacity 140ms ease,background-color 140ms ease; }
+
+/* Keep the filter panel in document flow so it never covers charts while scrolling. */
+.land-controls { position:relative; top:auto; }

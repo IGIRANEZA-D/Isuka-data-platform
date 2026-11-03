@@ -52,6 +52,15 @@
 @keyframes forecast-forecast-in { from { opacity:0; } to { opacity:1; } }
 @media (prefers-reduced-motion: reduce) { .forecast-guide,.actual-line,.forecast-line { animation:none; opacity:1; stroke-dashoffset:0; } }
 .chart-scroll-note { margin:0 0 8px; color:#8a9385; font-size:10px; }
+.forecast-chart-panel .forecast-chart { padding:10px 12px; border:1px solid rgba(61,107,31,.08); border-radius:15px; background:radial-gradient(ellipse at 50% 0%,rgba(111,168,60,.08),transparent 70%),linear-gradient(180deg,#fbfcf9,#f5f8f2); }
+.forecast-bar-track { fill:#eaf0e5; }
+.forecast-bar { fill:#79a951; filter:drop-shadow(0 2px 3px rgba(45,91,30,.16)); transition:filter 180ms ease,opacity 180ms ease; transform-box:fill-box; transform-origin:left center; animation:forecast-bar-arrive 480ms cubic-bezier(.2,.8,.25,1) both; }
+.forecast-bar:has(+ .forecast-bar-value + .forecast-bar-hit:hover) { fill:#3d6b1f; filter:drop-shadow(0 4px 5px rgba(45,91,30,.24)); }
+@keyframes forecast-bar-arrive { from { opacity:.4; transform:scaleX(.04); } to { opacity:1; transform:scaleX(1); } }
+.actual-line { filter:drop-shadow(0 2px 2px rgba(61,107,31,.18)); }
+.forecast-line { filter:drop-shadow(0 2px 2px rgba(192,138,62,.18)); }
+.forecast-point { filter:drop-shadow(0 1px 2px rgba(31,46,23,.14)); }
+@media (prefers-reduced-motion:reduce) { .forecast-bar { animation:none; transition:none; filter:none; transform:none; }.actual-line,.forecast-line,.forecast-point { filter:none; } }
 .analysis-link { color:var(--forecast-green); font-size:11px; font-weight:700; text-decoration:none; white-space:nowrap; }
 .analysis-link:hover { text-decoration:underline; }
 .forecast-analysis { color:#596755; font-size:12px; line-height:1.6; }
@@ -68,3 +77,25 @@
 @media (max-width:900px) { .analysis-grid { grid-template-columns:repeat(2,1fr); } }
 .backtest-panel { min-height:0; align-self:start; }
 @media (max-width:540px) { .analysis-grid { grid-template-columns:1fr 1fr; } .analysis-summary { display:grid; } }
+
+/* Forecast is a trajectory chart: level, season-to-season direction and uncertainty read together. */
+.forecast-chart-panel .forecast-chart { padding:8px 10px 2px; border:1px solid #e5ecdf; border-radius:16px; background:linear-gradient(180deg,#fbfcf9,#f5f8f2); }
+.forecast-grid-row line { stroke:#dfe8d9; stroke-width:1; stroke-dasharray:3 6; }
+.forecast-grid-row text,.forecast-x-label { fill:#758171; font:10px 'Work Sans',sans-serif; }
+.forecast-x-label { font-size:9px; }
+.forecast-confidence-band { fill:#9bbd72; opacity:.25; stroke:none; }
+.forecast-chart .actual-line { fill:none; stroke:#527d35; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:none; stroke-dashoffset:0; opacity:1; animation:none; }
+.forecast-chart .forecast-line { fill:none; stroke:#3d6b1f; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:8 5; opacity:1; animation:forecast-trajectory-in 420ms ease-out both; }
+.forecast-point-marker { fill:#fff; stroke:#3d6b1f; stroke-width:3; pointer-events:none; }
+.forecast-observed-point { fill:#527d35; stroke:#fff; stroke-width:2; pointer-events:none; }
+.forecast-point-hit { fill:transparent; stroke:transparent; cursor:pointer; outline:none; }
+.forecast-point-hit:hover,.forecast-point-hit:focus-visible { stroke:#3d6b1f; stroke-width:2; }
+.forecast-chart:has(.forecast-point-hit:hover) .forecast-point-marker,.forecast-chart:has(.forecast-point-hit:focus-visible) .forecast-point-marker { opacity:.25; }
+.forecast-point-hit:hover,.forecast-point-hit:focus-visible { fill:#fff; stroke:#3d6b1f; stroke-width:2.5; }
+.forecast-period-label { fill:#617254; font:700 9px 'Work Sans',sans-serif; letter-spacing:.12em; }
+.forecast-chart .forecast-chart-axis-title { fill:#56664f; }
+@keyframes forecast-trajectory-in { from { opacity:.25; stroke-dashoffset:90; } to { opacity:1; stroke-dashoffset:0; } }
+@media(prefers-reduced-motion:reduce) { .forecast-chart .forecast-line { animation:none; } }
+
+/* Keep forecast filters in normal flow and clear of charts during scrolling. */
+.forecast-controls { position:relative; top:auto; }

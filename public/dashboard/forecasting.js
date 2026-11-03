@@ -8,7 +8,7 @@ const elements = {
 const controls = document.querySelector('.forecast-controls');
 controls.insertAdjacentHTML('beforeend','<div class="shared-filter-actions"><span data-shared-filter-status>Ready</span><button type="button" data-shared-filter-reset>Reset</button></div>');
 const filterStatus = controls.querySelector('[data-shared-filter-status]'), filterReset = controls.querySelector('[data-shared-filter-reset]');
-let cache, activeModel='ensemble', map, boundaryLayer, historyController, selectionVersion=0;
+let cache, activeModel='ensemble', map, boundaryLayer, historyController, selectionVersion=0, mapRenderVersion=0, modelLoadVersion=0, boundaryDataPromise;
 const format = chartFormat.compact;
 const percent = (value) => Number.isFinite(value) ? `${value.toFixed(1)}%` : '—';
 const title = (value) => String(value || '').replace(/\b\w/g,(letter)=>letter.toUpperCase());
@@ -83,18 +83,21 @@ async function renderSelection() {
     .catch((error)=>{if(error.name==='AbortError'||version!==selectionVersion)return;console.warn('Forecast history unavailable; showing the published forecast.',error);filterStatus.textContent='Forecast ready - history unavailable';});
 }
 async function renderMap() {
-  const response=await fetch('/api/rwanda-districts'); if(!response.ok)throw new Error('Boundary service unavailable'); const geojson=await response.json();
-  const totals=new Map(); cache.forecasts.forEach((entry)=>{const data=futureModel(entry.future?.[0]||entry), productionKg=Number(data.productionKg), lossPercent=Number(data.lossPercent);if(!Number.isFinite(productionKg)||!Number.isFinite(lossPercent))return;const k=key(entry.districtCode),row=totals.get(k)||{productionKg:0,weightedLoss:0,cropCount:0};row.productionKg+=productionKg;row.weightedLoss+=productionKg*lossPercent;row.cropCount++;totals.set(k,row);});
+  const version=++mapRenderVersion, visibleForecasts=filteredForecasts();
+  if(!boundaryDataPromise)boundaryDataPromise=fetch('/api/rwanda-districts').then((response)=>{if(!response.ok)throw new Error('Boundary service unavailable');return response.json();}).catch((error)=>{boundaryDataPromise=null;throw error;});
+  const geojson=await boundaryDataPromise; if(version!==mapRenderVersion)return;
+  const totals=new Map(); visibleForecasts.forEach((entry)=>{const data=futureModel(entry.future?.[0]||entry), productionKg=Number(data.productionKg), lossPercent=Number(data.lossPercent);if(!Number.isFinite(productionKg)||!Number.isFinite(lossPercent))return;const k=key(entry.districtCode),row=totals.get(k)||{productionKg:0,weightedLoss:0,cropCount:0};row.productionKg+=productionKg;row.weightedLoss+=productionKg*lossPercent;row.cropCount++;totals.set(k,row);});
   const forecastByDistrict=new Map([...totals].map(([k,row])=>{const lossPercent=row.productionKg?row.weightedLoss/row.productionKg:null;return[k,{...row,lossPercent,riskTier:lossPercent>=30?'high':lossPercent>=15?'moderate':'low'}]}));
   if(!map)map=L.map(elements.map,{zoomControl:true,minZoom:7,maxZoom:11}).setView([-1.94,29.87],8);if(boundaryLayer)boundaryLayer.remove();
-  boundaryLayer=L.geoJSON(geojson,{style:(feature)=>{const row=forecastByDistrict.get(key(feature.properties.district||feature.properties.name));return{color:'#fff',weight:1.2,fillColor:riskColor(row?.riskTier),fillOpacity:.78};},onEachFeature:(feature,layer)=>{const row=forecastByDistrict.get(key(feature.properties.district||feature.properties.name));layer.bindTooltip(`<strong>${title(feature.properties.district||feature.properties.name)}</strong><br>Weighted forecast loss: ${percent(row?.lossPercent)}<br>Risk: ${row?.riskTier||'Unavailable'}<br>${row?.cropCount||0} crop forecasts`,{sticky:true});}}).addTo(map);
-  requestAnimationFrame(()=>{map.invalidateSize();map.fitBounds(boundaryLayer.getBounds(),{padding:[12,12]});});elements.mapStatus.textContent=`${forecastByDistrict.size} districts forecasted`;
+  boundaryLayer=L.geoJSON(geojson,{style:(feature)=>{const row=forecastByDistrict.get(key(feature.properties.district||feature.properties.name));return{color:'#fff',weight:1.2,fillColor:row?riskColor(row.riskTier):'#d8e2d2',fillOpacity:row&&row.cropCount?0.78:0.48};},onEachFeature:(feature,layer)=>{const row=forecastByDistrict.get(key(feature.properties.district||feature.properties.name));layer.bindTooltip(`<strong>${title(feature.properties.district||feature.properties.name)}</strong><br>Weighted forecast loss: ${percent(row?.lossPercent)}<br>Risk: ${row?.riskTier?`${row.riskTier} risk`:'No forecast for this filter'}<br>${row?.cropCount||0} crop forecasts`,{sticky:true});}}).addTo(map);
+  requestAnimationFrame(()=>{map.invalidateSize();map.fitBounds(boundaryLayer.getBounds(),{padding:[12,12]});});elements.mapStatus.textContent=`${forecastByDistrict.size} of 30 districts in this view`;
 }
-async function loadModel() { filterStatus.textContent='Loading forecast...';const response=await fetch(`${apiBaseUrl}/api/forecast?model=${activeModel}`,{cache:'no-store'});if(!response.ok)throw new Error(`Forecast data returned ${response.status}`);cache=await response.json();updateSelectors();renderImportance();await renderSelection();try{await renderMap();}catch(error){elements.mapStatus.textContent='Map unavailable';console.warn('Forecast map unavailable.',error);} }
+async function loadModel() { const version=++modelLoadVersion, requestedModel=activeModel;filterStatus.textContent='Loading forecast...';const response=await fetch(`${apiBaseUrl}/api/forecast?model=${requestedModel}`,{cache:'no-store'});if(!response.ok)throw new Error(`Forecast data returned ${response.status}`);const nextCache=await response.json();if(version!==modelLoadVersion)return;cache=nextCache;updateSelectors();renderImportance();await renderSelection();try{await renderMap();}catch(error){if(version===modelLoadVersion){elements.mapStatus.textContent='Map unavailable';console.warn('Forecast map unavailable.',error);}} }
 async function init() {
   document.querySelectorAll('[data-model]').forEach((button)=>button.addEventListener('click',()=>{activeModel=button.dataset.model;document.querySelectorAll('[data-model]').forEach((item)=>{item.classList.toggle('is-active',item===button);item.setAttribute('aria-pressed',String(item===button));});loadModel().catch(showError);}));
-  elements.district.addEventListener('change',()=>renderSelection().catch(showError));elements.crop.addEventListener('change',()=>renderSelection().catch(showError));
-  filterReset.addEventListener('click',()=>{elements.district.value='all';elements.crop.value='all';renderSelection().catch(showError);});
+  const refreshSelection=()=>{renderSelection().catch(showError);renderMap().catch((error)=>{elements.mapStatus.textContent='Map unavailable';console.warn('Forecast map could not be updated for this filter.',error);});};
+  elements.district.addEventListener('change',refreshSelection);elements.crop.addEventListener('change',refreshSelection);
+  filterReset.addEventListener('click',()=>{elements.district.value='all';elements.crop.value='all';refreshSelection();});
   await loadModel();
 }
 function showError(error) { elements.status.textContent='Data unavailable';elements.mapStatus.textContent=error.message;filterStatus.textContent='Update failed';elements.charts.innerHTML=`<p class="empty-state">${error.message}</p>`; }

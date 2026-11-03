@@ -96,3 +96,6 @@
 .forecast-chart .forecast-chart-axis-title { fill:#56664f; }
 @keyframes forecast-trajectory-in { from { opacity:.25; stroke-dashoffset:90; } to { opacity:1; stroke-dashoffset:0; } }
 @media(prefers-reduced-motion:reduce) { .forecast-chart .forecast-line { animation:none; } }
+
+/* Keep forecast filters in normal flow and clear of charts during scrolling. */
+.forecast-controls { position:relative; top:auto; }

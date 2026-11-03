@@ -47,18 +47,21 @@ async function load() {
   try {
     const query = new URLSearchParams({ year:elements.year.value, district:elements.district.value });
     const trendQuery = new URLSearchParams({ districtCode:elements.district.value });
-    const [overviewResponse, seriesResponse] = await Promise.all([
-      fetch(`${apiBaseUrl}/api/overview?${query}`, { signal:controller.signal }), fetch(`${apiBaseUrl}/api/timeseries?${trendQuery}`, { signal:controller.signal })
-    ]);
-    if (!overviewResponse.ok || !seriesResponse.ok) throw new Error('Survey data could not be loaded.');
-    const [overview, series] = await Promise.all([overviewResponse.json(), seriesResponse.json()]);
+    const overviewResponse = await fetch(`${apiBaseUrl}/api/overview?${query}`, { signal:controller.signal });
+    if (!overviewResponse.ok) throw new Error(`Survey data returned ${overviewResponse.status}.`);
+    const overview = await overviewResponse.json();
     setOptions(overview.filters); entries = overview.districtPerformance; page = 0;
     animateMetric(elements.rows, overview.dataQuality.rowsUsed, (value) => Number.isFinite(value) ? Math.round(value).toLocaleString() : '—');
     animateMetric(elements.districts, entries.length); animateMetric(elements.crops, overview.productionByCrop.length);
     animateMetric(elements.production, overview.kpis.weightedProductionKg / 1000, (value) => compact(value, 'T'));
-    renderCharts(overview, series); renderTable();
-  } catch (error) { if (error.name !== 'AbortError') { elements.filterStatus.textContent = 'Data unavailable'; elements.status.textContent = error.message; } }
-  finally { elements.filterBar.classList.remove('is-loading'); if (!controller.signal.aborted) elements.filterStatus.textContent = 'Updated just now'; }
+    renderTable(); renderCharts(overview, []);
+    elements.filterStatus.textContent = 'Updated just now';
+    fetch(`${apiBaseUrl}/api/timeseries?${trendQuery}`, { signal:controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error(`Survey trend returned ${response.status}.`)))
+      .then((series) => { if (!controller.signal.aborted) renderCharts(overview, series); })
+      .catch((error) => { if (error.name !== 'AbortError') console.warn('Farm production trend is unavailable; current survey data remains visible.', error); });
+  } catch (error) { if (error.name !== 'AbortError') { console.error('Farm production data could not be loaded.', error); elements.filterStatus.textContent = 'Data unavailable'; elements.status.textContent = error.message; } }
+  finally { elements.filterBar.classList.remove('is-loading'); }
 }
 elements.year.addEventListener('change', load); elements.district.addEventListener('change', load);
 elements.filterReset.addEventListener('click', () => { elements.year.value = 'all'; elements.district.value = 'all'; load(); });

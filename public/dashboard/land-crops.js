@@ -51,7 +51,7 @@ function render(overview, series) {
   animateMetric(elements.production, overview.kpis.weightedProductionKg / 1000, (value) => compact(value, 'T'));
   animateMetric(elements.rows, overview.dataQuality.rowsUsed, (value) => Number.isFinite(value) ? Math.round(value).toLocaleString() : '—');
   animateMetric(elements.crops, overview.productionByCrop.length, (value) => Number.isFinite(value) ? Math.round(value).toLocaleString() : '—');
-  renderCharts(overview, series); renderTable();
+  renderTable(); renderCharts(overview, series);
 }
 async function load() {
   controller?.abort(); controller = new AbortController();
@@ -59,15 +59,18 @@ async function load() {
   try {
     const overviewParams = new URLSearchParams({ year:elements.year.value, district:elements.district.value });
     const seriesParams = new URLSearchParams({ districtCode:elements.district.value });
-    const [overviewResponse, seriesResponse] = await Promise.all([
-      fetch(`${apiBaseUrl}/api/overview?${overviewParams}`, { signal:controller.signal }),
-      fetch(`${apiBaseUrl}/api/timeseries?${seriesParams}`, { signal:controller.signal })
-    ]);
-    if (!overviewResponse.ok || !seriesResponse.ok) throw new Error('Survey charts could not be updated.');
-    render(await overviewResponse.json(), await seriesResponse.json());
+    const overviewResponse = await fetch(`${apiBaseUrl}/api/overview?${overviewParams}`, { signal:controller.signal });
+    if (!overviewResponse.ok) throw new Error(`Survey data returned ${overviewResponse.status}.`);
+    const overview = await overviewResponse.json();
+    render(overview, []);
+    fetch(`${apiBaseUrl}/api/timeseries?${seriesParams}`, { signal:controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error(`Survey trend returned ${response.status}.`)))
+      .then((series) => { if (!controller.signal.aborted) renderCharts(overview, series); })
+      .catch((error) => { if (error.name !== 'AbortError') console.warn('Land and crops trend is unavailable; showing the survey overview.', error); });
+    elements.filterStatus.textContent = 'Updated just now';
   } catch (error) {
-    if (error.name !== 'AbortError') { elements.status.textContent = 'Data unavailable'; elements.table.innerHTML = '<tr><td colspan="5">The selected data could not be loaded.</td></tr>'; }
-  } finally { document.body.classList.remove('is-loading'); elements.filterBar.classList.remove('is-loading'); elements.filterStatus.textContent = 'Updated just now'; }
+    if (error.name !== 'AbortError') { console.error('Land and crops data could not be loaded.', error); elements.status.textContent = 'Data unavailable'; elements.table.innerHTML = '<tr><td colspan="5">The selected data could not be loaded.</td></tr>'; elements.filterStatus.textContent = 'Data unavailable'; }
+  } finally { document.body.classList.remove('is-loading'); elements.filterBar.classList.remove('is-loading'); }
 }
 elements.year.addEventListener('change', load); elements.district.addEventListener('change', load);
 elements.filterReset.addEventListener('click', () => { elements.year.value = 'all'; elements.district.value = 'all'; load(); });

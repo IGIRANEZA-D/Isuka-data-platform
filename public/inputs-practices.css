@@ -36,3 +36,6 @@
 .practice-bars:has(.practice-row:hover) .practice-row:not(:hover) { opacity:.38; }
 .practice-row:hover { position:relative; background:#f2f7ee; }
 .inputs-data-note { margin:-8px 0 18px; padding:12px 15px; border:1px solid #e2e9dd; border-left:3px solid #78a94d; border-radius:8px; background:#f8faf6; color:#60705a; font:500 12px/1.5 'Work Sans',sans-serif; }
+
+/* Keep filters in normal flow so they do not pin over the data panels. */
+.inputs-controls { position:relative; top:auto; }

@@ -55,18 +55,20 @@ function applyLoading(loading) {
 async function loadData() {
   requestController?.abort();
   requestController = new AbortController();
+  const controller = requestController;
   const query = new URLSearchParams({ year:elements.yearFilter.value, district:elements.districtFilter.value });
   const seriesQuery = new URLSearchParams({ districtCode:elements.districtFilter.value });
-  const [overviewResponse, seriesResponse] = await Promise.all([
-    fetch(`${apiBaseUrl}/api/overview?${query}`, { signal:requestController.signal, cache:'no-store' }),
-    fetch(`${apiBaseUrl}/api/timeseries?${seriesQuery}`, { signal:requestController.signal, cache:'no-store' })
-  ]);
-  if (!overviewResponse.ok || !seriesResponse.ok) throw new Error('Dashboard data is temporarily unavailable. Please try again.');
-  const [overview, series] = await Promise.all([overviewResponse.json(), seriesResponse.json()]);
+  const overviewResponse = await fetch(`${apiBaseUrl}/api/overview?${query}`, { signal:controller.signal, cache:'no-store' });
+  if (!overviewResponse.ok) throw new Error(`Dashboard data returned ${overviewResponse.status}.`);
+  const overview = await overviewResponse.json();
   updateOptions(elements.yearFilter, overview.filters.availableYears, overview.filters.year, 'years');
   updateOptions(elements.districtFilter, overview.filters.availableDistricts, overview.filters.district, 'districts');
   renderKpis(overview);
-  renderCharts(overview, series);
+  renderCharts(overview, []);
+  fetch(`${apiBaseUrl}/api/timeseries?${seriesQuery}`, { signal:controller.signal, cache:'no-store' })
+    .then((response) => response.ok ? response.json() : Promise.reject(new Error(`Survey trend returned ${response.status}.`)))
+    .then((series) => { if (!controller.signal.aborted && requestController === controller) renderCharts(overview, series); })
+    .catch((error) => { if (error.name !== 'AbortError') console.warn('Dashboard seasonal trend is unavailable; overview data remains visible.', error); });
 }
 async function refresh() {
   applyLoading(true);
