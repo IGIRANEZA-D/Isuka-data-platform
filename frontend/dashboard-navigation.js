@@ -65,10 +65,14 @@ function playDashboardEntry() {
   if (!target || normalizePath(target) !== normalizePath(window.location.pathname)) return;
   const main = document.querySelector('.dashboard-shell > main');
   if (!main) return;
-  main.classList.remove('dashboard-nav-enter');
-  void main.offsetWidth;
   main.classList.add('dashboard-nav-enter');
   main.addEventListener('animationend', () => main.classList.remove('dashboard-nav-enter'), { once: true });
+
+  const activeLink = document.querySelector('.sidebar-nav .nav-item.active');
+  if (activeLink) {
+    activeLink.classList.add('is-arriving');
+    activeLink.addEventListener('animationend', () => activeLink.classList.remove('is-arriving'), { once: true });
+  }
 }
 
 function prefetchDashboardPage(link) {

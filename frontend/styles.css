@@ -18,19 +18,6 @@ html {
   scroll-behavior: auto;
 }
 
-@view-transition { navigation: auto; }
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  /* Keep the browser from cross-fading two full dashboard pages together. */
-  animation: none;
-}
-
-::view-transition-old(sidebar),
-::view-transition-new(sidebar) {
-  animation: none;
-}
-
 body {
   margin: 0;
   font-family: 'Work Sans', sans-serif;
@@ -157,6 +144,7 @@ body.is-navigating a[aria-busy="true"] {
   .dashboard-shell > main.dashboard-nav-enter > .forecast-hero .forecast-hero-content,
   .dashboard-shell > main.dashboard-nav-enter > .lp-hero .lp-hero-content,
   .dashboard-shell > main.dashboard-nav-enter > .analysis-header { animation: none; }
+  .nav-item.is-arriving::before { animation: none; }
 }
 
 .nav-item:active,
@@ -236,7 +224,6 @@ svg {
   background-size: cover;
   background-position: center;
   transition: width 200ms ease, min-width 200ms ease;
-  view-transition-name: sidebar;
 }
 
 .sidebar.sidebar-state-restoring { transition: none !important; }
@@ -286,6 +273,7 @@ svg {
 }
 
 .nav-item {
+  position: relative;
   display: grid;
   grid-template-columns: 20px minmax(0, 1fr) 16px;
   align-items: center;
@@ -297,6 +285,26 @@ svg {
   text-align: left;
   text-decoration: none;
   transition: background-color 150ms ease, color 150ms ease;
+}
+
+.nav-item::before {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 5px;
+  width: 3px;
+  border-radius: 99px;
+  background: #d8efb6;
+  content: '';
+  opacity: 0;
+  transform: scaleY(.6);
+}
+
+.nav-item.is-arriving::before { animation: nav-highlight-enter 130ms ease-out both; }
+
+@keyframes nav-highlight-enter {
+  from { opacity: 0; transform: scaleY(.6); }
+  to { opacity: 1; transform: scaleY(1); }
 }
 
 .nav-item:hover {
@@ -428,6 +436,8 @@ svg {
   grid-template-columns: 1fr;
   padding: 0;
 }
+
+.sidebar.collapsed .nav-item::before { left: 4px; }
 
 .sidebar.collapsed .nav-icon {
   width: 20px;

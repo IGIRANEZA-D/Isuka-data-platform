@@ -363,7 +363,6 @@ function animateTonnes(value) {
 
 function renderAnswer(result) {
   const selectedName = baseline.crops.find((crop) => crop.code === state.cropCode)?.name || 'Not available';
-  const stageName = stageGroups.find((group) => group.id === state.stage)?.label || 'all recorded stages';
   const districtText = selectedDistricts === 'all' ? 'all districts' : `${selectedDistricts.size} districts`;
   const totals = result.totals;
   const empty = !totals.hasSelectedLoss;
@@ -373,15 +372,15 @@ function renderAnswer(result) {
   elements.answerValue.textContent = totals.valueRwf === null ? 'Value not available' : `about ${formatRwf(totals.valueRwf)}`;
   elements.answerValue.classList.toggle('is-muted', totals.valueRwf === null);
   elements.answerSacks.textContent = totals.recoveredKg >= 0 ? `about ${formatSacks(totals.recoveredKg)} of 50 kg` : 'Not available';
-  elements.answerSentence.textContent = `Cutting ${stageName} loss in ${selectedName} by ${state.reductionPct}% across ${districtText}, based on ${currentPeriodText()} survey data.`;
-  elements.rangeLine.textContent = `A 20% cut saves about ${toTonnes(range20?.totals.recoveredKg)}. A 40% cut about ${toTonnes(range40?.totals.recoveredKg)}.`;
+  elements.answerSentence.textContent = `${state.reductionPct}% reduction | ${selectedName} | ${districtText}`;
+  elements.rangeLine.textContent = `20%: ${toTonnes(range20?.totals.recoveredKg)} | 40%: ${toTonnes(range40?.totals.recoveredKg)}`;
   const band = coverageBand(totals.coveragePct);
   const coverageText = Number.isFinite(totals.coveragePct) ? `${band[0].toUpperCase()}${band.slice(1)} · ${totals.coveragePct.toFixed(1)}% stage-data coverage` : 'Coverage not available';
   elements.answerChips.innerHTML = `<span class="lp-chip ${band === 'high' ? 'is-high' : band === 'unavailable' ? '' : 'is-medium'}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 7 3v5c0 4.6-3 8.3-7 10-4-1.7-7-5.4-7-10V6l7-3Z"/><path d="m8.5 12 2.3 2.3 4.8-5"/></svg>Coverage: ${escapeHtml(coverageText)}</span><span class="lp-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v10m3-7H9m6 4H9"/></svg>${escapeHtml(formatMoneyLabel(result))}</span><span class="lp-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v7c0 1.7 3.1 3 7 3s7-1.3 7-3V5M5 12v7c0 1.7 3.1 3 7 3s7-1.3 7-3v-7"/></svg>${escapeHtml(formatCount(totals.includedRecords))} survey records</span>`;
   elements.lowCoverage.hidden = band !== 'low';
   elements.suppressed.hidden = totals.suppressedCount === 0;
-  if (totals.suppressedCount) elements.suppressed.textContent = `${formatCount(totals.suppressedCount)} district-crop combinations excluded (fewer than ${baseline.meta.minRecords} survey records).`;
-  elements.disclaimer.textContent = `What-if estimate based on NISR survey data (${currentPeriodText()}). Not a forecast or a guarantee.`;
+  if (totals.suppressedCount) elements.suppressed.textContent = `${formatCount(totals.suppressedCount)} crop-district groups omitted (<${baseline.meta.minRecords} records).`;
+  elements.disclaimer.textContent = `Scenario estimate | NISR survey | ${currentPeriodText()} | not a forecast`;
   announce(`${elements.answerTonnes.textContent} estimated harvest saved. Coverage ${coverageText}.`);
 }
 
@@ -415,7 +414,7 @@ function renderStages(result) {
     attachTooltip(row, `<strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(toTonnes(item.lossKg))} · ${Number.isFinite(item.productionSharePct) ? `${item.productionSharePct.toFixed(1)}% of production` : 'Not recorded'}</span><b>${escapeHtml(formatCount(item.records))} survey records</b>`);
   });
   elements.stageSummary.textContent = Number.isFinite(result.totals.recordedLossPct) && Number.isFinite(result.totals.lossAfterPct)
-    ? `Recorded loss: ${result.totals.recordedLossPct.toFixed(1)}% of production; ${result.totals.lossAfterPct.toFixed(1)}% after this change. ${availableStageRows.length} of 7 reported stages shown.`
+    ? `Loss ${result.totals.recordedLossPct.toFixed(1)}% -> ${result.totals.lossAfterPct.toFixed(1)}% | ${availableStageRows.length}/7 stages`
     : `${availableStageRows.length} of 7 reported stages shown.`;
   renderStageTable(result);
 }
@@ -528,7 +527,7 @@ function updateMapStyles(result) {
   });
   const shownDistricts = result.byDistrict.filter((row) => !row.suppressed && Number.isFinite(metricValue(row))).length;
   const omittedDistricts = Math.max(0, baseline.districts.length - shownDistricts);
-  elements.mapNote.textContent = `Showing ${formatCount(shownDistricts)} districts with at least ${formatCount(baseline.meta.minRecords)} survey records; ${formatCount(omittedDistricts)} omitted.`;
+  elements.mapNote.textContent = `${formatCount(shownDistricts)} districts shown | ${formatCount(omittedDistricts)} low sample (<${formatCount(baseline.meta.minRecords)} records)`;
   const legend = elements.map.parentElement.querySelector('.lp-map-legend');
   if (legend) {
     const labels = legend.querySelectorAll(':scope > span');
@@ -607,7 +606,7 @@ function highlightMapDistrict(code, active) {
 
 function renderMethod() {
   const excluded = formatCount(scenarioResult?.totals?.suppressedCount);
-  elements.method.innerHTML = `<p><strong>Estimate:</strong> measured loss × selected reduction. RWF uses self-reported prices when available.</p><p><strong>Included:</strong> district–crop groups with at least ${escapeHtml(formatCount(baseline.meta.minRecords))} survey records. ${escapeHtml(excluded)} lower-count groups are omitted; missing or unconfirmed stage data is not estimated.</p><p><strong>Limits:</strong> coverage is the share of production with reported stage data, not a confidence level. NISR Seasonal Agricultural Survey · ${escapeHtml(currentPeriodText())} · ${escapeHtml(baseline.meta.calcVersion)}. Storage reporting is incomplete.</p>`;
+  elements.method.innerHTML = `<p><strong>Estimate:</strong> recorded loss × selected reduction. Values use reported prices where available.</p><p><strong>Coverage:</strong> groups need at least ${escapeHtml(formatCount(baseline.meta.minRecords))} survey records. ${escapeHtml(excluded)} low-count groups are excluded; unconfirmed stage data is not estimated.</p><p><strong>Limits:</strong> coverage is reported stage-data share, not confidence. NISR Seasonal Agricultural Survey · ${escapeHtml(currentPeriodText())} · ${escapeHtml(baseline.meta.calcVersion)}. Storage reports are incomplete.</p>`;
 }
 
 function renderScenario() {
