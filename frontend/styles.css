@@ -239,6 +239,8 @@ svg {
   view-transition-name: sidebar;
 }
 
+.sidebar.sidebar-state-restoring { transition: none !important; }
+
 .sidebar-inner {
   position: relative;
   z-index: 1;

@@ -25,7 +25,11 @@ const dashboardSidebar = document.querySelector('.sidebar');
 const dashboardSidebarToggle = document.querySelector('.collapse-toggle');
 if (dashboardSidebar && dashboardSidebarToggle) {
   try {
-    if (localStorage.getItem(dashboardSidebarKey) === 'true') dashboardSidebar.classList.add('collapsed');
+    if (localStorage.getItem(dashboardSidebarKey) === 'true') {
+      dashboardSidebar.classList.add('sidebar-state-restoring', 'collapsed');
+      void dashboardSidebar.offsetWidth;
+      requestAnimationFrame(() => dashboardSidebar.classList.remove('sidebar-state-restoring'));
+    }
   } catch { /* use the expanded default when storage is disabled */ }
   updateSidebarState(dashboardSidebar, dashboardSidebarToggle);
   document.addEventListener('click', (event) => {
