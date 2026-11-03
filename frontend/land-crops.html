@@ -63,10 +63,22 @@
         <div class="land-filter-actions"><span data-land-filter-status aria-live="polite">Ready</span><button type="button" data-land-filter-reset>Reset</button></div>
       </section>
       <section class="land-kpis" aria-label="Land and crops metrics">
-        <article><span class="metric-label">Weighted cultivated area</span><strong id="land-area">—</strong><small>hectares</small></article>
-        <article><span class="metric-label">Weighted production</span><strong id="land-production">—</strong><small>metric tonnes</small></article>
-        <article><span class="metric-label">Recorded production rows</span><strong id="land-rows">—</strong><small>usable source records</small></article>
-        <article><span class="metric-label">Crops observed</span><strong id="land-crops-count">—</strong><small>crop categories</small></article>
+        <article>
+          <div class="land-kpi-heading"><span class="land-kpi-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V8l8-4 8 4v11M4 12h16M8 10v2m4-2v2m4-2v2M8 15v4m4-4v4m4-4v4"/></svg></span><span class="metric-label">Weighted cultivated area</span></div>
+          <strong id="land-area">—</strong><small>hectares</small>
+        </article>
+        <article>
+          <div class="land-kpi-heading"><span class="land-kpi-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V5m0 5c-3.5 0-5.5-2-5.5-5 3.5 0 5.5 2 5.5 5Zm0 3c3.5 0 5.5-2 5.5-5-3.5 0-5.5 2-5.5 5ZM5 20h14"/></svg></span><span class="metric-label">Weighted production</span></div>
+          <strong id="land-production">—</strong><small>metric tonnes</small>
+        </article>
+        <article>
+          <div class="land-kpi-heading"><span class="land-kpi-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12a2 2 0 0 1 2 2v14H4V6a2 2 0 0 1 2-2Z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span><span class="metric-label">Recorded production rows</span></div>
+          <strong id="land-rows">—</strong><small>usable source records</small>
+        </article>
+        <article>
+          <div class="land-kpi-heading"><span class="land-kpi-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 4.5c-7.5 0-13 3.5-13 9a6 6 0 0 0 6 6c5.5 0 9-5.5 7-15Z"/><path d="M4 20c3-4 6.5-6.5 12-9"/></svg></span><span class="metric-label">Crops observed</span></div>
+          <strong id="land-crops-count">—</strong><small>crop categories</small>
+        </article>
       </section>
       <section class="land-grid" aria-label="Land and crops charts">
         <article class="land-panel land-panel-wide"><div class="panel-heading"><div><p>Crop profile</p><h2>What is being produced?</h2></div><span id="land-crop-period">Loading</span></div><div id="land-crop-chart" class="land-bars" aria-label="Production by crop"></div></article>
