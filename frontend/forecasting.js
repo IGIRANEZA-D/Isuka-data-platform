@@ -7,6 +7,7 @@ const elements = {
 const controls = document.querySelector('.forecast-controls');
 controls.insertAdjacentHTML('beforeend','<div class="shared-filter-actions"><span data-shared-filter-status>Ready</span><button type="button" data-shared-filter-reset>Reset</button></div>');
 const filterStatus = controls.querySelector('[data-shared-filter-status]'), filterReset = controls.querySelector('[data-shared-filter-reset]');
+filterStatus.hidden = true;
 let cache, forecastCachePromise, boundaryDataPromise, activeModel='ensemble', map, boundaryLayer, mapRenderVersion=0, modelLoadVersion=0;
 const format = chartFormat.compact;
 const percent = (value) => Number.isFinite(value) ? `${value.toFixed(1)}%` : '—';
