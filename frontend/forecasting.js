@@ -95,7 +95,7 @@ function renderSelection() {
   const comparisons=renderBacktest();
   const history=forecast.history||[];
   renderKpis();renderCharts(history,forecast,comparisons);renderAnalysis(forecast,history);
-  filterStatus.textContent=`Updated just now · ${filteredForecasts().length} forecast pairs · ${confidence}`;
+  filterStatus.textContent=`${filteredForecasts().length} pairs · ${confidence}`;
 }
 function showMapError() {
   map=null;
