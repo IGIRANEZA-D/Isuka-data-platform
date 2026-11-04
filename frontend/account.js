@@ -987,9 +987,15 @@ function setupAssistantChat() {
   const requestAssistant = async (text) => { if (activeChat.title === 'New chat') activeChat.title = text.slice(0, 48).trim() || 'Uploaded farm file'; const body = new FormData(); body.append('message', text); body.append('conversationId', activeChat.id); body.append('conversationTitle', activeChat.title); if (selectedFile) body.append('attachment', selectedFile); return fetch('/api/assistant/messages', { method: 'POST', credentials: 'include', body }); };
   const animateTextReveal = (element, text, { speedMs = 18, onFinish } = {}) => {
     if (!element) return;
+    const nearBottom = () => messages.scrollHeight - messages.scrollTop - messages.clientHeight < 48;
+    let followOutput = nearBottom();
+    const follow = () => { if (followOutput) messages.scrollTop = messages.scrollHeight; };
+    const onMessagesScroll = () => { followOutput = nearBottom(); };
+    messages.addEventListener('scroll', onMessagesScroll, { passive: true });
+    const finish = () => { messages.removeEventListener('scroll', onMessagesScroll); onFinish?.(); };
     if (!text) {
       element.textContent = '';
-      onFinish?.();
+      finish();
       return;
     }
     element.textContent = '';
@@ -997,8 +1003,9 @@ function setupAssistantChat() {
     const tick = () => {
       index += 1;
       element.textContent = text.slice(0, index);
+      follow();
       if (index >= text.length) {
-        onFinish?.();
+        finish();
         return;
       }
       window.setTimeout(tick, speedMs);
@@ -1077,7 +1084,7 @@ function setupAssistantChat() {
     document.querySelector('[data-assistant-new-chat]')?.addEventListener('click', () => { activeChat = { id: crypto.randomUUID(), title: 'New chat', messages: [] }; renderSelectedMessages(activeChat.messages); input.focus(); });
     const addMessage = (text) => appendMessage(text, 'user');
     suggestions.querySelectorAll('button').forEach((button) => button.addEventListener('click', () => { input.value = button.textContent; input.focus(); }));
-    form.addEventListener('submit', async (event) => { event.preventDefault(); const text = input.value.trim(); if (!text && !selectedFile) return; const requestText = text || 'Please analyze this uploaded farm file and tell me what I should do next.'; const userText = selectedFile ? `${text || 'Analyze this upload.'}\n[Attached: ${selectedFile.name}]` : text; activeChat.messages.push({ role: 'user', text: userText }); addMessage(userText); input.value = ''; form.querySelector('button[type="submit"]').disabled = true; const typing = createTypingIndicator(); messages.appendChild(typing); messages.hidden = false; empty.hidden = true; suggestions.hidden = true; messages.scrollTop = messages.scrollHeight; try { const response = await requestAssistant(requestText); const result = await response.json(); if (!response.ok) throw new Error(result.error || 'The AI service is unavailable.'); typing.remove(); const assistantMessage = document.createElement('div'); assistantMessage.className = 'assistant-message assistant-message-assistant'; assistantMessage.appendChild(createAssistantAvatar()); const assistantText = document.createElement('p'); assistantMessage.appendChild(assistantText); messages.appendChild(assistantMessage); activeChat.messages.push({ role: 'assistant', text: result.answer }); animateTextReveal(assistantText, result.answer, { speedMs: 18, onFinish: () => { messages.scrollTop = messages.scrollHeight; window.dispatchEvent(new Event('assistant-chat-updated')); } }); } catch { typing.remove(); const assistantMessage = document.createElement('div'); assistantMessage.className = 'assistant-message assistant-message-assistant'; assistantMessage.appendChild(createAssistantAvatar()); const assistantText = document.createElement('p'); assistantText.textContent = assistantFailureMessage; messages.appendChild(assistantMessage); assistantMessage.appendChild(assistantText); activeChat.messages.push({ role: 'assistant', text: assistantFailureMessage }); } finally { clearAttachment(); form.querySelector('button[type="submit"]').disabled = false; input.focus(); } });
+    form.addEventListener('submit', async (event) => { event.preventDefault(); const text = input.value.trim(); if (!text && !selectedFile) return; const requestText = text || 'Please analyze this uploaded farm file and tell me what I should do next.'; const userText = selectedFile ? `${text || 'Analyze this upload.'}\n[Attached: ${selectedFile.name}]` : text; activeChat.messages.push({ role: 'user', text: userText }); addMessage(userText); input.value = ''; form.querySelector('button[type="submit"]').disabled = true; const typing = createTypingIndicator(); messages.appendChild(typing); messages.hidden = false; empty.hidden = true; suggestions.hidden = true; messages.scrollTop = messages.scrollHeight; try { const response = await requestAssistant(requestText); const result = await response.json(); if (!response.ok) throw new Error(result.error || 'The AI service is unavailable.'); typing.remove(); const assistantMessage = document.createElement('div'); assistantMessage.className = 'assistant-message assistant-message-assistant'; assistantMessage.appendChild(createAssistantAvatar()); const assistantText = document.createElement('p'); assistantMessage.appendChild(assistantText); messages.appendChild(assistantMessage); activeChat.messages.push({ role: 'assistant', text: result.answer }); animateTextReveal(assistantText, result.answer, { speedMs: 18, onFinish: () => window.dispatchEvent(new Event('assistant-chat-updated')) }); } catch { typing.remove(); const assistantMessage = document.createElement('div'); assistantMessage.className = 'assistant-message assistant-message-assistant'; assistantMessage.appendChild(createAssistantAvatar()); const assistantText = document.createElement('p'); assistantText.textContent = assistantFailureMessage; messages.appendChild(assistantMessage); assistantMessage.appendChild(assistantText); activeChat.messages.push({ role: 'assistant', text: assistantFailureMessage }); } finally { clearAttachment(); form.querySelector('button[type="submit"]').disabled = false; input.focus(); } });
     document.querySelector('[data-file-trigger]')?.addEventListener('click', () => fileInput?.click());
     return;
   }
@@ -1181,7 +1188,7 @@ function setupAssistantChat() {
       const assistantText = document.createElement('p');
       assistantMessage.appendChild(assistantText);
       messages.appendChild(assistantMessage);
-      animateTextReveal(assistantText, result.answer, { speedMs: 22, onFinish: () => { messages.scrollTop = messages.scrollHeight; } });
+      animateTextReveal(assistantText, result.answer, { speedMs: 22 });
     } catch (error) {
       typing.remove();
       const chat = currentChat();
@@ -1194,7 +1201,7 @@ function setupAssistantChat() {
       const assistantText = document.createElement('p');
       assistantMessage.appendChild(assistantText);
       messages.appendChild(assistantMessage);
-      animateTextReveal(assistantText, safeError, { speedMs: 18, onFinish: () => { messages.scrollTop = messages.scrollHeight; } });
+      animateTextReveal(assistantText, safeError, { speedMs: 18 });
     } finally {
       renderMessages();
       clearAttachment();
