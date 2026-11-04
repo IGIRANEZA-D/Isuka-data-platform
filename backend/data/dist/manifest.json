@@ -132,7 +132,7 @@
       "bytes": 20108
     },
     "../forecast-cache.json": {
-      "bytes": 2171161
+      "bytes": 23946890
     },
     "../loss-planner-cache.json": {
       "bytes": 15767277
@@ -179,7 +179,7 @@
     "loss-planner/2025-B.json": "91a30cf57a1e0ef92df9a8cda72303701b7a8d2a14e5c48cdbf8f046856392f5",
     "loss-planner/2025-C.json": "63e36786b836ec8b7c5f6d39a9616b52c22e3beec6b6b310b409be78cbcd4fb7",
     "../default-overview-cache.json": "eec7e0bd39e95614e20f64385bb47599042cbc02e8fba3b5175c1f02769400ae",
-    "../forecast-cache.json": "4a9cc96ffa27a8f82e9c1cfdd01cc838fc7d4c8cacd91b80b3ebe0f7c083f3a9",
+    "../forecast-cache.json": "c0a236c8b66dfed92aaefff8a81abeaf95268f2c9c96705c5681afbc6d95f803",
     "../loss-planner-cache.json": "c6e4830bef3f5f5dafd7e95d39bb8151a88ccec020822d7cf43dcc940e840f03",
     "frontend/data/landing-art.json": "8110a6bd191c004a02628bbd8e7f3c60d9b861f853834ac6e0db6f4ea7bfeae9"
   }

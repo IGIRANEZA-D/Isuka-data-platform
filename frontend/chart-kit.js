@@ -98,6 +98,34 @@ function drawLine(stage, spec) {
   bindPointTips(chart, rows, spec);
 }
 
+function drawForecastLine(stage, spec) {
+  const rows = (spec.data || []).filter((row) => validNumber(row.value));
+  if (!rows.length) return empty(stage);
+  const width = 820, height = 340, max = Math.max(...rows.map((row) => Number(row.value))) * 1.18 || 1;
+  const chart = svg('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': `${spec.title}; observed and forecast ${spec.unit || 'value'} by year` });
+  const box = drawAxes(chart, { width, height, left: 70, right: 24, top: 22, bottom: 62, max });
+  const x = (index) => box.x(index, rows.length), y = (row) => box.y(Number(row.value));
+  const actualIndexes = rows.map((row, index) => row.kind === 'actual' ? index : -1).filter((index) => index >= 0);
+  const forecastIndexes = rows.map((row, index) => row.kind === 'forecast' ? index : -1).filter((index) => index >= 0);
+  if (actualIndexes.length) {
+    const actualPath = actualIndexes.map((index, step) => `${step ? 'L' : 'M'}${x(index)},${y(rows[index])}`).join(' ');
+    chart.insertAdjacentHTML('beforeend', `<path class="analytics-line-area" d="${actualPath} L${x(actualIndexes.at(-1))},${box.baseline} L${x(actualIndexes[0])},${box.baseline} Z"/><path class="analytics-line analytics-line-draw" d="${actualPath}"/>`);
+  }
+  if (forecastIndexes.length) {
+    const forecastPath = [actualIndexes.at(-1), ...forecastIndexes].filter((index) => Number.isInteger(index)).map((index, step) => `${step ? 'L' : 'M'}${x(index)},${y(rows[index])}`).join(' ');
+    chart.insertAdjacentHTML('beforeend', `<path class="analytics-line-forecast" d="${forecastPath}"/>`);
+  }
+  rows.forEach((row, index) => {
+    const forecast = row.kind === 'forecast';
+    chart.insertAdjacentHTML('beforeend', `<circle class="analytics-line-point analytics-mark analytics-hoverable ${forecast ? 'analytics-forecast-point' : ''}" tabindex="0" cx="${x(index)}" cy="${y(row)}" r="5.5" data-index="${index}"/><text class="analytics-category" x="${x(index)}" y="${box.baseline + 22}" text-anchor="middle">${esc(row.label)}</text>`);
+  });
+  chart.insertAdjacentHTML('beforeend', `<g class="analytics-line-legend"><line x1="260" x2="284" y1="${height - 12}" y2="${height - 12}"/><text x="291" y="${height - 8}">Observed</text><line class="forecast-legend-line" x1="388" x2="412" y1="${height - 12}" y2="${height - 12}"/><text x="419" y="${height - 8}">Projected</text></g>`);
+  stage.appendChild(chart);
+  const line = chart.querySelector('.analytics-line-draw');
+  if (line) line.style.setProperty('--analytics-line-length', String(line.getTotalLength()));
+  bindPointTips(chart, rows, spec);
+}
+
 function drawGrouped(stage, spec) {
   const categories = (spec.data || []).filter((row) => Array.isArray(row.series) && row.series.some((series) => validNumber(series.value)));
   if (!categories.length) return empty(stage);
@@ -252,6 +280,7 @@ export function renderChartGrid(container, specs) {
     container.appendChild(frame.card);
     try {
       if (spec.type === 'line') drawLine(frame.stage, spec);
+      else if (spec.type === 'forecast-line') drawForecastLine(frame.stage, spec);
       else if (spec.type === 'donut') drawDonut(frame.stage, spec);
       else if (spec.type === 'grouped') drawGrouped(frame.stage, spec);
       else drawBar(frame.stage, spec, spec.type === 'bar');

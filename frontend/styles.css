@@ -820,6 +820,12 @@ svg {
 
 /* Shared, NISR-inspired public dashboard analytics cards. */
 .analytics-chart-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin:18px 0 26px; align-items:stretch; }
+.production-outlook-panel .panel-heading>div>span { display:block; margin-top:8px; color:#71806e; font-size:12px; }
+.production-outlook-chart .analytics-chart-grid { grid-template-columns:1fr; margin:12px 0 0; }
+.production-outlook-chart .analytics-chart-card { border-color:transparent; padding:8px 0 0; box-shadow:none; }
+.production-outlook-chart .analytics-chart-head { display:none; }
+.production-outlook-chart .analytics-chart-stage { min-height:340px; }
+.production-outlook-note { margin:0; color:#71806e; font-size:11px; line-height:1.5; }
 .analytics-chart-card { position:relative; min-width:0; padding:20px 20px 16px; overflow:visible; border:1px solid #dfe7da; border-radius:16px; background:linear-gradient(150deg,#fff 0%,#fcfdfb 100%); box-shadow:0 8px 28px rgba(31,46,23,.055); transition:box-shadow 180ms ease,border-color 180ms ease; }
 .analytics-chart-card:hover { border-color:#cbd9c3; box-shadow:0 12px 32px rgba(31,46,23,.09); }
 .analytics-chart-head { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
@@ -846,6 +852,16 @@ svg {
 .analytics-chart-stage .is-muted { opacity:.2; }
 .analytics-chart-stage .is-selected { filter:brightness(1.13) drop-shadow(0 3px 4px rgba(31,46,23,.3)); }
 .analytics-line { fill:none; stroke:#3d6b1f; stroke-width:3.5; stroke-linecap:round; stroke-linejoin:round; }
+.analytics-line-forecast { fill:none; stroke:#c08a3e; stroke-width:3.5; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:9 7; }
+.analytics-forecast-point { stroke:#c08a3e; }
+.analytics-line-legend line { stroke:#3d6b1f; stroke-width:3; stroke-linecap:round; }
+.analytics-line-legend .forecast-legend-line { stroke:#c08a3e; stroke-dasharray:6 4; }
+.analytics-line-legend text { fill:#687564; font:600 11px 'Work Sans',sans-serif; }
+.analytics-line-forecast { fill:none; stroke:#c08a3e; stroke-width:3.5; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:9 7; }
+.analytics-forecast-point { stroke:#c08a3e; }
+.analytics-line-legend line { stroke:#3d6b1f; stroke-width:3; stroke-linecap:round; }
+.analytics-line-legend .forecast-legend-line { stroke:#c08a3e; stroke-dasharray:6 4; }
+.analytics-line-legend text { fill:#687564; font:600 11px 'Work Sans',sans-serif; }
 .analytics-line-draw { stroke-dasharray:var(--analytics-line-length); stroke-dashoffset:var(--analytics-line-length); animation:analytics-line-draw 900ms ease-out forwards; }
 .analytics-line-area { fill:url(#analyticsLineFill); fill:#3d6b1f; opacity:.08; }
 .analytics-line-point { fill:#fff; stroke:#3d6b1f; stroke-width:3; }

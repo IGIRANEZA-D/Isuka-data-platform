@@ -139,6 +139,11 @@ if (fs.existsSync(frontendData)) {
   copyDirRecursive(frontendData, path.join(publicDir, 'data'));
   console.log('[build-public-dir] Copied frontend/data -> public/data');
 }
+const forecastCache = path.join(root, 'backend', 'data', 'forecast-cache.json');
+if (fs.existsSync(forecastCache)) {
+  copyFile(forecastCache, path.join(publicDir, 'data', 'forecast-cache.json'));
+  console.log('[build-public-dir] Copied offline forecast cache -> public/data/forecast-cache.json');
+}
 
 // 4. Publish generated static Data Library files directly from verified artifacts.
 const artifactDownloads = path.join(root, 'backend', 'data', 'dist', 'downloads');

@@ -9,6 +9,7 @@ and should be rerun manually when a new season is added.
 """
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
+import hashlib
 import json
 import math
 import os
@@ -27,8 +28,8 @@ MODERATE_THRESHOLD = 15.0
 HIGH_THRESHOLD = 30.0
 SEASON_ORDER = {"A": 0, "B": 1, "C": 2}
 FEATURE_NAMES = ["Previous season's loss rate", "Previous season's production", "Season indicator"]
-FORECAST_YEARS = (2026,)
-FORECAST_SEASONS = ("A",)
+FORECAST_YEARS = tuple(range(2026, 2031))
+FORECAST_SEASONS = ("A", "B", "C")
 
 
 def fetch_series():
@@ -98,8 +99,8 @@ def row_for(rows, year, season):
     return next((row for row in rows if row["year"] == year and row["season"] == season), None)
 
 
-def statistical_forecast(rows, season):
-    history = [row for row in rows if row["season"] == season and row["year"] <= 2025]
+def statistical_forecast(rows, season, cutoff_year=2025):
+    history = [row for row in rows if row["season"] == season and row["year"] <= cutoff_year]
     production_values = [row["weightedProductionKg"] for row in history]
     loss_values = [row["lossPercent"] for row in history]
     production = weighted_average(production_values)
@@ -257,15 +258,18 @@ def build_forecasts(groups, model_pair):
             "lossPercent": {"value": loss_cap, "lowConfidence": loss_low_confidence},
         }
         low_confidence_capped = caps["productionKg"]["lowConfidence"] or caps["lossPercent"]["lowConfidence"]
+        projection_rows = list(rows)
         previous_by_season = {
             season: row_for(rows, 2025, season) or next((row for row in reversed(rows) if row["season"] == season), None)
             for season in FORECAST_SEASONS
         }
         for forecast_year in FORECAST_YEARS:
             for season in FORECAST_SEASONS:
-                statistical = statistical_forecast(rows, season)
+                statistical = statistical_forecast(projection_rows, season, forecast_year - 1)
                 previous = previous_by_season[season]
                 ml = ml_prediction(model_pair, previous, season) if production_model and previous else statistical
+                if not finite(statistical.get("productionKg")) and not finite(ml.get("productionKg")):
+                    continue
                 ensemble = {
                     "productionKg": (statistical["productionKg"] + (ml["productionKg"] or statistical["productionKg"])) / 2 if statistical["productionKg"] is not None else ml["productionKg"],
                     "lossPercent": (statistical["lossPercent"] + (ml["lossPercent"] or statistical["lossPercent"])) / 2 if statistical["lossPercent"] is not None else ml["lossPercent"],
@@ -289,7 +293,12 @@ def build_forecasts(groups, model_pair):
                     },
                 })
                 previous_by_season[season] = {"weightedProductionKg": ensemble["productionKg"], "lossPercent": ensemble["lossPercent"]}
-        forecasts.append({"districtCode": district, "cropCode": crop, "cropName": rows[-1].get("cropName", crop), "yearsAvailable": len(years), "lowHistory": len(years) < 4, "lowConfidenceCapped": low_confidence_capped, "future": future, "models": future[0]["models"]})
+                projection_rows.append({"year": forecast_year, "season": season, "weightedProductionKg": ensemble["productionKg"], "lossPercent": ensemble["lossPercent"]})
+        history = [
+            {"year": row["year"], "season": row["season"], "weightedProductionKg": row.get("weightedProductionKg")}
+            for row in rows if row["season"] in FORECAST_SEASONS and row["year"] <= 2025
+        ]
+        forecasts.append({"districtCode": district, "cropCode": crop, "cropName": rows[-1].get("cropName", crop), "yearsAvailable": len(years), "lowHistory": len(years) < 4, "lowConfidenceCapped": low_confidence_capped, "history": history, "future": future, "models": future[0]["models"]})
     return forecasts
 
 
@@ -304,7 +313,7 @@ def main():
     artifact = {
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "horizon": {"startYear": min(FORECAST_YEARS), "endYear": max(FORECAST_YEARS), "seasons": list(FORECAST_SEASONS)},
-        "methodology": "Leakage-safe GradientBoostingRegressor ensemble with a seasonal weighted baseline; trained offline, evaluated on held-out 2025 data, and never trained at request time.",
+        "methodology": "Leakage-safe GradientBoostingRegressor ensemble with a seasonal weighted baseline; trained offline, evaluated on held-out 2025 data, and recursively projected through 2030 for supported Seasons A, B and C. Forecasts are generated offline and never trained at request time.",
         "thresholds": {"moderate": MODERATE_THRESHOLD, "high": HIGH_THRESHOLD},
         "modelAvailable": GradientBoostingRegressor is not None,
         "forecasts": forecasts,
@@ -323,6 +332,14 @@ def main():
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(artifact, indent=2), encoding="utf-8")
+    manifest_path = ROOT / "backend" / "data" / "dist" / "manifest.json"
+    if manifest_path.exists():
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        contents = OUTPUT.read_bytes().replace(b"\r\n", b"\n")
+        manifest_key = "../forecast-cache.json"
+        manifest.setdefault("files", {})[manifest_key] = {"bytes": len(contents)}
+        manifest.setdefault("checksums", {})[manifest_key] = hashlib.sha256(contents).hexdigest()
+        manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"output": str(OUTPUT), "forecastPairs": len(forecasts), "backtestPredictions": artifact["backtest"]["predictionCount"], "sklearn": artifact["modelAvailable"]}, indent=2))
 
 

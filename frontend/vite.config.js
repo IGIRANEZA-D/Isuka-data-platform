@@ -1,13 +1,21 @@
 import { defineConfig } from 'vite';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const backendTarget = process.env.ISUKA_API_URL || 'http://localhost:3000';
+const frontendDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   plugins: [{
     name: 'isuka-land-crops-route',
     configureServer(server) {
+      server.middlewares.use((request, response, next) => {
+        if (request.method !== 'GET' || request.url?.split('?')[0] !== '/data/forecast-cache.json') return next();
+        response.setHeader('Content-Type', 'application/json; charset=utf-8');
+        response.setHeader('Cache-Control', 'no-store');
+        fs.createReadStream(new URL('../backend/data/forecast-cache.json', import.meta.url)).pipe(response);
+      });
       server.middlewares.use('/dashboard/land-crops/', (request, response, next) => {
         if (request.method !== 'GET') return next();
         response.setHeader('Content-Type', 'text/html');
@@ -31,12 +39,12 @@ export default defineConfig({
       server.middlewares.use('/dashboard/forecasting/analysis/', (request, response, next) => {
         if (request.method !== 'GET') return next();
         response.setHeader('Content-Type', 'text/html');
-        fs.createReadStream(path.resolve(__dirname, 'forecasting-analysis.html')).pipe(response);
+        fs.createReadStream(path.join(frontendDirectory, 'forecasting-analysis.html')).pipe(response);
       });
       server.middlewares.use('/dashboard/forecasting/', (request, response, next) => {
         if (request.method !== 'GET') return next();
         response.setHeader('Content-Type', 'text/html');
-        fs.createReadStream(path.resolve(__dirname, 'forecasting.html')).pipe(response);
+        fs.createReadStream(path.join(frontendDirectory, 'forecasting.html')).pipe(response);
       });
       server.middlewares.use('/dashboard/loss-planner/', (request, response, next) => {
         if (request.method !== 'GET') return next();

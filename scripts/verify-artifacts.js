@@ -32,7 +32,14 @@ if (!fs.existsSync(forecastCachePath)) {
   try {
     const cache = JSON.parse(fs.readFileSync(forecastCachePath, 'utf8'));
     if (!cache.forecasts || !Array.isArray(cache.forecasts)) fail('forecast-cache.json missing forecasts array');
-    else pass(`forecast-cache.json present (${cache.forecasts.length} entries, generatedAt ${cache.generatedAt || 'unknown'})`);
+    else {
+      const requiredYears = [2026, 2027, 2028, 2029, 2030];
+      const hasHorizon = cache.horizon?.startYear === 2026 && cache.horizon?.endYear === 2030;
+      const completePairs = cache.forecasts.every((entry) => Array.isArray(entry.history) && requiredYears.every((year) => entry.future?.some((period) => period.year === year)));
+      if (!hasHorizon) fail('forecast-cache.json should publish the 2026–2030 horizon.');
+      else if (!completePairs) fail('forecast-cache.json should include observed history and all five projected years for every forecast pair.');
+      else pass(`forecast-cache.json present (${cache.forecasts.length} pairs, 2026–2030 horizon, generatedAt ${cache.generatedAt || 'unknown'})`);
+    }
   } catch (err) {
     fail(`forecast-cache.json parse error: ${err.message}`);
   }
@@ -108,7 +115,9 @@ if (!fs.existsSync(distManifestPath)) {
         fail(`${name} is missing`);
         continue;
       }
-      const contents = fs.readFileSync(artifactPath);
+      // Git may check text artifacts out with CRLF on Windows. Their manifest
+      // records the canonical LF bytes, so normalize text before hashing.
+      const contents = Buffer.from(fs.readFileSync(artifactPath, 'utf8').replace(/\r\n/g, '\n'));
       const actualHash = crypto.createHash('sha256').update(contents).digest('hex');
       if (actualHash !== distManifest.checksums?.[name]) fail(`${name}: checksum mismatch`);
       else pass(`${name}: checksum OK (${Math.round(contents.length / 1024)} KB)`);
@@ -159,7 +168,8 @@ if (!fs.existsSync(downloadsDir)) {
         fail(`${filename} is missing`);
         continue;
       }
-      const data = fs.readFileSync(filePath);
+      // CSV exports are text files and may be checked out with CRLF on Windows.
+      const data = Buffer.from(fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n'));
       const actualHash = crypto.createHash('sha256').update(data).digest('hex');
       const expectedHash = manifest.checksums?.[manifestKey];
       if (!expectedHash) {
